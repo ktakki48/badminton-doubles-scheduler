@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0f172a" />
+
+<meta name="format-detection" content="telephone=no" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="対戦表メーカー" />
+<meta name="application-name" content="対戦表メーカー" />
+<meta name="description" content="バドミントンダブルスの対戦表をiPhoneでも作りやすいようにしたホーム画面対応Webアプリです。" />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+<link rel="icon" href="icons/icon-192.png" sizes="192x192" />
+  <title>バドミントン対戦表メーカー</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: rgba(255,255,255,0.08);
+      --panel2: rgba(255,255,255,0.12);
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --line: rgba(255,255,255,0.15);
+      --accent: #38bdf8;
+      --good: #86efac;
+      --warn: #fde68a;
+      --bad: #fca5a5;
+      --shadow: 0 14px 36px rgba(0,0,0,.25);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { padding: env(safe-area-inset-top) 12px calc(env(safe-area-inset-bottom) + 18px); }
+    .app { max-width: 980px; margin: 0 auto; }
+    header { padding: 18px 4px 10px; }
+    h1 { margin: 0; font-size: 24px; letter-spacing: .02em; }
+    .subtitle { margin: 6px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 820px) { .grid.two { grid-template-columns: .9fr 1.1fr; } }
+
+    .card { background: linear-gradient(145deg, var(--panel), rgba(255,255,255,.045)); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px; backdrop-filter: blur(10px); }
+    .card h2 { margin: 0 0 12px; font-size: 16px; }
+    .row { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; }
+    .form-row { display: grid; grid-template-columns: 1fr 96px; gap: 8px; }
+    label { display: block; color: var(--muted); font-size: 12px; margin: 0 0 5px; }
+    input, select, button, textarea { font: inherit; }
+    input, select, textarea { width: 100%; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.08); color: var(--text); padding: 12px 10px; outline: none; }
+    option { color: #111827; }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56,189,248,.16); }
+    button { border: 0; border-radius: 12px; padding: 12px 14px; background: var(--accent); color: #082f49; font-weight: 700; cursor: pointer; }
+    button.secondary { background: rgba(255,255,255,.12); color: var(--text); border: 1px solid var(--line); }
+    button.danger { background: rgba(252,165,165,.18); color: #fecaca; border: 1px solid rgba(252,165,165,.35); }
+    button:active { transform: translateY(1px); }
+    .buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .settings { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .note { color: var(--muted); font-size: 12px; line-height: 1.55; margin-top: 10px; }
+    .error { color: var(--bad); font-size: 13px; margin-top: 8px; min-height: 18px; }
+
+    .players { display: grid; gap: 7px; max-height: 430px; overflow: auto; padding-right: 2px; }
+    .player { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; background: rgba(255,255,255,.075); border: 1px solid var(--line); border-radius: 14px; padding: 9px 10px; }
+    .name { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .rating { min-width: 34px; text-align: center; border-radius: 999px; padding: 4px 8px; background: rgba(56,189,248,.18); color: #bae6fd; font-weight: 800; }
+    .small-btn { padding: 7px 9px; border-radius: 10px; font-size: 12px; }
+    .count { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+
+    .schedule { display: grid; gap: 14px; margin-top: 12px; }
+    .round { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: rgba(255,255,255,.055); }
+    .round-head { display: flex; justify-content: space-between; gap: 10px; align-items: center; padding: 12px; background: rgba(255,255,255,.08); }
+    .round-title { font-weight: 900; }
+    .rest { color: var(--warn); font-size: 12px; line-height: 1.4; text-align: right; }
+    .courts { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 10px; }
+    @media (min-width: 760px) { .courts { grid-template-columns: repeat(2, 1fr); } }
+    .court { border: 1px solid rgba(255,255,255,.14); border-radius: 14px; padding: 10px; background: rgba(15,23,42,.32); }
+    .court-title { color: #bae6fd; font-weight: 900; margin-bottom: 8px; font-size: 13px; }
+    .match { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; }
+    .pair { border-radius: 12px; background: rgba(255,255,255,.08); padding: 9px; min-height: 64px; }
+    .pair strong { display: block; font-size: 13px; margin-bottom: 4px; }
+    .pair span { display: block; font-size: 12px; color: var(--muted); line-height: 1.35; }
+    .vs { color: var(--muted); font-weight: 900; }
+    .diff { margin-top: 8px; font-size: 12px; color: var(--muted); }
+    .diff.good { color: var(--good); }
+    .diff.warn { color: var(--warn); }
+    .diff.bad { color: var(--bad); }
+    .stats { display: grid; gap: 6px; margin-top: 10px; }
+    .stat-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; color: var(--muted); font-size: 12px; padding: 6px 8px; border-radius: 10px; background: rgba(255,255,255,.055); }
+    textarea { min-height: 160px; resize: vertical; }
+    .hidden { display: none; }
+
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  padding-left: max(12px, env(safe-area-inset-left));
+  padding-right: max(12px, env(safe-area-inset-right));
+  overscroll-behavior-y: contain;
+}
+.app { padding-bottom: 18px; }
+.install-tip {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(56,189,248,.18), rgba(255,255,255,.06));
+  border: 1px solid rgba(56,189,248,.28);
+  color: var(--text);
+}
+.install-tip strong { font-size: 14px; }
+.install-tip span { color: var(--muted); font-size: 12px; line-height: 1.55; }
+.ios-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.16);
+  color: var(--text);
+}
+.buttons { align-items: stretch; }
+.buttons button { min-height: 46px; }
+.pair { min-height: 70px; }
+.card { overflow: hidden; }
+.footer-note {
+  color: var(--muted);
+  font-size: 11px;
+  text-align: center;
+  padding: 6px 0 14px;
+}
+@media (max-width: 819px) {
+  .app { max-width: 680px; }
+  header { padding-top: 10px; }
+  h1 { font-size: 22px; }
+  .subtitle { font-size: 12px; }
+  .settings { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr 92px; }
+  .row { grid-template-columns: 1fr; }
+  .buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .buttons > button:first-child:last-child { grid-column: 1 / -1; }
+  textarea { min-height: 140px; }
+  .round-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .rest { text-align: left; }
+  .courts { grid-template-columns: 1fr; }
+  .player {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "name rating"
+      "button button";
+  }
+  .name { grid-area: name; }
+  .rating { grid-area: rating; justify-self: end; }
+  .player .small-btn { grid-area: button; width: 100%; }
+}
+@media (max-width: 420px) {
+  body { padding-top: max(10px, env(safe-area-inset-top)); }
+  .buttons { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .match { grid-template-columns: 1fr; }
+  .vs { text-align: center; }
+}
+
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <h1>バドミントン対戦表メーカー</h1>
+      <p class="subtitle">最大23人・5コート・20試合まで対応。レーティングを使って、極端な実力差ペアを避けながらダブルスの対戦表を自動作成します。</p>
+
+<div class="install-tip" id="installTip">
+  <div class="ios-badge">iPhone ホーム画面対応</div>
+  <strong>Safariで開いて「共有」→「ホーム画面に追加」でアプリ風に使えます。</strong>
+  <span>一度追加すると、次回からはホーム画面のアイコンから起動できます。参加者データはこの端末のブラウザ内に保存されます。</span>
+</div>
+    </header>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>参加者登録</h2>
+        <div class="form-row">
+          <div>
+            <label for="playerName">名前</label>
+            <input id="playerName" placeholder="例：田中" autocomplete="off" />
+          </div>
+          <div>
+            <label for="playerRating">実力</label>
+            <select id="playerRating"></select>
+          </div>
+        </div>
+        <div class="buttons">
+          <button id="addPlayer">追加</button>
+          <button class="secondary" id="loadSample">サンプル23人</button>
+          <button class="danger" id="clearPlayers">全削除</button>
+        </div>
+        <p class="note">レーティングは1〜10の整数。ペア重複を強く避けつつ、チーム合計レーティング差が小さい組み合わせを優先します。</p>
+        <div class="error" id="error"></div>
+      </div>
+
+      <div class="card">
+        <h2>試合条件</h2>
+        <div class="settings">
+          <div>
+            <label for="courtCount">使用コート数</label>
+            <select id="courtCount">
+              <option value="1">1コート</option>
+              <option value="2">2コート</option>
+              <option value="3">3コート</option>
+              <option value="4">4コート</option>
+              <option value="5" selected>5コート</option>
+            </select>
+          </div>
+          <div>
+            <label for="roundCount">各コート最大試合数</label>
+            <select id="roundCount"></select>
+          </div>
+        </div>
+        <div class="buttons">
+          <button id="generate">対戦表を作成</button>
+          <button class="secondary" id="copyText">テキストコピー</button>
+          <button class="secondary" id="toggleExport">テキスト表示</button>
+        </div>
+        <p class="note">人数が20人を超える場合は、各ラウンドで休憩者を出します。休憩は出場回数が多い人を優先して回します。</p>
+        <textarea id="exportText" class="hidden" readonly></textarea>
+      </div>
+    </section>
+
+    <section class="grid two" style="margin-top:12px;">
+      <div class="card">
+        <h2>参加者一覧</h2>
+        <div class="count" id="playerCount">0 / 23人</div>
+        <div class="players" id="players"></div>
+      </div>
+
+      <div class="card">
+        <h2>出場バランス</h2>
+        <div id="stats" class="stats"></div>
+      </div>
+    </section>
+
+    <section class="schedule" id="schedule"></section>
+
+<p class="footer-note">ホーム画面追加後はSafariのタブ表示なしで起動できます。</p>
+  </main>
+
+  <script>
+    const MAX_PLAYERS = 23;
+    const MAX_COURTS = 5;
+    const MAX_ROUNDS = 20;
+    const STORAGE_KEY = "bd_doubles_scheduler_v1";
+
+    let players = [];
+    let lastSchedule = [];
+
+    const $ = (id) => document.getElementById(id);
+
+    function uid() {
+      return crypto && crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random());
+    }
+
+    function initSelects() {
+      const rating = $("playerRating");
+      for (let i = 1; i <= 10; i++) {
+        const opt = document.createElement("option");
+        opt.value = i;
+        opt.textContent = i;
+        if (i === 5) opt.selected = true;
+        rating.appendChild(opt);
+      }
+
+      const rounds = $("roundCount");
+      for (let i = 1; i <= MAX_ROUNDS; i++) {
+        const opt = document.createElement("option");
+        opt.value = i;
+        opt.textContent = `${i}試合`;
+        if (i === 10) opt.selected = true;
+        rounds.appendChild(opt);
+      }
+    }
+
+    function save() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ players }));
+    }
+
+    function load() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (Array.isArray(data.players)) players = data.players;
+      } catch (_) {}
+    }
+
+    function setError(msg = "") {
+      $("error").textContent = msg;
+    }
+
+    function renderPlayers() {
+      $("playerCount").textContent = `${players.length} / ${MAX_PLAYERS}人`;
+      const wrap = $("players");
+      wrap.innerHTML = "";
+
+      if (!players.length) {
+        wrap.innerHTML = `<p class="note">まだ参加者が登録されていません。</p>`;
+        renderStats([]);
+        return;
+      }
+
+      players
+        .slice()
+        .sort((a, b) => b.rating - a.rating || a.name.localeCompare(b.name, "ja"))
+        .forEach(p => {
+          const div = document.createElement("div");
+          div.className = "player";
+          div.innerHTML = `
+            <div class="name">${escapeHtml(p.name)}</div>
+            <div class="rating">${p.rating}</div>
+            <button class="small-btn danger" data-remove="${p.id}">削除</button>
+          `;
+          wrap.appendChild(div);
+        });
+
+      wrap.querySelectorAll("[data-remove]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          players = players.filter(p => p.id !== btn.dataset.remove);
+          save();
+          lastSchedule = [];
+          renderPlayers();
+          renderSchedule([]);
+        });
+      });
+    }
+
+    function addPlayer() {
+      const name = $("playerName").value.trim();
+      const rating = Number($("playerRating").value);
+      setError();
+
+      if (!name) return setError("名前を入力してください。");
+      if (players.length >= MAX_PLAYERS) return setError("参加者は最大23人までです。");
+      if (players.some(p => p.name === name)) return setError("同じ名前が登録済みです。識別できるように別名を付けてください。");
+      if (!Number.isInteger(rating) || rating < 1 || rating > 10) return setError("レーティングは1〜10の整数にしてください。");
+
+      players.push({ id: uid(), name, rating });
+      $("playerName").value = "";
+      save();
+      renderPlayers();
+      $("playerName").focus();
+    }
+
+    function loadSample() {
+      const names = ["田中","佐藤","鈴木","高橋","伊藤","山本","中村","小林","加藤","吉田","山田","佐々木","山口","松本","井上","木村","林","清水","斎藤","森","池田","橋本","石川"];
+      const ratings = [10,9,9,8,8,7,7,7,6,6,5,5,5,4,4,4,3,3,3,2,2,1,1];
+      players = names.map((name, i) => ({ id: uid(), name, rating: ratings[i] }));
+      save();
+      lastSchedule = [];
+      renderPlayers();
+      renderSchedule([]);
+      setError();
+    }
+
+    function clearPlayers() {
+      if (!confirm("参加者を全削除しますか？")) return;
+      players = [];
+      lastSchedule = [];
+      save();
+      renderPlayers();
+      renderSchedule([]);
+      setError();
+    }
+
+    function cloneStatePlayers() {
+      return players.map(p => ({
+        ...p,
+        played: 0,
+        rested: 0,
+        lastRest: false,
+        partners: new Map(),
+        opponents: new Map()
+      }));
+    }
+
+    function generateSchedule() {
+      setError();
+      const courtSetting = Math.min(MAX_COURTS, Number($("courtCount").value));
+      const roundCount = Math.min(MAX_ROUNDS, Number($("roundCount").value));
+
+      if (players.length < 4) return setError("最低4人以上を登録してください。");
+
+      const state = cloneStatePlayers();
+      const schedule = [];
+
+      for (let roundNo = 1; roundNo <= roundCount; roundNo++) {
+        const availableCourts = Math.min(courtSetting, Math.floor(state.length / 4));
+        const activeCount = availableCourts * 4;
+        const restCount = state.length - activeCount;
+
+        const restIds = chooseRestPlayers(state, restCount).map(p => p.id);
+        const restSet = new Set(restIds);
+        const rests = state.filter(p => restSet.has(p.id));
+        const active = state.filter(p => !restSet.has(p.id));
+
+        rests.forEach(p => { p.rested += 1; p.lastRest = true; });
+        active.forEach(p => { p.lastRest = false; });
+
+        const roundMatches = chooseRoundMatches(active, availableCourts);
+        const courts = roundMatches.map((match, idx) => {
+          match.teamA.forEach(p => p.played += 1);
+          match.teamB.forEach(p => p.played += 1);
+          recordHistory(match.teamA, match.teamB);
+          return {
+            courtNo: idx + 1,
+            teamA: match.teamA.map(slim),
+            teamB: match.teamB.map(slim),
+            sumA: match.sumA,
+            sumB: match.sumB,
+            diff: Math.abs(match.sumA - match.sumB),
+            pairRepeat: match.pairRepeat || 0,
+            opponentRepeat: match.opponentRepeat || 0
+          };
+        });
+
+        schedule.push({
+          roundNo,
+          rests: rests.map(slim),
+          courts
+        });
+      }
+
+      lastSchedule = schedule;
+      renderSchedule(schedule);
+      renderStats(state);
+      updateExportText();
+    }
+
+    function chooseRestPlayers(state, restCount) {
+      if (restCount <= 0) return [];
+      return state
+        .slice()
+        .sort((a, b) => restScore(b) - restScore(a) || Math.random() - 0.5)
+        .slice(0, restCount);
+    }
+
+    function restScore(p) {
+      // 出場が多く、休憩が少ない人ほど休憩候補。
+      // 直前休憩者は連続休憩を避けるため大きく減点。
+      return p.played * 10 - p.rested * 12 - (p.lastRest ? 30 : 0) + Math.random();
+    }
+
+    function chooseRoundMatches(active, courtCount) {
+      // そのラウンドの全候補を作り、ペア重複を最優先で避ける。
+      // 候補数は最大20人時でも C(20,4)×3 = 14,535 通りなので、iPhone上でも実用範囲。
+      const candidates = buildMatchCandidates(active).sort((a, b) => a.score - b.score);
+      const byPlayer = new Map(active.map(p => [p.id, []]));
+      candidates.forEach(c => c.players.forEach(p => byPlayer.get(p.id).push(c)));
+
+      let best = null;
+      const orderedActive = active.slice().sort((a, b) => a.played - b.played || b.rating - a.rating || a.name.localeCompare(b.name, "ja"));
+
+      function search(selected, usedIds, score) {
+        if (selected.length === courtCount) {
+          if (!best || score < best.score) best = { matches: selected.slice(), score };
+          return;
+        }
+        if (best && score >= best.score) return;
+
+        const firstUnused = orderedActive.find(p => !usedIds.has(p.id));
+        if (!firstUnused) return;
+
+        // 全探索しすぎると重くなるため、各分岐ではスコア上位候補に絞る。
+        // ペア重複回避の罰点が非常に大きいため、上位候補に必要候補はほぼ残る。
+        const options = (byPlayer.get(firstUnused.id) || [])
+          .filter(c => !c.players.some(p => usedIds.has(p.id)))
+          .slice(0, 90);
+
+        for (const c of options) {
+          c.players.forEach(p => usedIds.add(p.id));
+          selected.push(c);
+          search(selected, usedIds, score + c.score);
+          selected.pop();
+          c.players.forEach(p => usedIds.delete(p.id));
+        }
+      }
+
+      search([], new Set(), 0);
+      if (best) return best.matches;
+
+      // 念のためのフォールバック。通常はここには来ない。
+      const used = new Set();
+      const greedy = [];
+      for (const c of candidates) {
+        if (greedy.length >= courtCount) break;
+        if (c.players.some(p => used.has(p.id))) continue;
+        c.players.forEach(p => used.add(p.id));
+        greedy.push(c);
+      }
+      return greedy;
+    }
+
+    function buildMatchCandidates(active) {
+      const out = [];
+      for (let i = 0; i < active.length - 3; i++) {
+        for (let j = i + 1; j < active.length - 2; j++) {
+          for (let k = j + 1; k < active.length - 1; k++) {
+            for (let l = k + 1; l < active.length; l++) {
+              const a = active[i], b = active[j], c = active[k], d = active[l];
+              addPairingCandidate(out, [a, b], [c, d]);
+              addPairingCandidate(out, [a, c], [b, d]);
+              addPairingCandidate(out, [a, d], [b, c]);
+            }
+          }
+        }
+      }
+      return out;
+    }
+
+    function addPairingCandidate(out, teamA, teamB) {
+      const sumA = teamA[0].rating + teamA[1].rating;
+      const sumB = teamB[0].rating + teamB[1].rating;
+      const diff = Math.abs(sumA - sumB);
+      const pairRepeat = partnerRepeatCount(teamA) + partnerRepeatCount(teamB);
+      const opponentRepeat = opponentPenalty(teamA, teamB);
+      const pairGapPenalty = Math.abs(teamA[0].rating - teamA[1].rating) + Math.abs(teamB[0].rating - teamB[1].rating);
+      const playerRepeatBias = (teamA[0].played + teamA[1].played + teamB[0].played + teamB[1].played) * 0.02;
+
+      // 優先順位：
+      // 1) 同じペアの再発生を極力避ける
+      // 2) 同じ相手との対戦を減らす
+      // 3) チーム合計レーティング差を小さくする
+      // 4) 可能ならペア内の実力差も極端にしすぎない
+      const score =
+        pairRepeat * 100000 +
+        opponentRepeat * 700 +
+        diff * 1200 +
+        pairGapPenalty * 8 +
+        playerRepeatBias +
+        Math.random();
+
+      out.push({
+        players: [teamA[0], teamA[1], teamB[0], teamB[1]],
+        teamA,
+        teamB,
+        sumA,
+        sumB,
+        diff,
+        pairRepeat,
+        opponentRepeat,
+        score
+      });
+    }
+
+    function partnerRepeatCount(team) {
+      return getCount(team[0].partners, team[1].id) + getCount(team[1].partners, team[0].id);
+    }
+
+    function partnerPenalty(team) {
+      return getCount(team[0].partners, team[1].id) + getCount(team[1].partners, team[0].id);
+    }
+
+    function opponentPenalty(teamA, teamB) {
+      let count = 0;
+      teamA.forEach(a => teamB.forEach(b => count += getCount(a.opponents, b.id)));
+      return count;
+    }
+
+    function getCount(map, id) {
+      return map instanceof Map ? (map.get(id) || 0) : 0;
+    }
+
+    function addMapCount(map, id) {
+      map.set(id, (map.get(id) || 0) + 1);
+    }
+
+    function recordHistory(teamA, teamB) {
+      addMapCount(teamA[0].partners, teamA[1].id);
+      addMapCount(teamA[1].partners, teamA[0].id);
+      addMapCount(teamB[0].partners, teamB[1].id);
+      addMapCount(teamB[1].partners, teamB[0].id);
+
+      teamA.forEach(a => teamB.forEach(b => {
+        addMapCount(a.opponents, b.id);
+        addMapCount(b.opponents, a.id);
+      }));
+    }
+
+    function slim(p) {
+      return { id: p.id, name: p.name, rating: p.rating, played: p.played, rested: p.rested };
+    }
+
+    function renderSchedule(schedule) {
+      const wrap = $("schedule");
+      wrap.innerHTML = "";
+      if (!schedule.length) return;
+
+      schedule.forEach(round => {
+        const div = document.createElement("div");
+        div.className = "round";
+        const restText = round.rests.length ? round.rests.map(p => `${p.name}(${p.rating})`).join("、") : "休憩なし";
+        div.innerHTML = `
+          <div class="round-head">
+            <div class="round-title">第${round.roundNo}試合</div>
+            <div class="rest">休憩：${escapeHtml(restText)}</div>
+          </div>
+          <div class="courts">
+            ${round.courts.map(courtHtml).join("")}
+          </div>
+        `;
+        wrap.appendChild(div);
+      });
+    }
+
+    function courtHtml(c) {
+      const cls = c.diff <= 1 ? "good" : c.diff <= 3 ? "warn" : "bad";
+      return `
+        <div class="court">
+          <div class="court-title">Court ${c.courtNo}</div>
+          <div class="match">
+            ${pairHtml(c.teamA, c.sumA)}
+            <div class="vs">VS</div>
+            ${pairHtml(c.teamB, c.sumB)}
+          </div>
+          <div class="diff ${cls}">チーム合計：${c.sumA} - ${c.sumB} / 差 ${c.diff}</div>
+        </div>
+      `;
+    }
+
+    function pairHtml(team, sum) {
+      return `
+        <div class="pair">
+          <strong>合計 ${sum}</strong>
+          ${team.map(p => `<span>${escapeHtml(p.name)} / R${p.rating}</span>`).join("")}
+        </div>
+      `;
+    }
+
+    function renderStats(state) {
+      const wrap = $("stats");
+      wrap.innerHTML = "";
+      const source = state && state.length ? state : players.map(p => ({ ...p, played: 0, rested: 0 }));
+      if (!source.length) {
+        wrap.innerHTML = `<p class="note">対戦表作成後に、出場数と休憩数を表示します。</p>`;
+        return;
+      }
+      source
+        .slice()
+        .sort((a, b) => b.played - a.played || a.rested - b.rested || b.rating - a.rating)
+        .forEach(p => {
+          const div = document.createElement("div");
+          div.className = "stat-row";
+          div.innerHTML = `<span>${escapeHtml(p.name)} / R${p.rating}</span><span>出場 ${p.played || 0}</span><span>休憩 ${p.rested || 0}</span>`;
+          wrap.appendChild(div);
+        });
+    }
+
+    function updateExportText() {
+      $("exportText").value = scheduleToText(lastSchedule);
+    }
+
+    function scheduleToText(schedule) {
+      if (!schedule.length) return "";
+      const lines = [];
+      schedule.forEach(round => {
+        lines.push(`第${round.roundNo}試合`);
+        lines.push(`休憩：${round.rests.length ? round.rests.map(p => `${p.name}(R${p.rating})`).join("、") : "なし"}`);
+        round.courts.forEach(c => {
+          const a = c.teamA.map(p => `${p.name}(R${p.rating})`).join(" & ");
+          const b = c.teamB.map(p => `${p.name}(R${p.rating})`).join(" & ");
+          lines.push(`Court ${c.courtNo}: ${a}  vs  ${b}  / 合計 ${c.sumA}-${c.sumB}`);
+        });
+        lines.push("");
+      });
+      return lines.join("\n");
+    }
+
+    async function copyText() {
+      if (!lastSchedule.length) return setError("先に対戦表を作成してください。");
+      const text = scheduleToText(lastSchedule);
+      try {
+        await navigator.clipboard.writeText(text);
+        setError("対戦表テキストをコピーしました。");
+      } catch (_) {
+        $("exportText").classList.remove("hidden");
+        $("exportText").value = text;
+        $("exportText").select();
+        setError("コピーできない場合は、表示されたテキストを手動でコピーしてください。");
+      }
+    }
+
+    function toggleExport() {
+      $("exportText").classList.toggle("hidden");
+      updateExportText();
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>'"]/g, ch => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "'": "&#39;",
+        "\"": "&quot;"
+      }[ch]));
+    }
+
+    $("addPlayer").addEventListener("click", addPlayer);
+    $("playerName").addEventListener("keydown", e => { if (e.key === "Enter") addPlayer(); });
+    $("loadSample").addEventListener("click", loadSample);
+    $("clearPlayers").addEventListener("click", clearPlayers);
+    $("generate").addEventListener("click", generateSchedule);
+    $("copyText").addEventListener("click", copyText);
+    $("toggleExport").addEventListener("click", toggleExport);
+
+
+
+function updateInstallTip() {
+  const isStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+  const isIOSStandalone = window.navigator.standalone === true;
+  if (isStandalone || isIOSStandalone) {
+    const tip = $("installTip");
+    if (tip) {
+      tip.innerHTML = `
+        <div class="ios-badge">ホーム画面起動中</div>
+        <strong>アプリ風の表示で起動しています。</strong>
+        <span>参加者データはこのiPhone内に保存されます。Safariで開き直さなくても、ホーム画面からそのまま使えます。</span>
+      `;
+    }
+  }
+}
+
+async function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) return;
+  const isLocalFile = location.protocol === "file:";
+  if (isLocalFile) return;
+  try {
+    await navigator.serviceWorker.register("./sw.js");
+  } catch (_) {
+    // 失敗しても本体利用は継続
+  }
+}
+
+    updateInstallTip();
+    registerServiceWorker();
+
+    initSelects();
+    load();
+    renderPlayers();
+    renderStats([]);
+  </script>
+</body>
+</html>

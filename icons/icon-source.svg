@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#dbeafe"/>
+    </linearGradient>
+  </defs>
+  <rect x="64" y="64" width="896" height="896" rx="200" fill="url(#g)"/>
+  <circle cx="512" cy="512" r="250" fill="rgba(255,255,255,0.08)"/>
+  <g transform="translate(512 500)">
+    <path d="M0 -260 C44 -206 66 -142 66 -87 C66 -30 30 11 0 33 C-30 11 -66 -30 -66 -87 C-66 -142 -44 -206 0 -260Z" fill="url(#g2)"/>
+    <path d="M0 -195 C26 -159 39 -125 39 -93 C39 -59 17 -33 0 -17 C-17 -33 -39 -59 -39 -93 C-39 -125 -26 -159 0 -195Z" fill="#93c5fd" opacity="0.9"/>
+    <rect x="-28" y="40" width="56" height="170" rx="24" fill="#f8fafc"/>
+    <rect x="-90" y="165" width="180" height="56" rx="28" fill="#38bdf8"/>
+  </g>
+  <text x="512" y="850" text-anchor="middle" font-family="Arial, sans-serif" font-size="150" font-weight="700" fill="#e0f2fe">BD</text>
+</svg>
