@@ -78,12 +78,12 @@
     .court-title { color: #bae6fd; font-weight: 900; margin-bottom: 10px; font-size: 14px; text-align: center; letter-spacing: .03em; }
     .match { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; justify-items: center; }
     .pair { width: 100%; border-radius: 14px; background: rgba(255,255,255,.08); padding: 12px 10px; min-height: 78px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
-    .pair strong { display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 14px; margin-bottom: 6px; text-align: center; }
+    .pair strong { display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 15px; margin-bottom: 7px; text-align: center; }
     .pair.challenge { background: rgba(245,158,11,.16); border: 1px solid rgba(245,158,11,.34); }
     .challenge-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px; font-size: 11px; line-height: 1.2; color: #fff7ed; background: linear-gradient(135deg, #f59e0b, #f97316); box-shadow: 0 6px 14px rgba(249,115,22,.22); }
-    .pair span { display: block; font-size: 12px; color: var(--muted); line-height: 1.45; text-align: center; }
+    .pair span { display: block; font-size: 15px; color: var(--text); line-height: 1.5; text-align: center; font-weight: 700; letter-spacing: .01em; }
     .vs { color: var(--muted); font-weight: 900; text-align: center; justify-self: center; }
-    .diff { margin-top: 10px; font-size: 12px; color: var(--muted); text-align: center; }
+    .diff { margin-top: 10px; font-size: 13px; color: var(--muted); text-align: center; }
     .diff.good { color: var(--good); }
     .diff.warn { color: var(--warn); }
     .diff.bad { color: var(--bad); }
@@ -242,7 +242,7 @@ button.is-pressed {
 .buttons button, .toolbar-inline button { min-height: 50px; }
 .small-btn { font-size: .82rem; min-height: 42px; }
 .note, .mode-help, .compact-note, .count, .footer-note, .rest, .diff, .pair span, .stat-row { font-size: .86rem; }
-.pair strong, .court-title, .round-title, .name { font-size: .96rem; }
+.pair strong, .court-title, .round-title, .name { font-size: 1.02rem; }
 .privacy-pill, .ios-badge { font-size: .78rem; }
 .rating { min-width: 44px; font-size: .88rem; }
 @media (max-width: 819px) {
@@ -255,7 +255,7 @@ button.is-pressed {
   
 
 .master-grid { display: grid; gap: 12px; }
-.selection-list { display: grid; gap: 7px; max-height: 430px; overflow: auto; padding-right: 2px; }
+.selection-list { display: grid; gap: 7px; max-height: 430px; overflow: auto; padding-right: 2px; margin-top: 14px; }
 .selection-row {
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -376,13 +376,13 @@ button.is-pressed {
 <body>
   <main class="app">
     <header>
-      <h1>ダブルス対戦メーカー V9</h1>
+      <h1>ダブルス対戦メーカー V10</h1>
       <p class="subtitle">登録メンバーは最大30人まで保持。毎回の開催では、その中から当日参加者だけを選んで対戦表を作成できます。</p>
 
       <div class="install-tip" id="installTip">
         <div class="ios-badge">iPhone ホーム画面対応</div>
         <strong>Safariで開いて「共有」→「ホーム画面に追加」でアプリ風に使えます。</strong>
-        <span>登録メンバー・当日参加者・直前の対戦表は、この端末内に保存されます。V9では対戦表と画像の見やすさも強化しています。</span>
+        <span>登録メンバー・当日参加者・直前の対戦表は、この端末内に保存されます。V10では参加者セットアップの間隔調整と、対戦表・画像の可読性をさらに強化しています。</span>
       </div>
     </header>
 
@@ -498,10 +498,10 @@ button.is-pressed {
     const SEARCH_OPTION_LIMIT = 24;
     const SEARCH_NODE_LIMIT = 12000;
     const SEARCH_TIME_LIMIT_MS = 180;
-    const IMAGE_BASE_WIDTH = 1600;
-    const IMAGE_MAX_HEIGHT = 9600;
-    const STORAGE_KEY = "bd_doubles_scheduler_v9";
-    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
+    const IMAGE_BASE_WIDTH = 1080;
+    const IMAGE_MAX_HEIGHT = 14000;
+    const STORAGE_KEY = "bd_doubles_scheduler_v10";
+    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
     const DEFAULT_SETTINGS = {
       useRatings: true,
       showRatings: false,
@@ -1365,42 +1365,40 @@ button.is-pressed {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
       const width = IMAGE_BASE_WIDTH;
-      const padding = 72;
-      const boardWidth = Math.min(width - padding * 2, 1320);
-      const boardX = Math.round((width - boardWidth) / 2);
-      const sectionGap = 24;
-      const headerHeight = 108;
-      const roundHeaderHeight = 54;
-      const textInset = 34;
+      const padding = 36;
+      const boardWidth = width - padding * 2;
+      const boardX = padding;
+      const sectionGap = 18;
+      const roundHeaderHeight = 48;
 
       const selectedCount = schedule.__meta && schedule.__meta.selectedCount ? schedule.__meta.selectedCount : getSelectedMembers().length;
       const courtCount = schedule.__meta && schedule.__meta.courtCount ? schedule.__meta.courtCount : $("courtCount").value;
       const metaText = `${selectedCount}人 / ${courtCount}コート / ${schedule.length}試合`;
-      let totalHeight = padding + headerHeight + 34;
+      let totalHeight = padding + 118;
       const layout = [];
 
       schedule.forEach((round) => {
-        ctx.font = "23px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+        ctx.font = "22px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
         const restText = round.rests.length ? round.rests.map((p) => p.name).join("、") : "なし";
-        const restLines = wrapText(ctx, `休憩：${restText}`, boardWidth - 96);
-        let roundHeight = 26 + roundHeaderHeight + restLines.length * 30 + 14;
+        const restLines = wrapText(ctx, `休憩：${restText}`, boardWidth - 72);
+        let roundHeight = 18 + roundHeaderHeight + restLines.length * 30 + 16;
         const rows = [];
 
         round.courts.forEach((c) => {
           const teamAText = `${c.teamA.map((p) => p.name).join("・")}${c.challengeTeam === "A" ? "　チャレンジ！" : ""}`;
           const teamBText = `${c.teamB.map((p) => p.name).join("・")}${c.challengeTeam === "B" ? "　チャレンジ！" : ""}`;
-          ctx.font = "bold 29px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-          const teamALines = wrapText(ctx, teamAText, boardWidth - textInset * 2 - 80);
-          const teamBLines = wrapText(ctx, teamBText, boardWidth - textInset * 2 - 80);
+          ctx.font = "bold 34px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+          const teamALines = wrapText(ctx, teamAText, boardWidth - 96);
+          const teamBLines = wrapText(ctx, teamBText, boardWidth - 96);
           const note = appSettings.useRatings && Number.isFinite(c.diff)
             ? `Court ${c.courtNo} / 実力差 ${formatRatingValue(c.diff)}`
             : `Court ${c.courtNo}`;
-          const rowHeight = 34 + teamALines.length * 34 + 28 + teamBLines.length * 34 + 34;
+          const rowHeight = 28 + teamALines.length * 40 + 26 + teamBLines.length * 40 + 28;
           rows.push({ note, teamALines, teamBLines, rowHeight, challengeTeam: c.challengeTeam });
-          roundHeight += rowHeight + 16;
+          roundHeight += rowHeight + 14;
         });
 
-        roundHeight += 16;
+        roundHeight += 12;
         layout.push({ round, restLines, rows, roundHeight });
         totalHeight += roundHeight + sectionGap;
       });
@@ -1410,100 +1408,97 @@ button.is-pressed {
       canvas.height = Math.max(1, Math.round(totalHeight * scale));
       if (scale !== 1) ctx.scale(scale, scale);
 
-      ctx.fillStyle = "#eaf3ff";
+      const bg = ctx.createLinearGradient(0, 0, width, totalHeight);
+      bg.addColorStop(0, '#f8fbff');
+      bg.addColorStop(1, '#e5f0ff');
+      ctx.fillStyle = bg;
       ctx.fillRect(0, 0, width, totalHeight);
-      const grad = ctx.createLinearGradient(0, 0, width, totalHeight);
-      grad.addColorStop(0, "#f8fbff");
-      grad.addColorStop(1, "#e2efff");
-      ctx.fillStyle = grad;
-      ctx.fillRect(boardX - 20, 24, boardWidth + 40, totalHeight - 48);
 
       let y = padding;
-      ctx.fillStyle = "#0f172a";
-      ctx.textAlign = "center";
-      ctx.font = "bold 48px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-      ctx.fillText("バドミントン対戦表", width / 2, y);
-      y += 46;
-      ctx.fillStyle = "#334155";
-      ctx.font = "26px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#0f172a';
+      ctx.font = "bold 44px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+      ctx.fillText('バドミントン対戦表', width / 2, y);
+      y += 42;
+      ctx.fillStyle = '#334155';
+      ctx.font = "24px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
       ctx.fillText(metaText, width / 2, y);
-      y += 40;
-      ctx.fillStyle = "#64748b";
-      ctx.font = "20px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-      ctx.fillText("共有用画像：レーティング非表示 / 当日選択メンバーのみ", width / 2, y);
-      y += 30;
+      y += 34;
+      ctx.fillStyle = '#64748b';
+      ctx.font = "18px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+      ctx.fillText('スマホで縦スクロールしやすい共有画像', width / 2, y);
+      y += 24;
 
       layout.forEach((block) => {
-        roundedRect(ctx, boardX, y, boardWidth, block.roundHeight, 28);
-        ctx.fillStyle = "#ffffff";
+        roundedRect(ctx, boardX, y, boardWidth, block.roundHeight, 24);
+        ctx.fillStyle = '#ffffff';
         ctx.fill();
-        ctx.strokeStyle = "#cbdcf7";
+        ctx.strokeStyle = '#d7e5fb';
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        roundedRect(ctx, boardX + 22, y + 18, boardWidth - 44, roundHeaderHeight, 18);
-        ctx.fillStyle = "#e0ecff";
+        roundedRect(ctx, boardX + 16, y + 14, boardWidth - 32, roundHeaderHeight, 16);
+        ctx.fillStyle = '#e8f0ff';
         ctx.fill();
+        ctx.fillStyle = '#1d4ed8';
+        ctx.font = "bold 27px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+        ctx.fillText(`第${block.round.roundNo}試合`, width / 2, y + 46);
 
-        ctx.fillStyle = "#1d4ed8";
-        ctx.font = "bold 28px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-        ctx.fillText(`第${block.round.roundNo}試合`, width / 2, y + 55);
-
-        let innerY = y + 100;
-        ctx.fillStyle = "#475569";
-        ctx.font = "23px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+        let innerY = y + 86;
+        ctx.fillStyle = '#475569';
+        ctx.font = "21px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
         block.restLines.forEach((line) => {
           ctx.fillText(line, width / 2, innerY);
-          innerY += 30;
+          innerY += 28;
         });
-        innerY += 8;
+        innerY += 4;
 
         block.rows.forEach((row, idx) => {
-          const rowX = boardX + 26;
-          const rowW = boardWidth - 52;
-          roundedRect(ctx, rowX, innerY - 18, rowW, row.rowHeight, 20);
-          ctx.fillStyle = idx % 2 === 0 ? "#f8fbff" : "#eef5ff";
+          const rowX = boardX + 18;
+          const rowW = boardWidth - 36;
+          roundedRect(ctx, rowX, innerY - 14, rowW, row.rowHeight, 18);
+          ctx.fillStyle = idx % 2 === 0 ? '#f8fbff' : '#eef5ff';
           ctx.fill();
-          ctx.strokeStyle = "#dde8fb";
+          ctx.strokeStyle = '#e0eaf9';
           ctx.lineWidth = 1.5;
           ctx.stroke();
 
-          roundedRect(ctx, width / 2 - 88, innerY - 4, 176, 34, 17);
-          ctx.fillStyle = row.challengeTeam ? "#fff4d9" : "#e2ecff";
+          roundedRect(ctx, width / 2 - 120, innerY - 2, 240, 34, 17);
+          ctx.fillStyle = row.challengeTeam ? '#fff2d3' : '#e2ecff';
           ctx.fill();
-          ctx.fillStyle = row.challengeTeam ? "#b45309" : "#1e40af";
-          ctx.font = "bold 20px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-          ctx.fillText(row.note, width / 2, innerY + 18);
+          ctx.fillStyle = row.challengeTeam ? '#b45309' : '#1e40af';
+          ctx.font = "bold 19px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+          ctx.fillText(row.note, width / 2, innerY + 20);
 
-          let lineY = innerY + 58;
-          ctx.fillStyle = row.challengeTeam === "A" ? "#b45309" : "#0f172a";
-          ctx.font = "bold 29px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+          let lineY = innerY + 62;
+          ctx.fillStyle = row.challengeTeam === 'A' ? '#b45309' : '#0f172a';
+          ctx.font = "bold 34px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
           row.teamALines.forEach((line) => {
             ctx.fillText(line, width / 2, lineY);
-            lineY += 34;
+            lineY += 40;
           });
 
-          ctx.fillStyle = "#64748b";
-          ctx.font = "bold 22px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-          ctx.fillText("VS", width / 2, lineY + 6);
+          ctx.fillStyle = '#64748b';
+          ctx.font = "bold 24px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+          ctx.fillText('VS', width / 2, lineY + 2);
           lineY += 34;
 
-          ctx.fillStyle = row.challengeTeam === "B" ? "#b45309" : "#0f172a";
-          ctx.font = "bold 29px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+          ctx.fillStyle = row.challengeTeam === 'B' ? '#b45309' : '#0f172a';
+          ctx.font = "bold 34px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
           row.teamBLines.forEach((line) => {
             ctx.fillText(line, width / 2, lineY);
-            lineY += 34;
+            lineY += 40;
           });
 
-          innerY += row.rowHeight + 16;
+          innerY += row.rowHeight + 14;
         });
 
         y += block.roundHeight + sectionGap;
       });
 
-      ctx.textAlign = "start";
+      ctx.textAlign = 'start';
       return await new Promise((resolve, reject) => {
-        canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("blob error")), "image/png");
+        canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('blob error')), 'image/png');
       });
     }
 
@@ -1519,7 +1514,7 @@ button.is-pressed {
           <strong style="color:#fff;font-size:18px;">対戦表画像プレビュー</strong>
           <button id="closeImagePreview" style="border:none;border-radius:12px;padding:10px 14px;background:#1d4ed8;color:#fff;font-weight:700;">閉じる</button>
         </div>
-        <div style="color:#cbd5e1;font-size:13px;line-height:1.6;">iPhoneでは画像を長押しして保存できます。必要なら下のダウンロードリンクも使えます。</div>
+        <div style="color:#cbd5e1;font-size:13px;line-height:1.6;">iPhoneでは縦長画像として表示されます。上下にスクロールしながら確認でき、画像を長押しして保存できます。</div>
         <div style="flex:1;overflow:auto;-webkit-overflow-scrolling:touch;background:#0b1220;border-radius:16px;padding:10px;">
           <img src="${url}" alt="対戦表画像" style="display:block;max-width:100%;height:auto;margin:0 auto;border-radius:16px;box-shadow:0 14px 36px rgba(0,0,0,.3);background:#fff;" />
         </div>
