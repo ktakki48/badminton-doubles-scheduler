@@ -360,7 +360,9 @@ button.is-pressed {
     const SEARCH_OPTION_LIMIT = 24;
     const SEARCH_NODE_LIMIT = 12000;
     const SEARCH_TIME_LIMIT_MS = 180;
-    const STORAGE_KEY = "bd_doubles_scheduler_v6";
+    const IMAGE_BASE_WIDTH = 1240;
+    const IMAGE_MAX_HEIGHT = 7600;
+    const STORAGE_KEY = "bd_doubles_scheduler_v7";
     const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
     const DEFAULT_SETTINGS = {
       useRatings: true,
@@ -1030,30 +1032,19 @@ button.is-pressed {
     async function exportImage() {
       if (!lastSchedule.length) return setError("先に対戦表を作成してください。");
       setError("画像を作成中です…");
-      const previewWindow = window.open("", "_blank");
+      await new Promise(resolve => setTimeout(resolve, 0));
       try {
         const blob = await createScheduleImageBlob(lastSchedule);
         const file = new File([blob], `badminton_schedule_${new Date().toISOString().slice(0,10)}.png`, { type: "image/png" });
         if (navigator.canShare && navigator.share && navigator.canShare({ files: [file] })) {
           await navigator.share({ files: [file], title: "バドミントン対戦表", text: "対戦表画像" });
-          if (previewWindow) previewWindow.close();
           setError("対戦表画像を共有しました。");
           return;
         }
-        const url = URL.createObjectURL(blob);
-        if (previewWindow) {
-          previewWindow.document.write(`<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>対戦表画像</title><style>body{margin:0;padding:16px;background:#0f172a;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}img{max-width:100%;height:auto;display:block;margin:0 auto;border-radius:16px;box-shadow:0 14px 36px rgba(0,0,0,.3)}p{font-size:14px;text-align:center;color:#cbd5e1}</style></head><body><p>画像を長押しして保存できます</p><img src="${url}" alt="対戦表画像"></body></html>`);
-          previewWindow.document.close();
-        } else {
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = file.name;
-          a.click();
-        }
-        setError("対戦表画像を開きました。iPhoneでは画像を長押しして保存できます。");
-        setTimeout(() => URL.revokeObjectURL(url), 60000);
+        showImagePreview(blob, file.name);
+        setError("対戦表画像を表示しました。画像を長押しして保存できます。");
       } catch (err) {
-        if (previewWindow) previewWindow.close();
+        console.error(err);
         setError("画像出力に失敗しました。もう一度お試しください。");
       }
     }
@@ -1061,7 +1052,7 @@ button.is-pressed {
     async function createScheduleImageBlob(schedule) {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
-      const width = 1240;
+      const width = IMAGE_BASE_WIDTH;
       const padding = 48;
       const rowGap = 12;
       const headerHeight = 80;
@@ -1096,8 +1087,10 @@ button.is-pressed {
         totalHeight += roundHeight + 18;
       });
 
-      canvas.width = width;
-      canvas.height = totalHeight;
+      const scale = Math.min(1, IMAGE_MAX_HEIGHT / totalHeight);
+      canvas.width = Math.max(1, Math.round(width * scale));
+      canvas.height = Math.max(1, Math.round(totalHeight * scale));
+      if (scale !== 1) ctx.scale(scale, scale);
 
       ctx.fillStyle = "#f8fafc";
       ctx.fillRect(0, 0, width, totalHeight);
@@ -1161,6 +1154,31 @@ button.is-pressed {
 
       return await new Promise((resolve, reject) => {
         canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("blob error")), "image/png");
+      });
+    }
+
+    function showImagePreview(blob, fileName) {
+      const previous = $("imagePreviewModal");
+      if (previous) previous.remove();
+      const url = URL.createObjectURL(blob);
+      const modal = document.createElement("div");
+      modal.id = "imagePreviewModal";
+      modal.style.cssText = "position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,.92);display:flex;flex-direction:column;padding:16px;gap:12px;";
+      modal.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+          <strong style="color:#fff;font-size:18px;">対戦表画像プレビュー</strong>
+          <button id="closeImagePreview" style="border:none;border-radius:12px;padding:10px 14px;background:#1d4ed8;color:#fff;font-weight:700;">閉じる</button>
+        </div>
+        <div style="color:#cbd5e1;font-size:13px;line-height:1.6;">iPhoneでは画像を長押しして保存できます。必要なら下のダウンロードリンクも使えます。</div>
+        <div style="flex:1;overflow:auto;-webkit-overflow-scrolling:touch;background:#0b1220;border-radius:16px;padding:10px;">
+          <img src="${url}" alt="対戦表画像" style="display:block;max-width:100%;height:auto;margin:0 auto;border-radius:16px;box-shadow:0 14px 36px rgba(0,0,0,.3);background:#fff;" />
+        </div>
+        <a href="${url}" download="${fileName}" style="display:inline-flex;justify-content:center;align-items:center;padding:12px 16px;border-radius:12px;background:#38bdf8;color:#082f49;font-weight:800;text-decoration:none;">ダウンロード</a>
+      `;
+      document.body.appendChild(modal);
+      $("closeImagePreview").addEventListener("click", () => {
+        URL.revokeObjectURL(url);
+        modal.remove();
       });
     }
 
