@@ -377,13 +377,13 @@ button.is-pressed {
 <body>
   <main class="app">
     <header>
-      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V13</span></h1>
+      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V14</span></h1>
       <p class="subtitle">登録メンバーは最大30人まで保持。毎回の開催では、その中から当日参加者だけを選んで対戦表を作成できます。</p>
 
       <div class="install-tip" id="installTip">
         <div class="ios-badge">iPhone ホーム画面対応</div>
         <strong>Safariで開いて「共有」→「ホーム画面に追加」でアプリ風に使えます。</strong>
-        <span>登録メンバー・当日参加者・直前の対戦表は、この端末内に保存されます。V13ではレーティング段階を12区分に整理し、目安表示も追加しています。</span>
+        <span>登録メンバー・当日参加者・直前の対戦表は、この端末内に保存されます。V14ではレーティング目安表示を見やすく固定し、共有画像のチャレンジカード高さを揃えています。</span>
       </div>
     </header>
 
@@ -411,7 +411,7 @@ button.is-pressed {
           <button class="danger" id="clearPlayers">マスター全削除</button>
         </div>
         <div class="privacy-pill" id="privacyStatus">共有向け：レーティング非表示</div>
-        <p class="note" id="ratingGuide">登録時にレーティングを入れておくと、当日の組み分けでそのまま使えます。レーティング目安 C：1～3、B3：4～4.5、B2：5～5.5、B1：6～7、A：8～10</p>
+        <div class="meta-card" id="ratingGuide"><div class="mode-help">登録時にレーティングを入れておくと、当日の組み分けでそのまま使えます。</div><div class="compact-note"><strong>レーティング目安：</strong> C：1～3、B3：4～4.5、B2：5～5.5、B1：6～7、A：8～10</div></div>
         <div class="master-card-note">新しく登録したメンバーは、当日参加者にも自動で追加されます。不要な場合は右側の参加者選択で外してください。</div>
         <div class="error" id="error"></div>
       </div>
@@ -501,8 +501,8 @@ button.is-pressed {
     const SEARCH_TIME_LIMIT_MS = 180;
     const IMAGE_BASE_WIDTH = 1680;
     const IMAGE_MAX_HEIGHT = 12000;
-    const STORAGE_KEY = "bd_doubles_scheduler_v13";
-    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
+    const STORAGE_KEY = "bd_doubles_scheduler_v14";
+    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
     const DEFAULT_SETTINGS = {
       useRatings: true,
       showRatings: false,
@@ -720,9 +720,9 @@ button.is-pressed {
       $("matchMode").value = appSettings.useRatings ? "rating" : "free";
       $("toggleRatings").textContent = appSettings.showRatings ? "レーティング非表示" : "レーティング表示";
       $("privacyStatus").textContent = appSettings.showRatings ? "操作者向け：レーティング表示中" : "共有向け：レーティング非表示";
-      $("ratingGuide").textContent = appSettings.useRatings
-        ? "レーティングありモードでは、当日参加者全員のレーティング設定が必要です。"
-        : "レーティングは未設定でも保存できます。レーティングなしモードでは組み分けに使いません。";
+      $("ratingGuide").innerHTML = appSettings.useRatings
+        ? '<div class="mode-help">レーティングありモードでは、当日参加者全員のレーティング設定が必要です。</div><div class="compact-note"><strong>レーティング目安：</strong> C：1～3、B3：4～4.5、B2：5～5.5、B1：6～7、A：8～10</div>'
+        : '<div class="mode-help">レーティングは未設定でも保存できます。レーティングなしモードでは組み分けに使いません。</div><div class="compact-note"><strong>レーティング目安：</strong> C：1～3、B3：4～4.5、B2：5～5.5、B1：6～7、A：8～10</div>';
       $("modeHelp").textContent = appSettings.useRatings
         ? `レーティングありでは、まず差が±${MAX_ALLOWED_TEAM_DIFF}以内の対戦を優先し、難しい場合だけチャレンジカードを混ぜます。`
         : "レーティングなしでは同じペアの重複回避・同じ相手との対戦回避・出場バランスを優先します。";
@@ -1397,8 +1397,9 @@ button.is-pressed {
           const challengeInset = 18;
           const teamBoxExtra = 18;
           const badgeGap = 10;
-          const aBoxHeight = teamALines.length * 31 + teamBoxExtra + (c.challengeTeam === "A" ? pillHeight + badgeGap : 0);
-          const bBoxHeight = teamBLines.length * 31 + teamBoxExtra + (c.challengeTeam === "B" ? pillHeight + badgeGap : 0);
+          const badgeReserve = pillHeight + badgeGap;
+          const aBoxHeight = teamALines.length * 31 + teamBoxExtra + badgeReserve;
+          const bBoxHeight = teamBLines.length * 31 + teamBoxExtra + badgeReserve;
           const rowHeight = 22 + 28 + 18 + aBoxHeight + 18 + 26 + 16 + bBoxHeight + 18;
           rows.push({
             note: `Court ${c.courtNo}`,
@@ -1409,7 +1410,8 @@ button.is-pressed {
             aBoxHeight,
             bBoxHeight,
             challengeInset,
-            pillHeight
+            pillHeight,
+            badgeReserve
           });
           roundHeight += rowHeight + 12;
         });
@@ -1503,7 +1505,7 @@ button.is-pressed {
             const boxX = rowX + row.challengeInset;
             const boxW = rowW - row.challengeInset * 2;
 
-            const drawTeamBox = (teamLines, teamLabel, isChallenge, boxHeight, startY) => {
+            const drawTeamBox = (teamLines, isChallenge, boxHeight, startY) => {
               roundedRect(ctx, boxX, startY, boxW, boxHeight, 16);
               ctx.fillStyle = isChallenge ? '#fff1d6' : '#ffffff';
               ctx.fill();
@@ -1519,8 +1521,8 @@ button.is-pressed {
                 ctx.fillStyle = '#fff7ed';
                 ctx.font = "bold 16px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
                 ctx.fillText('チャレンジ！', x + cardWidth / 2, textY + 13);
-                textY += row.pillHeight + 10;
               }
+              textY += row.badgeReserve;
 
               ctx.fillStyle = isChallenge ? '#9a3412' : '#0f172a';
               ctx.font = "bold 27px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
@@ -1531,12 +1533,12 @@ button.is-pressed {
               return startY + boxHeight;
             };
 
-            lineY = drawTeamBox(row.teamALines, 'A', row.challengeTeam === 'A', row.aBoxHeight, lineY);
+            lineY = drawTeamBox(row.teamALines, row.challengeTeam === 'A', row.aBoxHeight, lineY);
             ctx.fillStyle = '#64748b';
             ctx.font = "bold 21px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
             ctx.fillText('VS', x + cardWidth / 2, lineY + 22);
             lineY += 38;
-            drawTeamBox(row.teamBLines, 'B', row.challengeTeam === 'B', row.bBoxHeight, lineY);
+            drawTeamBox(row.teamBLines, row.challengeTeam === 'B', row.bBoxHeight, lineY);
 
             innerY += row.rowHeight + 12;
           });
