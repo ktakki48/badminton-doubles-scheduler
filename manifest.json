@@ -1,7 +1,7 @@
 {
   "name": "ダブルス対戦メーカー",
   "short_name": "ダブルス対戦メーカー",
-  "description": "バドミントンダブルスの対戦表をiPhoneでも作りやすいホーム画面対応Webアプリ。",
+  "description": "登録メンバーを保持し、当日参加者を選んで使えるバドミントンダブルス対戦表メーカー。",
   "lang": "ja",
   "start_url": "./index.html",
   "scope": "./",

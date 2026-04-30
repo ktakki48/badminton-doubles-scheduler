@@ -249,91 +249,227 @@ button.is-pressed {
   .card { padding: 15px; }
 }
 
+  
+
+.master-grid { display: grid; gap: 12px; }
+.selection-list { display: grid; gap: 7px; max-height: 430px; overflow: auto; padding-right: 2px; }
+.selection-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: center;
+  background: rgba(255,255,255,.075);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+.selection-row.is-checked {
+  border-color: rgba(56,189,248,.45);
+  background: rgba(56,189,248,.10);
+}
+.selection-row input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent);
+  margin: 0;
+}
+.selection-main strong {
+  display: block;
+  font-size: .96rem;
+}
+.selection-main span {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: .82rem;
+  line-height: 1.45;
+}
+.status-tag {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 62px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: .74rem;
+  font-weight: 800;
+  background: rgba(255,255,255,.08);
+  color: var(--muted);
+}
+.selection-row.is-checked .status-tag {
+  background: rgba(56,189,248,.18);
+  color: #bae6fd;
+}
+.member-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.member-row {
+  grid-template-columns: minmax(0,1fr) auto auto;
+}
+.name-wrap {
+  min-width: 0;
+}
+.mini-note {
+  color: var(--muted);
+  font-size: .76rem;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+.section-stack {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+.inline-summary {
+  color: var(--muted);
+  font-size: .84rem;
+  line-height: 1.55;
+  margin-top: 8px;
+}
+.subtle-divider {
+  height: 1px;
+  background: rgba(255,255,255,.08);
+  margin: 10px 0;
+}
+.ghost-btn {
+  background: transparent;
+  color: var(--muted);
+  border: 1px dashed rgba(255,255,255,.18);
+}
+.ghost-btn:hover { filter: none; background: rgba(255,255,255,.04); }
+.master-card-note {
+  color: var(--muted);
+  font-size: .84rem;
+  line-height: 1.55;
+  margin-top: 8px;
+}
+@media (max-width: 819px) {
+  .member-row {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "name rating"
+      "actions actions";
+  }
+  .member-row .name-wrap { grid-area: name; }
+  .member-row .rating { grid-area: rating; justify-self: end; }
+  .member-actions { grid-area: actions; justify-content: stretch; }
+  .member-actions .small-btn { flex: 1 1 auto; }
+  .selection-row {
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "check main"
+      "tag tag";
+  }
+  .selection-row input[type="checkbox"] { grid-area: check; }
+  .selection-main { grid-area: main; }
+  .status-tag { grid-area: tag; width: 100%; }
+}
+
   </style>
 </head>
 <body>
   <main class="app">
     <header>
-      <h1>ダブルス対戦メーカー</h1>
-      <p class="subtitle">最大23人・5コート・20試合まで対応。レーティングを使って、極端な実力差ペアを避けながらダブルスの対戦表を自動作成します。</p>
+      <h1>ダブルス対戦メーカー V8</h1>
+      <p class="subtitle">登録メンバーは最大30人まで保持。毎回の開催では、その中から当日参加者だけを選んで対戦表を作成できます。</p>
 
-<div class="install-tip" id="installTip">
-  <div class="ios-badge">iPhone ホーム画面対応</div>
-  <strong>Safariで開いて「共有」→「ホーム画面に追加」でアプリ風に使えます。</strong>
-  <span>一度追加すると、次回からはホーム画面のアイコンから起動できます。参加者データはこの端末のブラウザ内に保存されます。</span>
-</div>
+      <div class="install-tip" id="installTip">
+        <div class="ios-badge">iPhone ホーム画面対応</div>
+        <strong>Safariで開いて「共有」→「ホーム画面に追加」でアプリ風に使えます。</strong>
+        <span>登録メンバー・当日参加者・直前の対戦表は、この端末内に保存されます。</span>
+      </div>
     </header>
 
     <section class="grid two">
       <div class="card">
-  <h2>参加者登録</h2>
-  <div class="form-row">
-    <div>
-      <label for="playerName">名前</label>
-      <input id="playerName" placeholder="例：田中" autocomplete="off" />
-    </div>
-    <div>
-      <label for="playerRating">実力</label>
-      <select id="playerRating"></select>
-    </div>
-  </div>
-  <div class="toolbar-inline">
-    <button id="addPlayer">追加</button>
-    <button class="secondary" id="toggleRatings">レーティング表示</button>
-  </div>
-  <div class="buttons">
-    <button class="secondary" id="loadSample">サンプル23人</button>
-    <button class="danger" id="clearPlayers">全削除</button>
-  </div>
-  <div class="privacy-pill" id="privacyStatus">共有向け：レーティング非表示</div>
-  <p class="note" id="ratingGuide">レーティングは任意です。未設定のままでも登録できます。</p>
-  <div class="error" id="error"></div>
-</div>
+        <h2>メンバーマスター管理</h2>
+        <div class="count" id="memberCount">0 / 30人</div>
+        <div class="form-row">
+          <div>
+            <label for="playerName">名前</label>
+            <input id="playerName" placeholder="例：田中" autocomplete="off" />
+          </div>
+          <div>
+            <label for="playerRating">レーティング</label>
+            <select id="playerRating"></select>
+          </div>
+        </div>
+        <div class="toolbar-inline">
+          <button id="addPlayer">メンバー登録</button>
+          <button class="secondary hidden" id="cancelEdit">編集をやめる</button>
+          <button class="secondary" id="toggleRatings">レーティング表示</button>
+        </div>
+        <div class="buttons">
+          <button class="secondary" id="loadSample">サンプル30人</button>
+          <button class="danger" id="clearPlayers">マスター全削除</button>
+        </div>
+        <div class="privacy-pill" id="privacyStatus">共有向け：レーティング非表示</div>
+        <p class="note" id="ratingGuide">登録時にレーティングを入れておくと、当日の組み分けでそのまま使えます。</p>
+        <div class="master-card-note">新しく登録したメンバーは、当日参加者にも自動で追加されます。不要な場合は右側の参加者選択で外してください。</div>
+        <div class="error" id="error"></div>
+      </div>
 
+      <div class="card" id="selectionCard">
+        <h2>今日の参加者セットアップ</h2>
+        <div class="count" id="selectedCount">0人選択中</div>
+        <div class="buttons">
+          <button class="secondary" id="selectAllMembers">全員選択</button>
+          <button class="secondary" id="clearTodaySelection">当日参加を全解除</button>
+          <button class="secondary" id="restoreLastSelection">前回参加者を復元</button>
+        </div>
+        <div class="selection-list" id="selectionList"></div>
+        <div class="inline-summary" id="selectionNote">登録済みメンバーから、今日プレイする人だけチェックして選択します。</div>
+      </div>
+    </section>
+
+    <section class="section-stack">
       <div class="card">
-  <h2>試合条件</h2>
-  <div class="settings">
-    <div>
-      <label for="courtCount">使用コート数</label>
-      <select id="courtCount">
-        <option value="1">1コート</option>
-        <option value="2">2コート</option>
-        <option value="3">3コート</option>
-        <option value="4">4コート</option>
-        <option value="5" selected>5コート</option>
-      </select>
-    </div>
-    <div>
-      <label for="roundCount">各コート最大試合数</label>
-      <select id="roundCount"></select>
-    </div>
-    <div>
-      <label for="matchMode">組み分けモード</label>
-      <select id="matchMode">
-        <option value="rating">レーティングあり（実力バランス重視）</option>
-        <option value="free">レーティングなし（重複回避・公平性重視）</option>
-      </select>
-    </div>
-  </div>
-  <div class="buttons">
-    <button id="generate">対戦表を作成</button>
-    <button class="secondary" id="copyText">テキストコピー</button>
-    <button class="secondary" id="toggleExport">テキスト表示</button>
-    <button class="secondary" id="exportImage">画像出力</button>
-  </div>
-  <div class="meta-card">
-    <div class="mode-help" id="modeHelp">レーティングありでは、まず差が±5以内の対戦を優先し、難しい場合だけチャレンジカードを混ぜます。レーティングなしでは重複回避と出場バランスを優先します。</div>
-    <div class="compact-note">画像出力は共有しやすい一覧表のPNGを作ります。画像にはレーティングを載せません。</div>
-  </div>
-  <p class="note">人数が20人を超える場合は、各ラウンドで休憩者を出します。休憩は出場回数が多い人を優先して回します。</p>
-  <textarea id="exportText" class="hidden" readonly></textarea>
-</div>
+        <h2>試合条件</h2>
+        <div class="settings">
+          <div>
+            <label for="courtCount">使用コート数</label>
+            <select id="courtCount">
+              <option value="1">1コート</option>
+              <option value="2">2コート</option>
+              <option value="3">3コート</option>
+              <option value="4">4コート</option>
+              <option value="5" selected>5コート</option>
+            </select>
+          </div>
+          <div>
+            <label for="roundCount">各コート最大試合数</label>
+            <select id="roundCount"></select>
+          </div>
+          <div>
+            <label for="matchMode">組み分けモード</label>
+            <select id="matchMode">
+              <option value="rating">レーティングあり（実力バランス重視）</option>
+              <option value="free">レーティングなし（重複回避・公平性重視）</option>
+            </select>
+          </div>
+        </div>
+        <div class="buttons">
+          <button id="generateBtn">対戦表を作成</button>
+          <button class="secondary" id="copyText">テキストコピー</button>
+          <button class="secondary" id="toggleExport">テキスト表示</button>
+          <button class="secondary" id="exportImage">画像出力</button>
+        </div>
+        <div class="meta-card">
+          <div class="mode-help" id="modeHelp">レーティングありでは、まず差が±5以内の対戦を優先し、難しい場合だけチャレンジカードを混ぜます。レーティングなしでは重複回避と出場バランスを優先します。</div>
+          <div class="compact-note">共有用画像には、当日選択した参加者だけを載せます。画像にはレーティングを載せません。</div>
+        </div>
+        <p class="note">登録人数が30人でも、実際の組み分け計算に使うのは「今日の参加者」にチェックしたメンバーだけです。</p>
+        <textarea id="exportText" class="hidden" readonly></textarea>
+      </div>
     </section>
 
     <section class="grid two" style="margin-top:12px;">
       <div class="card">
-        <h2>参加者一覧</h2>
-        <div class="count" id="playerCount">0 / 23人</div>
+        <h2>登録メンバー一覧</h2>
+        <div class="count" id="masterListCount">0 / 30人</div>
         <div class="players" id="players"></div>
       </div>
 
@@ -345,12 +481,11 @@ button.is-pressed {
 
     <section class="schedule" id="schedule"></section>
 
-<p class="footer-note">ホーム画面追加後はSafariのタブ表示なしで起動できます。</p>
+    <p class="footer-note">ホーム画面追加後はSafariのタブ表示なしで起動できます。登録メンバーと当日参加者は別管理です。</p>
   </main>
 
   <script>
-
-    const MAX_PLAYERS = 23;
+    const MAX_MEMBERS = 30;
     const MAX_COURTS = 5;
     const MAX_ROUNDS = 20;
     const MIN_RATING = 1;
@@ -362,21 +497,28 @@ button.is-pressed {
     const SEARCH_TIME_LIMIT_MS = 180;
     const IMAGE_BASE_WIDTH = 1240;
     const IMAGE_MAX_HEIGHT = 7600;
-    const STORAGE_KEY = "bd_doubles_scheduler_v7";
-    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
+    const STORAGE_KEY = "bd_doubles_scheduler_v8";
+    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
     const DEFAULT_SETTINGS = {
       useRatings: true,
       showRatings: false,
     };
 
-    let players = [];
+    let members = [];
+    let selectedIds = [];
+    let lastSelectedIds = [];
     let lastSchedule = [];
     let appSettings = { ...DEFAULT_SETTINGS };
+    let editingMemberId = null;
 
     const $ = (id) => document.getElementById(id);
 
     function uid() {
       return window.crypto && crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random());
+    }
+
+    function uniqueIds(ids) {
+      return [...new Set((Array.isArray(ids) ? ids : []).map((id) => String(id)))];
     }
 
     function normalizeRating(value) {
@@ -399,15 +541,35 @@ button.is-pressed {
       return Number.isFinite(p.rating) ? formatRatingValue(p.rating) : "—";
     }
 
-    function formatPerson(p, { includeRating = appSettings.showRatings } = {}) {
-      if (!includeRating) return escapeHtml(p.name);
-      return `${escapeHtml(p.name)} / ${Number.isFinite(p.rating) ? `R${formatRatingValue(p.rating)}` : `未設定`}`;
+    function sanitizeMembers(source) {
+      const nameSet = new Set();
+      return (Array.isArray(source) ? source : [])
+        .map((p) => ({
+          id: p.id || uid(),
+          name: String(p.name || "").trim(),
+          rating: normalizeRating(p.rating)
+        }))
+        .filter((p) => {
+          if (!p.name) return false;
+          const key = p.name.toLowerCase();
+          if (nameSet.has(key)) return false;
+          nameSet.add(key);
+          return true;
+        })
+        .slice(0, MAX_MEMBERS);
     }
 
-    function formatPersonPlain(p, { includeRating = appSettings.showRatings } = {}) {
-      return includeRating
-        ? `${p.name}${Number.isFinite(p.rating) ? `(R${formatRatingValue(p.rating)})` : `(未設定)`}`
-        : `${p.name}`;
+    function getSelectedMembers() {
+      const selectedSet = new Set(selectedIds);
+      return members.filter((m) => selectedSet.has(m.id));
+    }
+
+    function resetMemberForm() {
+      editingMemberId = null;
+      $("playerName").value = "";
+      $("playerRating").value = "";
+      $("addPlayer").textContent = "メンバー登録";
+      $("cancelEdit").classList.add("hidden");
     }
 
     function initSelects() {
@@ -422,6 +584,7 @@ button.is-pressed {
       }
 
       const rounds = $("roundCount");
+      rounds.innerHTML = "";
       for (let i = 1; i <= MAX_ROUNDS; i++) {
         const opt = document.createElement("option");
         opt.value = i;
@@ -431,13 +594,17 @@ button.is-pressed {
       }
     }
 
+    function slim(p) {
+      return { id: p.id, name: p.name, rating: p.rating, played: p.played || 0, rested: p.rested || 0 };
+    }
+
     function scheduleSnapshot() {
       if (!lastSchedule.length) return null;
       return {
-        schedule: lastSchedule.map(round => ({
+        schedule: lastSchedule.map((round) => ({
           roundNo: round.roundNo,
           rests: (round.rests || []).map(slim),
-          courts: (round.courts || []).map(c => ({
+          courts: (round.courts || []).map((c) => ({
             courtNo: c.courtNo,
             teamA: (c.teamA || []).map(slim),
             teamB: (c.teamB || []).map(slim),
@@ -445,14 +612,16 @@ button.is-pressed {
             sumB: Number.isFinite(c.sumB) ? c.sumB : null,
             diff: Number.isFinite(c.diff) ? c.diff : null,
             pairRepeat: c.pairRepeat || 0,
-            opponentRepeat: c.opponentRepeat || 0
+            opponentRepeat: c.opponentRepeat || 0,
+            challengeTeam: c.challengeTeam || null
           }))
         })),
         stats: Array.isArray(lastSchedule.__state) ? lastSchedule.__state.map(slim) : [],
         controls: {
           courtCount: $("courtCount").value,
           roundCount: $("roundCount").value
-        }
+        },
+        meta: lastSchedule.__meta || null
       };
     }
 
@@ -461,10 +630,10 @@ button.is-pressed {
         lastSchedule = [];
         return;
       }
-      lastSchedule = snapshot.schedule.map(round => ({
+      lastSchedule = snapshot.schedule.map((round) => ({
         roundNo: round.roundNo,
         rests: Array.isArray(round.rests) ? round.rests.map(slim) : [],
-        courts: Array.isArray(round.courts) ? round.courts.map(c => ({
+        courts: Array.isArray(round.courts) ? round.courts.map((c) => ({
           courtNo: c.courtNo,
           teamA: Array.isArray(c.teamA) ? c.teamA.map(slim) : [],
           teamB: Array.isArray(c.teamB) ? c.teamB.map(slim) : [],
@@ -472,10 +641,12 @@ button.is-pressed {
           sumB: Number.isFinite(c.sumB) ? c.sumB : null,
           diff: Number.isFinite(c.diff) ? c.diff : null,
           pairRepeat: c.pairRepeat || 0,
-          opponentRepeat: c.opponentRepeat || 0
+          opponentRepeat: c.opponentRepeat || 0,
+          challengeTeam: c.challengeTeam || null
         })) : []
       }));
       lastSchedule.__state = Array.isArray(snapshot.stats) ? snapshot.stats.map(slim) : [];
+      lastSchedule.__meta = snapshot.meta || null;
       if (snapshot.controls) {
         if (snapshot.controls.courtCount) $("courtCount").value = String(snapshot.controls.courtCount);
         if (snapshot.controls.roundCount) $("roundCount").value = String(snapshot.controls.roundCount);
@@ -484,11 +655,14 @@ button.is-pressed {
 
     function clearScheduleSnapshot() {
       lastSchedule = [];
+      $("exportText").value = "";
     }
 
     function save() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        players,
+        members,
+        selectedIds,
+        lastSelectedIds,
         settings: appSettings,
         lastResult: scheduleSnapshot()
       }));
@@ -500,12 +674,21 @@ button.is-pressed {
         if (!legacyRaw) continue;
         try {
           const data = JSON.parse(legacyRaw);
-          if (Array.isArray(data.players) && !players.length) {
-            players = data.players.map(p => ({ id: p.id || uid(), name: String(p.name || "").trim(), rating: normalizeRating(p.rating) }));
+          const legacyMembers = sanitizeMembers(data.members || data.players || []);
+          if (legacyMembers.length && !members.length) {
+            members = legacyMembers;
           }
+          const explicitSelected = uniqueIds(data.selectedIds);
+          if (explicitSelected.length) {
+            selectedIds = explicitSelected.filter((id) => members.some((m) => m.id === id));
+          } else if (Array.isArray(data.players) && data.players.length) {
+            selectedIds = members.map((m) => m.id);
+          }
+          const explicitLast = uniqueIds(data.lastSelectedIds);
+          lastSelectedIds = (explicitLast.length ? explicitLast : selectedIds).filter((id) => members.some((m) => m.id === id));
           appSettings = { ...DEFAULT_SETTINGS, ...(data.settings || {}) };
           if (data.lastResult) restoreScheduleSnapshot(data.lastResult);
-          if (players.length || data.lastResult) return;
+          if (members.length || data.lastResult) return;
         } catch (_) {}
       }
     }
@@ -515,9 +698,9 @@ button.is-pressed {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
           const data = JSON.parse(raw);
-          if (Array.isArray(data.players)) {
-            players = data.players.map(p => ({ id: p.id || uid(), name: String(p.name || "").trim(), rating: normalizeRating(p.rating) }));
-          }
+          members = sanitizeMembers(data.members || []);
+          selectedIds = uniqueIds(data.selectedIds).filter((id) => members.some((m) => m.id === id));
+          lastSelectedIds = uniqueIds(data.lastSelectedIds).filter((id) => members.some((m) => m.id === id));
           appSettings = { ...DEFAULT_SETTINGS, ...(data.settings || {}) };
           restoreScheduleSnapshot(data.lastResult);
           return;
@@ -535,8 +718,8 @@ button.is-pressed {
       $("toggleRatings").textContent = appSettings.showRatings ? "レーティング非表示" : "レーティング表示";
       $("privacyStatus").textContent = appSettings.showRatings ? "操作者向け：レーティング表示中" : "共有向け：レーティング非表示";
       $("ratingGuide").textContent = appSettings.useRatings
-        ? "レーティングありモードでは、対戦表作成時に全員のレーティング設定が必要です。"
-        : "レーティングは任意です。未設定のままでも登録でき、組み分け時には使いません。";
+        ? "レーティングありモードでは、当日参加者全員のレーティング設定が必要です。"
+        : "レーティングは未設定でも保存できます。レーティングなしモードでは組み分けに使いません。";
       $("modeHelp").textContent = appSettings.useRatings
         ? `レーティングありでは、まず差が±${MAX_ALLOWED_TEAM_DIFF}以内の対戦を優先し、難しい場合だけチャレンジカードを混ぜます。`
         : "レーティングなしでは同じペアの重複回避・同じ相手との対戦回避・出場バランスを優先します。";
@@ -547,19 +730,212 @@ button.is-pressed {
       appSettings.useRatings = $("matchMode").value === "rating";
       applySettingsToControls();
       save();
-      renderPlayers();
-      renderStats([]);
+      renderMasterList();
+      renderSelectionList();
+      renderStats(lastSchedule.__state || []);
       if (lastSchedule.length) {
         renderSchedule(lastSchedule);
         updateExportText();
       }
     }
 
+    function formatPerson(p, { includeRating = appSettings.showRatings } = {}) {
+      if (!includeRating) return escapeHtml(p.name);
+      return `${escapeHtml(p.name)} / ${Number.isFinite(p.rating) ? `R${formatRatingValue(p.rating)}` : `未設定`}`;
+    }
+
+    function formatPersonPlain(p, { includeRating = appSettings.showRatings } = {}) {
+      return includeRating
+        ? `${p.name}${Number.isFinite(p.rating) ? `(R${formatRatingValue(p.rating)})` : `(未設定)`}`
+        : `${p.name}`;
+    }
+
+    function invalidateGeneratedResult() {
+      clearScheduleSnapshot();
+      renderSchedule([]);
+      renderStats([]);
+      save();
+    }
+
+    function renderMasterList() {
+      $("memberCount").textContent = `${members.length} / ${MAX_MEMBERS}人`;
+      $("masterListCount").textContent = `${members.length} / ${MAX_MEMBERS}人`;
+      const wrap = $("players");
+      wrap.innerHTML = "";
+
+      if (!members.length) {
+        wrap.innerHTML = `<p class="note">まずはメンバーマスターに参加者を登録してください。</p>`;
+        return;
+      }
+
+      const selectedSet = new Set(selectedIds);
+      members
+        .slice()
+        .sort((a, b) => sortRatingValue(b) - sortRatingValue(a) || a.name.localeCompare(b.name, "ja"))
+        .forEach((member) => {
+          const div = document.createElement("div");
+          div.className = "player member-row";
+          div.innerHTML = `
+            <div class="name-wrap">
+              <div class="name">${escapeHtml(member.name)}</div>
+              <div class="mini-note">${selectedSet.has(member.id) ? "今日の参加者に選択中" : "今日は未選択"}</div>
+            </div>
+            <div class="rating">${appSettings.showRatings ? ratingLabel(member) : "非表示"}</div>
+            <div class="member-actions">
+              <button class="small-btn secondary" data-edit="${member.id}">編集</button>
+              <button class="small-btn danger" data-remove="${member.id}">削除</button>
+            </div>
+          `;
+          wrap.appendChild(div);
+        });
+
+      wrap.querySelectorAll("[data-edit]").forEach((btn) => {
+        btn.addEventListener("click", () => startEditMember(btn.dataset.edit));
+      });
+      wrap.querySelectorAll("[data-remove]").forEach((btn) => {
+        btn.addEventListener("click", () => removeMember(btn.dataset.remove));
+      });
+    }
+
+    function renderSelectionList() {
+      const selectedSet = new Set(selectedIds);
+      $("selectedCount").textContent = `${selectedIds.length}人選択中`;
+      $("selectionNote").textContent = lastSelectedIds.length
+        ? `前回参加者 ${lastSelectedIds.length}人を記憶しています。必要なら「前回参加者を復元」で戻せます。`
+        : "登録済みメンバーから、今日プレイする人だけチェックして選択します。";
+      $("restoreLastSelection").disabled = !lastSelectedIds.length;
+
+      const wrap = $("selectionList");
+      wrap.innerHTML = "";
+      if (!members.length) {
+        wrap.innerHTML = `<p class="note">メンバー登録後に、ここで当日参加者を選択できます。</p>`;
+        return;
+      }
+
+      members
+        .slice()
+        .sort((a, b) => a.name.localeCompare(b.name, "ja"))
+        .forEach((member) => {
+          const checked = selectedSet.has(member.id);
+          const label = document.createElement("label");
+          label.className = `selection-row ${checked ? "is-checked" : ""}`;
+          label.innerHTML = `
+            <input type="checkbox" data-toggle="${member.id}" ${checked ? "checked" : ""} />
+            <div class="selection-main">
+              <strong>${escapeHtml(member.name)}</strong>
+              <span>${appSettings.showRatings ? `R${ratingLabel(member)}` : "レーティングは操作者のみ表示"}</span>
+            </div>
+            <span class="status-tag">${checked ? "参加" : "未参加"}</span>
+          `;
+          wrap.appendChild(label);
+        });
+
+      wrap.querySelectorAll("[data-toggle]").forEach((input) => {
+        input.addEventListener("change", () => toggleMemberSelection(input.dataset.toggle, input.checked));
+      });
+    }
+
+    function renderStats(state) {
+      const wrap = $("stats");
+      wrap.innerHTML = "";
+      const selectedMembers = getSelectedMembers();
+      const source = state && state.length ? state : selectedMembers.map((m) => ({ ...m, played: 0, rested: 0 }));
+      if (!selectedMembers.length) {
+        wrap.innerHTML = `<p class="note">当日参加者を選ぶと、ここに出場数と休憩数を表示します。</p>`;
+        return;
+      }
+      source
+        .slice()
+        .sort((a, b) => b.played - a.played || a.rested - b.rested || sortRatingValue(b) - sortRatingValue(a))
+        .forEach((p) => {
+          const div = document.createElement("div");
+          div.className = "stat-row";
+          div.innerHTML = `<span>${appSettings.showRatings ? `${escapeHtml(p.name)} / ${Number.isFinite(p.rating) ? `R${formatRatingValue(p.rating)}` : `未設定`}` : `${escapeHtml(p.name)}`}</span><span>出場 ${p.played || 0}</span><span>休憩 ${p.rested || 0}</span>`;
+          wrap.appendChild(div);
+        });
+    }
+
+    function addOrUpdateMember() {
+      const name = $("playerName").value.trim();
+      const rating = normalizeRating($("playerRating").value);
+      setError();
+
+      if (!name) return setError("名前を入力してください。");
+      const duplicate = members.some((m) => m.name === name && m.id !== editingMemberId);
+      if (duplicate) return setError("同じ名前が登録済みです。識別できるように別名を付けてください。");
+
+      if (editingMemberId) {
+        members = members.map((m) => (m.id === editingMemberId ? { ...m, name, rating } : m));
+      } else {
+        if (members.length >= MAX_MEMBERS) return setError(`登録メンバーは最大${MAX_MEMBERS}人までです。`);
+        const newMember = { id: uid(), name, rating };
+        members.push(newMember);
+        if (!selectedIds.includes(newMember.id)) selectedIds.push(newMember.id);
+      }
+
+      resetMemberForm();
+      invalidateGeneratedResult();
+      renderMasterList();
+      renderSelectionList();
+      $("playerName").focus();
+    }
+
+    function startEditMember(id) {
+      const member = members.find((m) => m.id === id);
+      if (!member) return;
+      editingMemberId = id;
+      $("playerName").value = member.name;
+      $("playerRating").value = Number.isFinite(member.rating) ? String(member.rating) : "";
+      $("addPlayer").textContent = "登録内容を保存";
+      $("cancelEdit").classList.remove("hidden");
+      $("playerName").focus();
+    }
+
+    function removeMember(id) {
+      const member = members.find((m) => m.id === id);
+      if (!member) return;
+      if (!confirm(`${member.name} をマスターから削除しますか？`)) return;
+      members = members.filter((m) => m.id !== id);
+      selectedIds = selectedIds.filter((memberId) => memberId !== id);
+      lastSelectedIds = lastSelectedIds.filter((memberId) => memberId !== id);
+      if (editingMemberId === id) resetMemberForm();
+      invalidateGeneratedResult();
+      renderMasterList();
+      renderSelectionList();
+    }
+
+    function loadSampleMembers() {
+      const names = ["田中","佐藤","鈴木","高橋","伊藤","山本","中村","小林","加藤","吉田","山田","佐々木","山口","松本","井上","木村","林","清水","斎藤","森","池田","橋本","石川","阿部","前田","藤田","後藤","岡田","長谷川","村上"];
+      const ratings = [10,9.5,9,8.5,8.5,8,7.5,7.5,7,7,6.5,6.5,6,6,5.5,5.5,5,5,4.5,4.5,4,4,3.5,3.5,3,3,2.5,2.5,2,2];
+      members = names.map((name, i) => ({ id: uid(), name, rating: ratings[i] }));
+      selectedIds = members.map((m) => m.id);
+      lastSelectedIds = selectedIds.slice();
+      resetMemberForm();
+      invalidateGeneratedResult();
+      renderMasterList();
+      renderSelectionList();
+      setError("");
+    }
+
+    function clearMembers() {
+      if (!confirm("登録メンバーと当日参加者をすべて削除しますか？")) return;
+      members = [];
+      selectedIds = [];
+      lastSelectedIds = [];
+      resetMemberForm();
+      invalidateGeneratedResult();
+      renderMasterList();
+      renderSelectionList();
+      renderStats([]);
+      setError("");
+    }
+
     function toggleRatings() {
       appSettings.showRatings = !appSettings.showRatings;
       applySettingsToControls();
       save();
-      renderPlayers();
+      renderMasterList();
+      renderSelectionList();
       if (lastSchedule.length) {
         renderSchedule(lastSchedule);
         updateExportText();
@@ -567,87 +943,41 @@ button.is-pressed {
       renderStats(lastSchedule.__state || []);
     }
 
-    function renderPlayers() {
-      $("playerCount").textContent = `${players.length} / ${MAX_PLAYERS}人`;
-      const wrap = $("players");
-      wrap.innerHTML = "";
-
-      if (!players.length) {
-        wrap.innerHTML = `<p class="note">まだ参加者が登録されていません。</p>`;
-        renderStats([]);
-        return;
-      }
-
-      players
-        .slice()
-        .sort((a, b) => sortRatingValue(b) - sortRatingValue(a) || a.name.localeCompare(b.name, "ja"))
-        .forEach(p => {
-          const div = document.createElement("div");
-          div.className = "player";
-          div.innerHTML = `
-            <div class="name">${escapeHtml(p.name)}</div>
-            <div class="rating">${appSettings.showRatings ? ratingLabel(p) : "非表示"}</div>
-            <button class="small-btn danger" data-remove="${p.id}">削除</button>
-          `;
-          wrap.appendChild(div);
-        });
-
-      wrap.querySelectorAll("[data-remove]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          players = players.filter(p => p.id !== btn.dataset.remove);
-          clearScheduleSnapshot();
-          save();
-          renderPlayers();
-          renderSchedule([]);
-          renderStats([]);
-        });
-      });
+    function toggleMemberSelection(id, checked) {
+      const set = new Set(selectedIds);
+      if (checked) set.add(id);
+      else set.delete(id);
+      selectedIds = members.map((m) => m.id).filter((memberId) => set.has(memberId));
+      invalidateGeneratedResult();
+      renderMasterList();
+      renderSelectionList();
     }
 
-    function addPlayer() {
-      const name = $("playerName").value.trim();
-      const rating = normalizeRating($("playerRating").value);
-      setError();
-
-      if (!name) return setError("名前を入力してください。");
-      if (players.length >= MAX_PLAYERS) return setError("参加者は最大23人までです。");
-      if (players.some(p => p.name === name)) return setError("同じ名前が登録済みです。識別できるように別名を付けてください。");
-
-      players.push({ id: uid(), name, rating });
-      $("playerName").value = "";
-      $("playerRating").value = "";
-      clearScheduleSnapshot();
-      save();
-      renderPlayers();
-      renderSchedule([]);
-      renderStats([]);
-      $("playerName").focus();
+    function selectAllMembers() {
+      selectedIds = members.map((m) => m.id);
+      invalidateGeneratedResult();
+      renderMasterList();
+      renderSelectionList();
     }
 
-    function loadSample() {
-      const names = ["田中","佐藤","鈴木","高橋","伊藤","山本","中村","小林","加藤","吉田","山田","佐々木","山口","松本","井上","木村","林","清水","斎藤","森","池田","橋本","石川"];
-      const ratings = [10,9,9,8,8,7,7,7,6,6,5,5,5,4,4,4,3,3,3,2,2,1,1];
-      players = names.map((name, i) => ({ id: uid(), name, rating: ratings[i] }));
-      clearScheduleSnapshot();
-      save();
-      renderPlayers();
-      renderSchedule([]);
-      setError();
+    function clearTodaySelection() {
+      selectedIds = [];
+      invalidateGeneratedResult();
+      renderMasterList();
+      renderSelectionList();
     }
 
-    function clearPlayers() {
-      if (!confirm("参加者を全削除しますか？")) return;
-      players = [];
-      clearScheduleSnapshot();
-      save();
-      renderPlayers();
-      renderSchedule([]);
-      renderStats([]);
-      setError();
+    function restoreLastSelection() {
+      if (!lastSelectedIds.length) return setError("前回参加者データがまだありません。");
+      selectedIds = members.map((m) => m.id).filter((id) => lastSelectedIds.includes(id));
+      invalidateGeneratedResult();
+      renderMasterList();
+      renderSelectionList();
+      setError("前回参加者を復元しました。");
     }
 
-    function cloneStatePlayers() {
-      return players.map(p => ({
+    function cloneStatePlayers(source) {
+      return source.map((p) => ({
         ...p,
         played: 0,
         rested: 0,
@@ -659,23 +989,24 @@ button.is-pressed {
 
     async function generateSchedule() {
       const generateBtn = $("generateBtn");
-      const originalLabel = generateBtn ? generateBtn.textContent : "対戦表を作成";
+      const originalLabel = generateBtn.textContent;
       setError("対戦表を作成中です…");
-      if (generateBtn) {
-        generateBtn.disabled = true;
-        generateBtn.textContent = "計算中…";
-      }
-      await new Promise(resolve => setTimeout(resolve, 0));
+      generateBtn.disabled = true;
+      generateBtn.textContent = "計算中…";
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
       try {
+        const activeMembers = getSelectedMembers();
         const courtSetting = Math.min(MAX_COURTS, Number($("courtCount").value));
         const roundCount = Math.min(MAX_ROUNDS, Number($("roundCount").value));
 
-        if (players.length < 4) return setError("最低4人以上を登録してください。");
-        if (appSettings.useRatings && players.some(p => !Number.isFinite(p.rating))) {
-          return setError("レーティングありモードでは、全員の実力を設定してください。未設定の人がいます。");
+        if (activeMembers.length < 4) return setError("当日参加者を最低4人以上選択してください。");
+        if (appSettings.useRatings && activeMembers.some((p) => !Number.isFinite(p.rating))) {
+          return setError("レーティングありモードでは、当日参加者全員のレーティング設定が必要です。未設定の人がいます。");
         }
 
-        const state = cloneStatePlayers();
+        lastSelectedIds = selectedIds.slice();
+        const state = cloneStatePlayers(activeMembers);
         const schedule = [];
 
         for (let roundNo = 1; roundNo <= roundCount; roundNo++) {
@@ -683,18 +1014,18 @@ button.is-pressed {
           const activeCount = availableCourts * 4;
           const restCount = state.length - activeCount;
 
-          const restIds = chooseRestPlayers(state, restCount).map(p => p.id);
+          const restIds = chooseRestPlayers(state, restCount).map((p) => p.id);
           const restSet = new Set(restIds);
-          const rests = state.filter(p => restSet.has(p.id));
-          const active = state.filter(p => !restSet.has(p.id));
+          const rests = state.filter((p) => restSet.has(p.id));
+          const active = state.filter((p) => !restSet.has(p.id));
 
-          rests.forEach(p => { p.rested += 1; p.lastRest = true; });
-          active.forEach(p => { p.lastRest = false; });
+          rests.forEach((p) => { p.rested += 1; p.lastRest = true; });
+          active.forEach((p) => { p.lastRest = false; });
 
           const roundMatches = chooseRoundMatches(active, availableCourts);
           const courts = roundMatches.map((match, idx) => {
-            match.teamA.forEach(p => p.played += 1);
-            match.teamB.forEach(p => p.played += 1);
+            match.teamA.forEach((p) => p.played += 1);
+            match.teamB.forEach((p) => p.played += 1);
             recordHistory(match.teamA, match.teamB);
             return {
               courtNo: idx + 1,
@@ -713,6 +1044,7 @@ button.is-pressed {
         }
 
         schedule.__state = state.map(slim);
+        schedule.__meta = { selectedCount: activeMembers.length, courtCount: courtSetting, roundCount };
         lastSchedule = schedule;
         save();
         renderSchedule(schedule);
@@ -720,10 +1052,8 @@ button.is-pressed {
         updateExportText();
         setError("");
       } finally {
-        if (generateBtn) {
-          generateBtn.disabled = false;
-          generateBtn.textContent = originalLabel;
-        }
+        generateBtn.disabled = false;
+        generateBtn.textContent = originalLabel;
       }
     }
 
@@ -741,8 +1071,8 @@ button.is-pressed {
 
     function chooseRoundMatches(active, courtCount) {
       const candidates = buildMatchCandidates(active).sort((a, b) => a.score - b.score);
-      const byPlayer = new Map(active.map(p => [p.id, []]));
-      candidates.forEach(c => c.players.forEach(p => byPlayer.get(p.id).push(c)));
+      const byPlayer = new Map(active.map((p) => [p.id, []]));
+      candidates.forEach((c) => c.players.forEach((p) => byPlayer.get(p.id).push(c)));
 
       let best = null;
       let visited = 0;
@@ -767,19 +1097,19 @@ button.is-pressed {
         }
         if (best && score >= best.score) return;
 
-        const firstUnused = orderedActive.find(p => !usedIds.has(p.id));
+        const firstUnused = orderedActive.find((p) => !usedIds.has(p.id));
         if (!firstUnused) return;
 
         const options = (byPlayer.get(firstUnused.id) || [])
-          .filter(c => !c.players.some(p => usedIds.has(p.id)))
+          .filter((c) => !c.players.some((p) => usedIds.has(p.id)))
           .slice(0, SEARCH_OPTION_LIMIT);
 
         for (const c of options) {
-          c.players.forEach(p => usedIds.add(p.id));
+          c.players.forEach((p) => usedIds.add(p.id));
           selected.push(c);
           search(selected, usedIds, score + c.score);
           selected.pop();
-          c.players.forEach(p => usedIds.delete(p.id));
+          c.players.forEach((p) => usedIds.delete(p.id));
           if (aborted) break;
         }
       }
@@ -791,8 +1121,8 @@ button.is-pressed {
       const greedy = [];
       for (const c of candidates) {
         if (greedy.length >= courtCount) break;
-        if (c.players.some(p => used.has(p.id))) continue;
-        c.players.forEach(p => used.add(p.id));
+        if (c.players.some((p) => used.has(p.id))) continue;
+        c.players.forEach((p) => used.add(p.id));
         greedy.push(c);
       }
       return greedy;
@@ -859,7 +1189,7 @@ button.is-pressed {
 
     function opponentPenalty(teamA, teamB) {
       let count = 0;
-      teamA.forEach(a => teamB.forEach(b => count += getCount(a.opponents, b.id)));
+      teamA.forEach((a) => teamB.forEach((b) => count += getCount(a.opponents, b.id)));
       return count;
     }
 
@@ -876,14 +1206,10 @@ button.is-pressed {
       addMapCount(teamA[1].partners, teamA[0].id);
       addMapCount(teamB[0].partners, teamB[1].id);
       addMapCount(teamB[1].partners, teamB[0].id);
-      teamA.forEach(a => teamB.forEach(b => {
+      teamA.forEach((a) => teamB.forEach((b) => {
         addMapCount(a.opponents, b.id);
         addMapCount(b.opponents, a.id);
       }));
-    }
-
-    function slim(p) {
-      return { id: p.id, name: p.name, rating: p.rating, played: p.played, rested: p.rested };
     }
 
     function renderSchedule(schedule) {
@@ -891,11 +1217,11 @@ button.is-pressed {
       wrap.innerHTML = "";
       if (!schedule.length) return;
 
-      schedule.forEach(round => {
+      schedule.forEach((round) => {
         const div = document.createElement("div");
         div.className = "round";
         const restText = round.rests.length
-          ? round.rests.map(p => formatPersonPlain(p)).join("、")
+          ? round.rests.map((p) => formatPersonPlain(p)).join("、")
           : "休憩なし";
         div.innerHTML = `
           <div class="round-head">
@@ -934,28 +1260,9 @@ button.is-pressed {
       return `
         <div class="pair ${isChallenge ? "challenge" : ""}">
           <strong>${heading}${isChallenge ? `<span class="challenge-badge">チャレンジ！</span>` : ""}</strong>
-          ${team.map(p => `<span>${formatPerson(p)}</span>`).join("")}
+          ${team.map((p) => `<span>${formatPerson(p)}</span>`).join("")}
         </div>
       `;
-    }
-
-    function renderStats(state) {
-      const wrap = $("stats");
-      wrap.innerHTML = "";
-      const source = state && state.length ? state : players.map(p => ({ ...p, played: 0, rested: 0 }));
-      if (!source.length) {
-        wrap.innerHTML = `<p class="note">対戦表作成後に、出場数と休憩数を表示します。</p>`;
-        return;
-      }
-      source
-        .slice()
-        .sort((a, b) => b.played - a.played || a.rested - b.rested || sortRatingValue(b) - sortRatingValue(a))
-        .forEach(p => {
-          const div = document.createElement("div");
-          div.className = "stat-row";
-          div.innerHTML = `<span>${appSettings.showRatings ? `${escapeHtml(p.name)} / ${Number.isFinite(p.rating) ? `R${formatRatingValue(p.rating)}` : `未設定`}` : `${escapeHtml(p.name)}`}</span><span>出場 ${p.played || 0}</span><span>休憩 ${p.rested || 0}</span>`;
-          wrap.appendChild(div);
-        });
     }
 
     function updateExportText() {
@@ -966,12 +1273,12 @@ button.is-pressed {
       if (!schedule.length) return "";
       const includeRatings = opts.includeRatings ?? appSettings.showRatings;
       const lines = [];
-      schedule.forEach(round => {
+      schedule.forEach((round) => {
         lines.push(`第${round.roundNo}試合`);
-        lines.push(`休憩：${round.rests.length ? round.rests.map(p => formatPersonPlain(p, { includeRating: includeRatings })).join("、") : "なし"}`);
-        round.courts.forEach(c => {
-          const a = c.teamA.map(p => formatPersonPlain(p, { includeRating: includeRatings })).join(" & ");
-          const b = c.teamB.map(p => formatPersonPlain(p, { includeRating: includeRatings })).join(" & ");
+        lines.push(`休憩：${round.rests.length ? round.rests.map((p) => formatPersonPlain(p, { includeRating: includeRatings })).join("、") : "なし"}`);
+        round.courts.forEach((c) => {
+          const a = c.teamA.map((p) => formatPersonPlain(p, { includeRating: includeRatings })).join(" & ");
+          const b = c.teamB.map((p) => formatPersonPlain(p, { includeRating: includeRatings })).join(" & ");
           const aText = c.challengeTeam === "A" ? `${a}【チャレンジ！】` : a;
           const bText = c.challengeTeam === "B" ? `${b}【チャレンジ！】` : b;
           const suffix = appSettings.useRatings && Number.isFinite(c.sumA) ? ` / 合計 ${formatRatingValue(c.sumA)}-${formatRatingValue(c.sumB)} / 差 ${formatRatingValue(c.diff)}` : "";
@@ -997,6 +1304,7 @@ button.is-pressed {
     }
 
     function toggleExport() {
+      if (!lastSchedule.length) return setError("先に対戦表を作成してください。");
       $("exportText").classList.toggle("hidden");
       updateExportText();
     }
@@ -1005,7 +1313,7 @@ button.is-pressed {
       const chars = String(text).split("");
       const lines = [];
       let current = "";
-      chars.forEach(ch => {
+      chars.forEach((ch) => {
         const test = current + ch;
         if (ctx.measureText(test).width > maxWidth && current) {
           lines.push(current);
@@ -1032,7 +1340,7 @@ button.is-pressed {
     async function exportImage() {
       if (!lastSchedule.length) return setError("先に対戦表を作成してください。");
       setError("画像を作成中です…");
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
       try {
         const blob = await createScheduleImageBlob(lastSchedule);
         const file = new File([blob], `badminton_schedule_${new Date().toISOString().slice(0,10)}.png`, { type: "image/png" });
@@ -1061,21 +1369,23 @@ button.is-pressed {
       const textWidth = width - padding * 2 - 180;
 
       ctx.font = "28px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-      const metaText = `${players.length}人 / ${$("courtCount").value}コート / ${schedule.length}試合`;
+      const selectedCount = schedule.__meta && schedule.__meta.selectedCount ? schedule.__meta.selectedCount : getSelectedMembers().length;
+      const courtCount = schedule.__meta && schedule.__meta.courtCount ? schedule.__meta.courtCount : $("courtCount").value;
+      const metaText = `${selectedCount}人 / ${courtCount}コート / ${schedule.length}試合`;
       let totalHeight = padding + headerHeight + 28;
       const layout = [];
 
-      schedule.forEach(round => {
-        const restText = round.rests.length ? round.rests.map(p => p.name).join("、") : "なし";
+      schedule.forEach((round) => {
+        const restText = round.rests.length ? round.rests.map((p) => p.name).join("、") : "なし";
         ctx.font = "22px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
         const restLines = wrapText(ctx, `休憩：${restText}`, width - padding * 2 - 32);
         let roundHeight = roundHeaderHeight + restLines.length * 28 + 14;
         const rows = [];
         ctx.font = "20px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-        round.courts.forEach(c => {
+        round.courts.forEach((c) => {
           const left = `Court ${c.courtNo}`;
-          const teamAText = `${c.teamA.map(p => p.name).join("・")}${c.challengeTeam === "A" ? "（チャレンジ！）" : ""}`;
-          const teamBText = `${c.teamB.map(p => p.name).join("・")}${c.challengeTeam === "B" ? "（チャレンジ！）" : ""}`;
+          const teamAText = `${c.teamA.map((p) => p.name).join("・")}${c.challengeTeam === "A" ? "（チャレンジ！）" : ""}`;
+          const teamBText = `${c.teamB.map((p) => p.name).join("・")}${c.challengeTeam === "B" ? "（チャレンジ！）" : ""}`;
           const right = `${teamAText}  vs  ${teamBText}`;
           const rightLines = wrapText(ctx, right, textWidth);
           const rowHeight = Math.max(rowMinHeight, rightLines.length * 26 + 8);
@@ -1106,10 +1416,10 @@ button.is-pressed {
       y += 42;
       ctx.fillStyle = "#64748b";
       ctx.font = "18px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-      ctx.fillText("共有用画像：レーティング非表示", padding, y);
+      ctx.fillText("共有用画像：レーティング非表示 / 当日選択メンバーのみ", padding, y);
       y += 28;
 
-      layout.forEach(block => {
+      layout.forEach((block) => {
         roundedRect(ctx, padding, y, width - padding * 2, block.roundHeight, 18);
         ctx.fillStyle = "#ffffff";
         ctx.fill();
@@ -1127,7 +1437,7 @@ button.is-pressed {
         let innerY = y + 76;
         ctx.fillStyle = "#334155";
         ctx.font = "20px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-        block.restLines.forEach(line => {
+        block.restLines.forEach((line) => {
           ctx.fillText(line, padding + 28, innerY);
           innerY += 28;
         });
@@ -1153,7 +1463,7 @@ button.is-pressed {
       });
 
       return await new Promise((resolve, reject) => {
-        canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("blob error")), "image/png");
+        canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("blob error")), "image/png");
       });
     }
 
@@ -1183,7 +1493,7 @@ button.is-pressed {
     }
 
     function escapeHtml(str) {
-      return String(str).replace(/[&<>'"]/g, ch => ({
+      return String(str).replace(/[&<>'"]/g, (ch) => ({
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;",
@@ -1201,7 +1511,7 @@ button.is-pressed {
           tip.innerHTML = `
             <div class="ios-badge">ホーム画面起動中</div>
             <strong>アプリ風の表示で起動しています。</strong>
-            <span>参加者データはこのiPhone内に保存されます。Safariで開き直さなくても、ホーム画面からそのまま使えます。</span>
+            <span>登録メンバーと前回の当日参加者はこのiPhone内に保存されます。ホーム画面からそのまま使えます。</span>
           `;
         }
       }
@@ -1215,31 +1525,31 @@ button.is-pressed {
       } catch (_) {}
     }
 
-    $("addPlayer").addEventListener("click", addPlayer);
-    $("playerName").addEventListener("keydown", e => { if (e.key === "Enter") addPlayer(); });
-    $("loadSample").addEventListener("click", loadSample);
-    $("clearPlayers").addEventListener("click", clearPlayers);
-    $("generate").addEventListener("click", generateSchedule);
+    function enableButtonTapFeedback() {
+      const clear = () => document.querySelectorAll("button.is-pressed").forEach((btn) => btn.classList.remove("is-pressed"));
+      document.addEventListener("pointerdown", (e) => {
+        const btn = e.target.closest("button");
+        if (btn) btn.classList.add("is-pressed");
+      });
+      ["pointerup", "pointercancel", "pointerleave", "touchend"].forEach((eventName) => {
+        document.addEventListener(eventName, () => setTimeout(clear, 90), { passive: true });
+      });
+    }
+
+    $("addPlayer").addEventListener("click", addOrUpdateMember);
+    $("cancelEdit").addEventListener("click", resetMemberForm);
+    $("playerName").addEventListener("keydown", (e) => { if (e.key === "Enter") addOrUpdateMember(); });
+    $("loadSample").addEventListener("click", loadSampleMembers);
+    $("clearPlayers").addEventListener("click", clearMembers);
+    $("toggleRatings").addEventListener("click", toggleRatings);
+    $("selectAllMembers").addEventListener("click", selectAllMembers);
+    $("clearTodaySelection").addEventListener("click", clearTodaySelection);
+    $("restoreLastSelection").addEventListener("click", restoreLastSelection);
+    $("generateBtn").addEventListener("click", generateSchedule);
     $("copyText").addEventListener("click", copyText);
     $("toggleExport").addEventListener("click", toggleExport);
     $("exportImage").addEventListener("click", exportImage);
-    $("toggleRatings").addEventListener("click", toggleRatings);
     $("matchMode").addEventListener("change", updateSettingsFromControls);
-
-
-
-function enableButtonTapFeedback() {
-  document.querySelectorAll("button").forEach(button => {
-    const add = () => button.classList.add("is-pressed");
-    const remove = () => setTimeout(() => button.classList.remove("is-pressed"), 90);
-    button.addEventListener("pointerdown", add);
-    button.addEventListener("pointerup", remove);
-    button.addEventListener("pointercancel", remove);
-    button.addEventListener("pointerleave", remove);
-    button.addEventListener("touchstart", add, { passive: true });
-    button.addEventListener("touchend", remove, { passive: true });
-  });
-}
 
     enableButtonTapFeedback();
     updateInstallTip();
@@ -1247,7 +1557,8 @@ function enableButtonTapFeedback() {
     initSelects();
     load();
     applySettingsToControls();
-    renderPlayers();
+    renderMasterList();
+    renderSelectionList();
     renderStats(lastSchedule.__state || []);
     if (lastSchedule.length) {
       renderSchedule(lastSchedule);
