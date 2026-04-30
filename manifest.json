@@ -1,6 +1,6 @@
 {
-  "name": "バドミントン対戦表メーカー",
-  "short_name": "対戦表メーカー",
+  "name": "ダブルス対戦メーカー",
+  "short_name": "ダブルス対戦メーカー",
   "description": "バドミントンダブルスの対戦表をiPhoneでも作りやすいホーム画面対応Webアプリ。",
   "lang": "ja",
   "start_url": "./index.html",

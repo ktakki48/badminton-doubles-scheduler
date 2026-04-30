@@ -1,11 +1,12 @@
-const CACHE_NAME = 'bd-doubles-scheduler-v1';
+const CACHE_NAME = 'bd-doubles-scheduler-v5';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
-  './icons/apple-touch-icon.png'
+  './icons/apple-touch-icon.png',
+  './icons/icon-source.svg'
 ];
 
 self.addEventListener('install', (event) => {
