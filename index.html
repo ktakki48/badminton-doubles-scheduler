@@ -357,8 +357,11 @@ button.is-pressed {
     const MAX_RATING = 10;
     const RATING_STEP = 0.5;
     const MAX_ALLOWED_TEAM_DIFF = 5;
-    const STORAGE_KEY = "bd_doubles_scheduler_v4";
-    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
+    const SEARCH_OPTION_LIMIT = 24;
+    const SEARCH_NODE_LIMIT = 12000;
+    const SEARCH_TIME_LIMIT_MS = 180;
+    const STORAGE_KEY = "bd_doubles_scheduler_v6";
+    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
     const DEFAULT_SETTINGS = {
       useRatings: true,
       showRatings: false,
@@ -652,59 +655,74 @@ button.is-pressed {
       }));
     }
 
-    function generateSchedule() {
-      setError();
-      const courtSetting = Math.min(MAX_COURTS, Number($("courtCount").value));
-      const roundCount = Math.min(MAX_ROUNDS, Number($("roundCount").value));
-
-      if (players.length < 4) return setError("最低4人以上を登録してください。");
-      if (appSettings.useRatings && players.some(p => !Number.isFinite(p.rating))) {
-        return setError("レーティングありモードでは、全員の実力を設定してください。未設定の人がいます。");
+    async function generateSchedule() {
+      const generateBtn = $("generateBtn");
+      const originalLabel = generateBtn ? generateBtn.textContent : "対戦表を作成";
+      setError("対戦表を作成中です…");
+      if (generateBtn) {
+        generateBtn.disabled = true;
+        generateBtn.textContent = "計算中…";
       }
+      await new Promise(resolve => setTimeout(resolve, 0));
+      try {
+        const courtSetting = Math.min(MAX_COURTS, Number($("courtCount").value));
+        const roundCount = Math.min(MAX_ROUNDS, Number($("roundCount").value));
 
-      const state = cloneStatePlayers();
-      const schedule = [];
+        if (players.length < 4) return setError("最低4人以上を登録してください。");
+        if (appSettings.useRatings && players.some(p => !Number.isFinite(p.rating))) {
+          return setError("レーティングありモードでは、全員の実力を設定してください。未設定の人がいます。");
+        }
 
-      for (let roundNo = 1; roundNo <= roundCount; roundNo++) {
-        const availableCourts = Math.min(courtSetting, Math.floor(state.length / 4));
-        const activeCount = availableCourts * 4;
-        const restCount = state.length - activeCount;
+        const state = cloneStatePlayers();
+        const schedule = [];
 
-        const restIds = chooseRestPlayers(state, restCount).map(p => p.id);
-        const restSet = new Set(restIds);
-        const rests = state.filter(p => restSet.has(p.id));
-        const active = state.filter(p => !restSet.has(p.id));
+        for (let roundNo = 1; roundNo <= roundCount; roundNo++) {
+          const availableCourts = Math.min(courtSetting, Math.floor(state.length / 4));
+          const activeCount = availableCourts * 4;
+          const restCount = state.length - activeCount;
 
-        rests.forEach(p => { p.rested += 1; p.lastRest = true; });
-        active.forEach(p => { p.lastRest = false; });
+          const restIds = chooseRestPlayers(state, restCount).map(p => p.id);
+          const restSet = new Set(restIds);
+          const rests = state.filter(p => restSet.has(p.id));
+          const active = state.filter(p => !restSet.has(p.id));
 
-        const roundMatches = chooseRoundMatches(active, availableCourts);
-        const courts = roundMatches.map((match, idx) => {
-          match.teamA.forEach(p => p.played += 1);
-          match.teamB.forEach(p => p.played += 1);
-          recordHistory(match.teamA, match.teamB);
-          return {
-            courtNo: idx + 1,
-            teamA: match.teamA.map(slim),
-            teamB: match.teamB.map(slim),
-            sumA: match.sumA,
-            sumB: match.sumB,
-            diff: match.diff,
-            pairRepeat: match.pairRepeat || 0,
-            opponentRepeat: match.opponentRepeat || 0,
-            challengeTeam: match.challengeTeam || null
-          };
-        });
+          rests.forEach(p => { p.rested += 1; p.lastRest = true; });
+          active.forEach(p => { p.lastRest = false; });
 
-        schedule.push({ roundNo, rests: rests.map(slim), courts });
+          const roundMatches = chooseRoundMatches(active, availableCourts);
+          const courts = roundMatches.map((match, idx) => {
+            match.teamA.forEach(p => p.played += 1);
+            match.teamB.forEach(p => p.played += 1);
+            recordHistory(match.teamA, match.teamB);
+            return {
+              courtNo: idx + 1,
+              teamA: match.teamA.map(slim),
+              teamB: match.teamB.map(slim),
+              sumA: match.sumA,
+              sumB: match.sumB,
+              diff: match.diff,
+              pairRepeat: match.pairRepeat || 0,
+              opponentRepeat: match.opponentRepeat || 0,
+              challengeTeam: match.challengeTeam || null
+            };
+          });
+
+          schedule.push({ roundNo, rests: rests.map(slim), courts });
+        }
+
+        schedule.__state = state.map(slim);
+        lastSchedule = schedule;
+        save();
+        renderSchedule(schedule);
+        renderStats(state);
+        updateExportText();
+        setError("");
+      } finally {
+        if (generateBtn) {
+          generateBtn.disabled = false;
+          generateBtn.textContent = originalLabel;
+        }
       }
-
-      schedule.__state = state.map(slim);
-      lastSchedule = schedule;
-      save();
-      renderSchedule(schedule);
-      renderStats(state);
-      updateExportText();
     }
 
     function chooseRestPlayers(state, restCount) {
@@ -725,6 +743,9 @@ button.is-pressed {
       candidates.forEach(c => c.players.forEach(p => byPlayer.get(p.id).push(c)));
 
       let best = null;
+      let visited = 0;
+      let aborted = false;
+      const startedAt = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
       const orderedActive = active.slice().sort((a, b) => {
         if (a.played !== b.played) return a.played - b.played;
         if (appSettings.useRatings) return sortRatingValue(b) - sortRatingValue(a) || a.name.localeCompare(b.name, "ja");
@@ -732,6 +753,12 @@ button.is-pressed {
       });
 
       function search(selected, usedIds, score) {
+        visited += 1;
+        const now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+        if (visited > SEARCH_NODE_LIMIT || now - startedAt > SEARCH_TIME_LIMIT_MS) {
+          aborted = true;
+          return;
+        }
         if (selected.length === courtCount) {
           if (!best || score < best.score) best = { matches: selected.slice(), score };
           return;
@@ -743,7 +770,7 @@ button.is-pressed {
 
         const options = (byPlayer.get(firstUnused.id) || [])
           .filter(c => !c.players.some(p => usedIds.has(p.id)))
-          .slice(0, 90);
+          .slice(0, SEARCH_OPTION_LIMIT);
 
         for (const c of options) {
           c.players.forEach(p => usedIds.add(p.id));
@@ -751,6 +778,7 @@ button.is-pressed {
           search(selected, usedIds, score + c.score);
           selected.pop();
           c.players.forEach(p => usedIds.delete(p.id));
+          if (aborted) break;
         }
       }
 
