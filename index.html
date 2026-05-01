@@ -350,6 +350,74 @@ button.is-pressed {
   line-height: 1.55;
   margin-top: 8px;
 }
+.release-notes-card {
+  margin-top: 14px;
+  padding: 0;
+  overflow: hidden;
+}
+.release-notes-card details {
+  display: block;
+}
+.release-notes-card summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--text);
+  background: linear-gradient(145deg, rgba(56,189,248,.14), rgba(255,255,255,.04));
+}
+.release-notes-card summary::-webkit-details-marker { display: none; }
+.release-notes-card summary::after {
+  content: '▼';
+  font-size: 11px;
+  color: #bae6fd;
+  transition: transform .18s ease;
+}
+.release-notes-card details[open] summary::after { transform: rotate(180deg); }
+.release-notes-body {
+  padding: 0 14px 14px;
+  display: grid;
+  gap: 10px;
+}
+.release-note-item {
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.045);
+  border-radius: 14px;
+  padding: 12px 13px;
+}
+.release-note-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.release-note-version {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(56,189,248,.16);
+  color: #bae6fd;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+.release-note-title {
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 700;
+}
+.release-note-text {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
 @media (max-width: 819px) {
   .member-row {
     grid-template-columns: 1fr auto;
@@ -377,13 +445,13 @@ button.is-pressed {
 <body>
   <main class="app">
     <header>
-      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V15</span></h1>
+      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V16</span></h1>
       <p class="subtitle">登録メンバーは最大30人まで保持。毎回の開催では、その中から当日参加者だけを選んで対戦表を作成できます。</p>
 
       <div class="install-tip" id="installTip">
         <div class="ios-badge">iPhone ホーム画面対応</div>
         <strong>Safariで開いて「共有」→「ホーム画面に追加」でアプリ風に使えます。</strong>
-        <span>登録メンバー・当日参加者・直前の対戦表は、この端末内に保存されます。V15では共有画像を3列固定にし、チャレンジ表記を加油！＋炎バッジに刷新しています。</span>
+        <span>登録メンバー・当日参加者・直前の対戦表は、この端末内に保存されます。更新内容は画面最下部のアップデートノートで確認できます。</span>
       </div>
     </header>
 
@@ -485,6 +553,30 @@ button.is-pressed {
 
     <section class="schedule" id="schedule"></section>
 
+    <section class="card release-notes-card">
+      <details>
+        <summary>アップデートノート</summary>
+        <div class="release-notes-body">
+          <div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V16</span><span class="release-note-title">共有画像の視認性を再調整</span></div>
+            <div class="release-note-text">共有画像のペア名を左右中心で整え、加油！を白抜き文字のオレンジ楕円バッジへ変更。炎バッジは背景なしの炎アイコンのみとし、差7以内は🔥1つ、差8以上は🔥🔥で表示します。テキスト表示ではレーティング非表示設定時に合計値と差も出さないよう修正しました。</div>
+          </div>
+          <div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V15</span><span class="release-note-title">3列固定の共有画像へ刷新</span></div>
+            <div class="release-note-text">共有画像を常に3列固定にし、チャレンジ側は左に加油！、右に炎アイコンで強調。休憩者名の文字サイズも少し上げて見やすくしました。</div>
+          </div>
+          <div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V14</span><span class="release-note-title">レーティング目安とカード高さ統一</span></div>
+            <div class="release-note-text">メンバーマスター内にレーティング目安を常時表示し、共有画像のチャレンジ有無で対戦カードの高さが変わらないよう調整しました。</div>
+          </div>
+          <div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V13以前</span><span class="release-note-title">参加者管理と共有画像の基礎改善</span></div>
+            <div class="release-note-text">30人管理、前回参加者復元、共有画像の複数列化、中央寄せ、チャレンジ強調など、これまでの改善内容を引き継いでいます。</div>
+          </div>
+        </div>
+      </details>
+    </section>
+
     <p class="footer-note">ホーム画面追加後はSafariのタブ表示なしで起動できます。登録メンバーと当日参加者は別管理です。</p>
   </main>
 
@@ -501,8 +593,8 @@ button.is-pressed {
     const SEARCH_TIME_LIMIT_MS = 180;
     const IMAGE_BASE_WIDTH = 1680;
     const IMAGE_MAX_HEIGHT = 12000;
-    const STORAGE_KEY = "bd_doubles_scheduler_v15";
-    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v14", "bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
+    const STORAGE_KEY = "bd_doubles_scheduler_v16";
+    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v15", "bd_doubles_scheduler_v14", "bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
     const DEFAULT_SETTINGS = {
       useRatings: true,
       showRatings: false,
@@ -1285,7 +1377,7 @@ button.is-pressed {
           const b = c.teamB.map((p) => formatPersonPlain(p, { includeRating: includeRatings })).join(" & ");
           const aText = c.challengeTeam === "A" ? `${a}【チャレンジ！】` : a;
           const bText = c.challengeTeam === "B" ? `${b}【チャレンジ！】` : b;
-          const suffix = appSettings.useRatings && Number.isFinite(c.sumA) ? ` / 合計 ${formatRatingValue(c.sumA)}-${formatRatingValue(c.sumB)} / 差 ${formatRatingValue(c.diff)}` : "";
+          const suffix = appSettings.useRatings && includeRatings && Number.isFinite(c.sumA) ? ` / 合計 ${formatRatingValue(c.sumA)}-${formatRatingValue(c.sumB)} / 差 ${formatRatingValue(c.diff)}` : "";
           lines.push(`Court ${c.courtNo}: ${aText}  vs  ${bText}${suffix}`);
         });
         lines.push("");
@@ -1373,13 +1465,13 @@ button.is-pressed {
       const columns = 3;
       const contentWidth = width - padding * 2;
       const cardWidth = Math.floor((contentWidth - columnGap * (columns - 1)) / columns);
-      const leftAccentWidth = 84;
-      const rightBadgeWidth = 48;
-      const nameGap = 12;
+      const decoSlotWidth = 92;
+      const nameGap = 10;
       const teamBoxSidePadding = 16;
       const nameLineHeight = 31;
       const teamBoxMinHeight = 86;
-      const badgeSize = 28;
+      const cheerPillWidth = 76;
+      const cheerPillHeight = 34;
 
       const selectedCount = schedule.__meta && schedule.__meta.selectedCount ? schedule.__meta.selectedCount : getSelectedMembers().length;
       const courtCount = schedule.__meta && schedule.__meta.courtCount ? schedule.__meta.courtCount : $("courtCount").value;
@@ -1390,14 +1482,14 @@ button.is-pressed {
         ctx.font = "21px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
         const restText = round.rests.length ? round.rests.map((p) => p.name).join("、") : "なし";
         const restLines = wrapText(ctx, `休憩：${restText}`, cardWidth - 48);
-        let roundHeight = 18 + roundHeaderHeight + restLines.length * 27 + 16;
+        let roundHeight = 18 + roundHeaderHeight + restLines.length * 28 + 16;
         const rows = [];
 
         round.courts.forEach((c) => {
           const teamAText = `${c.teamA.map((p) => p.name).join("・")}`;
           const teamBText = `${c.teamB.map((p) => p.name).join("・")}`;
           ctx.font = "bold 27px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-          const usableNameWidth = cardWidth - 28 - teamBoxSidePadding * 2 - leftAccentWidth - rightBadgeWidth - nameGap * 2;
+          const usableNameWidth = cardWidth - 28 - teamBoxSidePadding * 2 - decoSlotWidth * 2 - nameGap * 2;
           const teamALines = wrapText(ctx, teamAText, usableNameWidth);
           const teamBLines = wrapText(ctx, teamBText, usableNameWidth);
           const aBoxHeight = Math.max(teamBoxMinHeight, teamALines.length * nameLineHeight + 34);
@@ -1410,7 +1502,8 @@ button.is-pressed {
             rowHeight,
             challengeTeam: c.challengeTeam || null,
             aBoxHeight,
-            bBoxHeight
+            bBoxHeight,
+            diff: Number.isFinite(c.diff) ? c.diff : null,
           });
           roundHeight += rowHeight + 12;
         });
@@ -1454,25 +1547,52 @@ button.is-pressed {
       y += 34;
       ctx.fillStyle = '#64748b';
       ctx.font = "18px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-      ctx.fillText('共有用画像：3列固定 / レーティング非表示 / 加油！＋炎バッジ', width / 2, y);
+      ctx.fillText('共有用画像：3列固定 / レーティング非表示 / 加油！＋炎アイコン強調', width / 2, y);
       y += 28;
 
-      const drawFlameBadge = (cx, cy) => {
-        const grad = ctx.createLinearGradient(cx - badgeSize / 2, cy - badgeSize / 2, cx + badgeSize / 2, cy + badgeSize / 2);
-        grad.addColorStop(0, '#fb923c');
-        grad.addColorStop(1, '#ea580c');
-        roundedRect(ctx, cx - badgeSize / 2, cy - badgeSize / 2, badgeSize, badgeSize, 12);
-        ctx.fillStyle = grad;
-        ctx.fill();
-        ctx.strokeStyle = '#fdba74';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-        ctx.fillStyle = '#fff7ed';
-        ctx.font = "bold 18px -apple-system, BlinkMacSystemFont, 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif";
-        ctx.fillText('🔥', cx, cy + 6);
+      const flameCountFromDiff = (diff) => Number.isFinite(diff) && diff >= 8 ? 2 : 1;
+
+      const drawFlames = (cx, cy, count) => {
+        ctx.save();
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = "28px -apple-system, BlinkMacSystemFont, 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif";
+        ctx.shadowColor = 'rgba(234,88,12,.18)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetY = 2;
+        if (count >= 2) {
+          ctx.fillText('🔥', cx - 15, cy);
+          ctx.fillText('🔥', cx + 15, cy);
+        } else {
+          ctx.fillText('🔥', cx, cy);
+        }
+        ctx.restore();
       };
 
-      const drawTeamBox = (boxX, boxY, boxW, boxH, teamLines, isChallenge) => {
+      const drawCheerPill = (cx, cy) => {
+        const pillX = cx - cheerPillWidth / 2;
+        const pillY = cy - cheerPillHeight / 2;
+        const grad = ctx.createLinearGradient(pillX, pillY, pillX + cheerPillWidth, pillY + cheerPillHeight);
+        grad.addColorStop(0, '#f59e0b');
+        grad.addColorStop(1, '#f97316');
+        roundedRect(ctx, pillX, pillY, cheerPillWidth, cheerPillHeight, cheerPillHeight / 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.shadowColor = 'rgba(249,115,22,.2)';
+        ctx.shadowBlur = 12;
+        ctx.shadowOffsetY = 4;
+        ctx.strokeStyle = '#fdba74';
+        ctx.lineWidth = 1.4;
+        ctx.stroke();
+        ctx.shadowColor = 'transparent';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#fff7ed';
+        ctx.font = "bold 18px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+        ctx.fillText('加油！', cx, cy + 1);
+      };
+
+      const drawTeamBox = (boxX, boxY, boxW, boxH, teamLines, isChallenge, diff) => {
         roundedRect(ctx, boxX, boxY, boxW, boxH, 16);
         ctx.fillStyle = isChallenge ? '#fff1d6' : '#ffffff';
         ctx.fill();
@@ -1480,30 +1600,31 @@ button.is-pressed {
         ctx.lineWidth = isChallenge ? 2.1 : 1.2;
         ctx.stroke();
 
+        const contentLeft = boxX + teamBoxSidePadding;
+        const contentRight = boxX + boxW - teamBoxSidePadding;
         const centerY = boxY + boxH / 2;
-        const leftX = boxX + teamBoxSidePadding + leftAccentWidth / 2;
-        const rightX = boxX + boxW - teamBoxSidePadding - rightBadgeWidth / 2;
-        const nameLeft = boxX + teamBoxSidePadding + leftAccentWidth + nameGap;
-        const nameRight = boxX + boxW - teamBoxSidePadding - rightBadgeWidth - nameGap;
-        const nameCenterX = (nameLeft + nameRight) / 2;
-        const textBlockHeight = teamLines.length * nameLineHeight;
-        let lineY = centerY - textBlockHeight / 2 + 21;
+        const leftX = contentLeft + decoSlotWidth / 2;
+        const rightX = contentRight - decoSlotWidth / 2;
+        const nameCenterX = boxX + boxW / 2;
+        const textBlockHeight = (teamLines.length - 1) * nameLineHeight;
+        const firstLineY = centerY - textBlockHeight / 2;
 
         if (isChallenge) {
-          ctx.fillStyle = '#c2410c';
-          ctx.font = "bold 17px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-          ctx.fillText('加油！', leftX, centerY + 6);
-          drawFlameBadge(rightX, centerY);
+          drawCheerPill(leftX, centerY);
+          drawFlames(rightX, centerY, flameCountFromDiff(diff));
           ctx.fillStyle = '#9a3412';
         } else {
           ctx.fillStyle = '#0f172a';
         }
 
+        ctx.save();
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
         ctx.font = "bold 27px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-        teamLines.forEach((line) => {
-          ctx.fillText(line, nameCenterX, lineY);
-          lineY += nameLineHeight;
+        teamLines.forEach((line, index) => {
+          ctx.fillText(line, nameCenterX, firstLineY + index * nameLineHeight);
         });
+        ctx.restore();
       };
 
       rowGroups.forEach((group) => {
@@ -1525,10 +1646,10 @@ button.is-pressed {
 
           let innerY = y + 78;
           ctx.fillStyle = '#475569';
-          ctx.font = "19px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+          ctx.font = "20px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
           block.restLines.forEach((line) => {
             ctx.fillText(line, x + cardWidth / 2, innerY);
-            innerY += 26;
+            innerY += 28;
           });
           innerY += 4;
 
@@ -1552,13 +1673,13 @@ button.is-pressed {
             let lineY = innerY + 44;
             const boxX = rowX + 14;
             const boxW = rowW - 28;
-            drawTeamBox(boxX, lineY, boxW, row.aBoxHeight, row.teamALines, row.challengeTeam === 'A');
+            drawTeamBox(boxX, lineY, boxW, row.aBoxHeight, row.teamALines, row.challengeTeam === 'A', row.diff);
             lineY += row.aBoxHeight + 14;
             ctx.fillStyle = '#64748b';
             ctx.font = "bold 21px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
             ctx.fillText('VS', x + cardWidth / 2, lineY + 16);
             lineY += 30;
-            drawTeamBox(boxX, lineY, boxW, row.bBoxHeight, row.teamBLines, row.challengeTeam === 'B');
+            drawTeamBox(boxX, lineY, boxW, row.bBoxHeight, row.teamBLines, row.challengeTeam === 'B', row.diff);
 
             innerY += row.rowHeight + 12;
           });
@@ -1584,7 +1705,7 @@ button.is-pressed {
           <strong style="color:#fff;font-size:18px;">対戦表画像プレビュー</strong>
           <button id="closeImagePreview" style="border:none;border-radius:12px;padding:10px 14px;background:#1d4ed8;color:#fff;font-weight:700;">閉じる</button>
         </div>
-        <div style="color:#cbd5e1;font-size:13px;line-height:1.6;">共有画像では、チャレンジ側を左に「加油！」、右に炎バッジで強調表示し、常に3列固定で出力します。</div>
+        <div style="color:#cbd5e1;font-size:13px;line-height:1.6;">共有画像では、チャレンジ側を左の加油！楕円バッジと右の炎アイコンで強調し、常に3列固定で出力します。炎は差7以内で1つ、差8以上で2つ表示されます。</div>
         <div style="flex:1;overflow:auto;-webkit-overflow-scrolling:touch;background:#0b1220;border-radius:16px;padding:10px;">
           <img src="${url}" alt="対戦表画像" style="display:block;max-width:100%;height:auto;margin:0 auto;border-radius:16px;box-shadow:0 14px 36px rgba(0,0,0,.3);background:#fff;" />
         </div>
@@ -1616,7 +1737,7 @@ button.is-pressed {
           tip.innerHTML = `
             <div class="ios-badge">ホーム画面起動中</div>
             <strong>アプリ風の表示で起動しています。</strong>
-            <span>登録メンバーと前回の当日参加者はこのiPhone内に保存されます。ホーム画面からそのまま使えます。</span>
+            <span>登録メンバーと前回の当日参加者はこのiPhone内に保存されます。更新内容は画面最下部のアップデートノートで確認できます。</span>
           `;
         }
       }
