@@ -445,7 +445,7 @@ button.is-pressed {
 <body>
   <main class="app">
     <header>
-      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V16</span></h1>
+      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V17</span></h1>
       <p class="subtitle">登録メンバーは最大30人まで保持。毎回の開催では、その中から当日参加者だけを選んで対戦表を作成できます。</p>
 
       <div class="install-tip" id="installTip">
@@ -558,8 +558,12 @@ button.is-pressed {
         <summary>アップデートノート</summary>
         <div class="release-notes-body">
           <div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V17</span><span class="release-note-title">チャレンジ炎マークを3段階に細分化</span></div>
+            <div class="release-note-text">共有画像内のチャレンジ表現を、レート合計差に応じた3段階の炎マークに細分化しました。差3〜5は🔥1つ、差5.5〜7は🔥🔥2つ、差8以上は🔥🔥🔥3つを表示します。差3未満はチャレンジ扱いとならず炎は表示されません。境界値は、5は🔥、5.5は🔥🔥、7は🔥🔥、8は🔥🔥🔥に分類されます。あわせて、共有画像下部の備考欄説明を省略し、炎間の余白も詰めてコンパクト化しました。</div>
+          </div>
+          <div class="release-note-item">
             <div class="release-note-head"><span class="release-note-version">V16</span><span class="release-note-title">共有画像の視認性を再調整</span></div>
-            <div class="release-note-text">共有画像のペア名を左右中心で整え、加油！を白抜き文字のオレンジ楕円バッジへ変更。炎バッジは背景なしの炎アイコンのみとし、差7以内は🔥1つ、差8以上は🔥🔥で表示します。テキスト表示ではレーティング非表示設定時に合計値と差も出さないよう修正しました。</div>
+            <div class="release-note-text">共有画像のペア名を左右中心で整え、加油！を白抜き文字のオレンジ楕円バッジへ変更。炎バッジは背景なしの炎アイコンのみとし、差7以内は🔥1つ、差8以上は🔥🔥で表示する仕様でリリース（V17で3段階表現に拡張）。テキスト表示ではレーティング非表示設定時に合計値と差も出さないよう修正しました。</div>
           </div>
           <div class="release-note-item">
             <div class="release-note-head"><span class="release-note-version">V15</span><span class="release-note-title">3列固定の共有画像へ刷新</span></div>
@@ -593,8 +597,8 @@ button.is-pressed {
     const SEARCH_TIME_LIMIT_MS = 180;
     const IMAGE_BASE_WIDTH = 1680;
     const IMAGE_MAX_HEIGHT = 12000;
-    const STORAGE_KEY = "bd_doubles_scheduler_v16";
-    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v15", "bd_doubles_scheduler_v14", "bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
+    const STORAGE_KEY = "bd_doubles_scheduler_v17";
+    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v16", "bd_doubles_scheduler_v15", "bd_doubles_scheduler_v14", "bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
     const DEFAULT_SETTINGS = {
       useRatings: true,
       showRatings: false,
@@ -1545,24 +1549,33 @@ button.is-pressed {
       ctx.font = "24px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
       ctx.fillText(metaText, width / 2, y);
       y += 34;
-      ctx.fillStyle = '#64748b';
-      ctx.font = "18px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-      ctx.fillText('共有用画像：3列固定 / レーティング非表示 / 加油！＋炎アイコン強調', width / 2, y);
-      y += 28;
+      y += 6;
 
-      const flameCountFromDiff = (diff) => Number.isFinite(diff) && diff >= 8 ? 2 : 1;
+      const flameCountFromDiff = (diff) => {
+        if (!Number.isFinite(diff)) return 0;
+        if (diff >= 8) return 3;
+        if (diff >= 5.5) return 2;
+        if (diff >= 3) return 1;
+        return 0;
+      };
 
       const drawFlames = (cx, cy, count) => {
+        if (!count || count <= 0) return;
         ctx.save();
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.font = "28px -apple-system, BlinkMacSystemFont, 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif";
+        ctx.font = "26px -apple-system, BlinkMacSystemFont, 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif";
         ctx.shadowColor = 'rgba(234,88,12,.18)';
         ctx.shadowBlur = 10;
         ctx.shadowOffsetY = 2;
-        if (count >= 2) {
-          ctx.fillText('🔥', cx - 15, cy);
-          ctx.fillText('🔥', cx + 15, cy);
+        const flameSpacing = 18;
+        if (count >= 3) {
+          ctx.fillText('🔥', cx - flameSpacing, cy);
+          ctx.fillText('🔥', cx, cy);
+          ctx.fillText('🔥', cx + flameSpacing, cy);
+        } else if (count === 2) {
+          ctx.fillText('🔥', cx - flameSpacing / 2, cy);
+          ctx.fillText('🔥', cx + flameSpacing / 2, cy);
         } else {
           ctx.fillText('🔥', cx, cy);
         }
@@ -1705,7 +1718,7 @@ button.is-pressed {
           <strong style="color:#fff;font-size:18px;">対戦表画像プレビュー</strong>
           <button id="closeImagePreview" style="border:none;border-radius:12px;padding:10px 14px;background:#1d4ed8;color:#fff;font-weight:700;">閉じる</button>
         </div>
-        <div style="color:#cbd5e1;font-size:13px;line-height:1.6;">共有画像では、チャレンジ側を左の加油！楕円バッジと右の炎アイコンで強調し、常に3列固定で出力します。炎は差7以内で1つ、差8以上で2つ表示されます。</div>
+        <div style="color:#cbd5e1;font-size:13px;line-height:1.6;">共有画像では、チャレンジ側を左の加油！楕円バッジと右の炎アイコンで強調し、常に3列固定で出力します。レート合計差3〜5は🔥1つ、5.5〜7は🔥🔥2つ、8以上は🔥🔥🔥3つで表示されます。</div>
         <div style="flex:1;overflow:auto;-webkit-overflow-scrolling:touch;background:#0b1220;border-radius:16px;padding:10px;">
           <img src="${url}" alt="対戦表画像" style="display:block;max-width:100%;height:auto;margin:0 auto;border-radius:16px;box-shadow:0 14px 36px rgba(0,0,0,.3);background:#fff;" />
         </div>
