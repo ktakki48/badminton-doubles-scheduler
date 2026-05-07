@@ -280,10 +280,15 @@ button.is-pressed {
 }
 .selection-main {
   min-width: 0;
-  display: grid;
-  gap: 4px;
 }
-.selection-top {
+.selection-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+.selection-left {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -308,11 +313,6 @@ button.is-pressed {
   color: #fde68a;
   white-space: nowrap;
 }
-.selection-bottom {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
 .status-tag {
   display: inline-flex;
   justify-content: center;
@@ -325,24 +325,47 @@ button.is-pressed {
   font-weight: 800;
   background: rgba(255,255,255,.08);
   color: var(--muted);
+  margin-left: auto;
 }
 .selection-row.is-checked .status-tag {
   background: rgba(56,189,248,.18);
   color: #bae6fd;
 }
-.member-actions {
+.member-main {
+  width: 100%;
+  display: grid;
+  gap: 6px;
+}
+.member-head {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.member-meta {
+  min-width: 0;
+}
+.member-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.member-actions {
+  display: inline-flex;
   gap: 6px;
   flex-wrap: nowrap;
   justify-content: flex-end;
+  flex: 0 0 auto;
 }
 .member-actions .small-btn {
-  min-height: 36px;
-  padding: 7px 10px;
+  min-height: 34px;
+  padding: 6px 10px;
   white-space: nowrap;
 }
 .member-row {
-  grid-template-columns: minmax(0,1fr) auto auto;
+  grid-template-columns: 1fr;
+  align-items: stretch;
 }
 .name-wrap {
   min-width: 0;
@@ -350,7 +373,6 @@ button.is-pressed {
 .mini-note {
   color: var(--muted);
   font-size: .76rem;
-  margin-top: 4px;
   line-height: 1.4;
 }
 .section-stack {
@@ -371,7 +393,8 @@ button.is-pressed {
 }
 .master-summary-list {
   display: grid;
-  gap: 3px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 10px;
   margin-top: 10px;
 }
 .master-summary-row {
@@ -379,15 +402,20 @@ button.is-pressed {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 7px 2px;
-  border-bottom: 1px dashed rgba(255,255,255,.10);
+  padding: 8px 10px;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 12px;
+  background: rgba(255,255,255,.04);
   color: var(--muted);
-  font-size: .84rem;
+  font-size: .83rem;
 }
-.master-summary-row:last-child { border-bottom: 0; }
 .master-summary-name {
   color: var(--text);
   font-weight: 700;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .master-summary-rating {
   color: #bae6fd;
@@ -475,24 +503,23 @@ button.is-pressed {
   line-height: 1.65;
 }
 @media (max-width: 819px) {
-  .member-row {
-    grid-template-columns: 1fr auto;
-    grid-template-areas:
-      "name rating"
-      "actions actions";
+  .master-summary-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .member-row .name-wrap { grid-area: name; }
-  .member-row .rating { grid-area: rating; justify-self: end; }
-  .member-actions { grid-area: actions; justify-content: flex-end; }
-  .member-actions .small-btn { flex: 0 0 auto; }
+  .member-foot {
+    align-items: flex-start;
+  }
   .selection-row {
     grid-template-columns: auto 1fr;
   }
-  .selection-top {
+  .selection-left {
     gap: 6px;
   }
 }
 @media (max-width: 420px) {
+  .master-summary-list {
+    grid-template-columns: 1fr;
+  }
   .selection-name {
     font-size: .92rem;
   }
@@ -510,7 +537,7 @@ button.is-pressed {
 <body>
   <main class="app">
     <header>
-      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V19</span></h1>
+      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V19.1</span></h1>
       <p class="subtitle">登録メンバーは最大30人まで保持。毎回の開催では、その中から当日参加者だけを選んで対戦表を作成できます。</p>
 
       <div class="install-tip" id="installTip">
@@ -627,6 +654,10 @@ button.is-pressed {
         <summary>アップデートノート</summary>
         <div class="release-notes-body">
           <div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V19.1</span><span class="release-note-title">一覧カードと参加者表示のレイアウト不具合を修正</span></div>
+            <div class="release-note-text">登録メンバー一覧の編集・削除ボタンを名前カード内で確実に押せる位置へ再配置し、テキスト一覧は2列寄りのバランスに調整しました。今日の参加者セットアップでは、参加・未参加バッジを右寄せ1行表示へ変更し、並び順もレートの高い順へ統一しています。</div>
+          </div>
+          <div class="release-note-item">
             <div class="release-note-head"><span class="release-note-version">V19</span><span class="release-note-title">メンバー管理画面の配置と一覧性を改善</span></div>
             <div class="release-note-text">登録メンバー一覧カードをメンバーマスター管理の直下へ移動し、ホーム画面内で管理導線をまとめました。あわせて、レート順のテキスト一覧を追加し、登録メンバー一覧の編集・削除ボタンを同一行でスリム化。今日の参加者セットアップも、名前とレートを上段、参加・未参加を下段に整理したコンパクト表示へ刷新しました。</div>
           </div>
@@ -679,8 +710,8 @@ button.is-pressed {
     const SEARCH_TIME_LIMIT_MS = 180;
     const IMAGE_BASE_WIDTH = 1680;
     const IMAGE_MAX_HEIGHT = 12000;
-    const STORAGE_KEY = "bd_doubles_scheduler_v19";
-    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v18", "bd_doubles_scheduler_v17", "bd_doubles_scheduler_v16", "bd_doubles_scheduler_v15", "bd_doubles_scheduler_v14", "bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
+    const STORAGE_KEY = "bd_doubles_scheduler_v19_1";
+    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v19", "bd_doubles_scheduler_v18", "bd_doubles_scheduler_v17", "bd_doubles_scheduler_v16", "bd_doubles_scheduler_v15", "bd_doubles_scheduler_v14", "bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
     const DEFAULT_SETTINGS = {
       useRatings: true,
       showRatings: false,
@@ -986,14 +1017,20 @@ button.is-pressed {
         const div = document.createElement("div");
         div.className = "player member-row";
         div.innerHTML = `
-          <div class="name-wrap">
-            <div class="name">${escapeHtml(member.name)}</div>
-            <div class="mini-note">${selectedSet.has(member.id) ? "今日の参加者に選択中" : "今日は未選択"}</div>
-          </div>
-          <div class="rating">${appSettings.showRatings ? `R${ratingLabel(member)}` : "非表示"}</div>
-          <div class="member-actions">
-            <button class="small-btn secondary" data-edit="${member.id}">編集</button>
-            <button class="small-btn danger" data-remove="${member.id}">削除</button>
+          <div class="member-main">
+            <div class="member-head">
+              <div class="member-meta name-wrap">
+                <div class="name">${escapeHtml(member.name)}</div>
+              </div>
+              <div class="rating">${appSettings.showRatings ? `R${ratingLabel(member)}` : "非表示"}</div>
+            </div>
+            <div class="member-foot">
+              <div class="mini-note">${selectedSet.has(member.id) ? "今日の参加者に選択中" : "今日は未選択"}</div>
+              <div class="member-actions">
+                <button class="small-btn secondary" data-edit="${member.id}">編集</button>
+                <button class="small-btn danger" data-remove="${member.id}">削除</button>
+              </div>
+            </div>
           </div>
         `;
         wrap.appendChild(div);
@@ -1024,7 +1061,7 @@ button.is-pressed {
 
       members
         .slice()
-        .sort((a, b) => a.name.localeCompare(b.name, "ja"))
+        .sort((a, b) => sortRatingValue(b) - sortRatingValue(a) || a.name.localeCompare(b.name, "ja"))
         .forEach((member) => {
           const checked = selectedSet.has(member.id);
           const label = document.createElement("label");
@@ -1032,11 +1069,11 @@ button.is-pressed {
           label.innerHTML = `
             <input type="checkbox" data-toggle="${member.id}" ${checked ? "checked" : ""} />
             <div class="selection-main">
-              <div class="selection-top">
-                <span class="selection-name">${escapeHtml(member.name)}</span>
-                <span class="selection-rating-badge">${selectionRatingBadge(member)}</span>
-              </div>
-              <div class="selection-bottom">
+              <div class="selection-line">
+                <div class="selection-left">
+                  <span class="selection-name">${escapeHtml(member.name)}</span>
+                  <span class="selection-rating-badge">${selectionRatingBadge(member)}</span>
+                </div>
                 <span class="status-tag">${checked ? "参加" : "未参加"}</span>
               </div>
             </div>
