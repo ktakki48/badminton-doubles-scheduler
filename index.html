@@ -445,7 +445,7 @@ button.is-pressed {
 <body>
   <main class="app">
     <header>
-      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V17</span></h1>
+      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V18</span></h1>
       <p class="subtitle">登録メンバーは最大30人まで保持。毎回の開催では、その中から当日参加者だけを選んで対戦表を作成できます。</p>
 
       <div class="install-tip" id="installTip">
@@ -558,6 +558,10 @@ button.is-pressed {
         <summary>アップデートノート</summary>
         <div class="release-notes-body">
           <div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V18</span><span class="release-note-title">直前2試合同ペア回避と自動ゆらぎ調整を追加</span></div>
+            <div class="release-note-text">通常時は「差±3以内を最優先（A1）＋直前2試合の同ペアを強く回避（B2）＋上位候補からランダム選択（C2）」で組みます。候補のうち差5以内に収まる組み合わせが半数未満になる場合（基準X）、または参加者が8人未満の場合（基準Y）は、自動で「差±5目安＋直前2試合回避をやや緩める＋ランダム性を強める」方向へ切り替え、チャレンジが増えそうな局面では固定化しすぎないようにしました。</div>
+          </div>
+          <div class="release-note-item">
             <div class="release-note-head"><span class="release-note-version">V17</span><span class="release-note-title">チャレンジ炎マークを3段階に細分化</span></div>
             <div class="release-note-text">共有画像内のチャレンジ表現を、レート合計差に応じた3段階の炎マークに細分化しました。差3〜5は🔥1つ、差5.5〜7は🔥🔥2つ、差8以上は🔥🔥🔥3つを表示します。差3未満はチャレンジ扱いとならず炎は表示されません。境界値は、5は🔥、5.5は🔥🔥、7は🔥🔥、8は🔥🔥🔥に分類されます。あわせて、共有画像下部の備考欄説明を省略し、炎間の余白も詰めてコンパクト化しました。</div>
           </div>
@@ -591,14 +595,19 @@ button.is-pressed {
     const MIN_RATING = 1;
     const MAX_RATING = 10;
     const ALLOWED_RATINGS = [1, 2, 3, 4, 4.5, 5, 5.5, 6, 7, 8, 9, 10];
-    const MAX_ALLOWED_TEAM_DIFF = 5;
+    const CHALLENGE_MIN_DIFF = 3;
+    const NORMAL_TARGET_TEAM_DIFF = 3;
+    const RELAXED_TARGET_TEAM_DIFF = 5;
+    const RELAX_TRIGGER_GOOD_RATE = 0.5;
+    const RELAX_TRIGGER_ACTIVE_COUNT = 8;
+    const RECENT_PAIR_LOOKBACK = 2;
     const SEARCH_OPTION_LIMIT = 24;
     const SEARCH_NODE_LIMIT = 12000;
     const SEARCH_TIME_LIMIT_MS = 180;
     const IMAGE_BASE_WIDTH = 1680;
     const IMAGE_MAX_HEIGHT = 12000;
-    const STORAGE_KEY = "bd_doubles_scheduler_v17";
-    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v16", "bd_doubles_scheduler_v15", "bd_doubles_scheduler_v14", "bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
+    const STORAGE_KEY = "bd_doubles_scheduler_v18";
+    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v17", "bd_doubles_scheduler_v16", "bd_doubles_scheduler_v15", "bd_doubles_scheduler_v14", "bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
     const DEFAULT_SETTINGS = {
       useRatings: true,
       showRatings: false,
@@ -820,7 +829,7 @@ button.is-pressed {
         ? '<div class="mode-help">レーティングありモードでは、当日参加者全員のレーティング設定が必要です。</div><div class="compact-note"><strong>レーティング目安：</strong> C：1～3、B3：4～4.5、B2：5～5.5、B1：6～7、A：8～10</div>'
         : '<div class="mode-help">レーティングは未設定でも保存できます。レーティングなしモードでは組み分けに使いません。</div><div class="compact-note"><strong>レーティング目安：</strong> C：1～3、B3：4～4.5、B2：5～5.5、B1：6～7、A：8～10</div>';
       $("modeHelp").textContent = appSettings.useRatings
-        ? `レーティングありでは、まず差が±${MAX_ALLOWED_TEAM_DIFF}以内の対戦を優先し、難しい場合だけチャレンジカードを混ぜます。`
+        ? "レーティングありでは、通常は差±3以内と直前2試合の同ペア回避を優先します。差5以内に収まる候補が半数未満、または参加者が8人未満のときは、差±5目安＋ランダム性強めへ自動で少し緩めます。"
         : "レーティングなしでは同じペアの重複回避・同じ相手との対戦回避・出場バランスを優先します。";
       document.body.classList.toggle("rating-hidden", !appSettings.showRatings);
     }
@@ -1082,7 +1091,8 @@ button.is-pressed {
         rested: 0,
         lastRest: false,
         partners: new Map(),
-        opponents: new Map()
+        opponents: new Map(),
+        recentPartners: new Map()
       }));
     }
 
@@ -1121,11 +1131,11 @@ button.is-pressed {
           rests.forEach((p) => { p.rested += 1; p.lastRest = true; });
           active.forEach((p) => { p.lastRest = false; });
 
-          const roundMatches = chooseRoundMatches(active, availableCourts);
+          const roundMatches = chooseRoundMatches(active, availableCourts, roundNo, activeMembers.length);
           const courts = roundMatches.map((match, idx) => {
             match.teamA.forEach((p) => p.played += 1);
             match.teamB.forEach((p) => p.played += 1);
-            recordHistory(match.teamA, match.teamB);
+            recordHistory(match.teamA, match.teamB, roundNo);
             return {
               courtNo: idx + 1,
               teamA: match.teamA.map(slim),
@@ -1168,12 +1178,63 @@ button.is-pressed {
       return p.played * 10 - p.rested * 12 - (p.lastRest ? 30 : 0) + Math.random();
     }
 
-    function chooseRoundMatches(active, courtCount) {
-      const candidates = buildMatchCandidates(active).sort((a, b) => a.score - b.score);
+    function collectCandidateStats(active) {
+      if (!appSettings.useRatings) return { ratedCandidateCount: 0, withinFiveCount: 0 };
+      let ratedCandidateCount = 0;
+      let withinFiveCount = 0;
+      const register = (teamA, teamB) => {
+        const sumA = (teamA[0].rating || 0) + (teamA[1].rating || 0);
+        const sumB = (teamB[0].rating || 0) + (teamB[1].rating || 0);
+        const diff = Math.abs(sumA - sumB);
+        ratedCandidateCount += 1;
+        if (diff <= RELAXED_TARGET_TEAM_DIFF) withinFiveCount += 1;
+      };
+      for (let i = 0; i < active.length - 3; i++) {
+        for (let j = i + 1; j < active.length - 2; j++) {
+          for (let k = j + 1; k < active.length - 1; k++) {
+            for (let l = k + 1; l < active.length; l++) {
+              const a = active[i], b = active[j], c = active[k], d = active[l];
+              register([a, b], [c, d]);
+              register([a, c], [b, d]);
+              register([a, d], [b, c]);
+            }
+          }
+        }
+      }
+      return { ratedCandidateCount, withinFiveCount };
+    }
+
+    function buildRoundStrategy(active, roundNo, selectedCount) {
+      const stats = collectCandidateStats(active);
+      const relaxedByX = appSettings.useRatings && stats.ratedCandidateCount > 0 && (stats.withinFiveCount / stats.ratedCandidateCount) < RELAX_TRIGGER_GOOD_RATE;
+      const relaxedByY = appSettings.useRatings && selectedCount < RELAX_TRIGGER_ACTIVE_COUNT;
+      const relaxed = appSettings.useRatings && (relaxedByX || relaxedByY);
+      return {
+        roundNo,
+        relaxed,
+        targetDiff: appSettings.useRatings ? (relaxed ? RELAXED_TARGET_TEAM_DIFF : NORMAL_TARGET_TEAM_DIFF) : null,
+        recentPairWeight: relaxed ? 76000 : 165000,
+        pairRepeatWeight: relaxed ? 18000 : 32000,
+        opponentRepeatWeight: relaxed ? 640 : 880,
+        diffWeight: relaxed ? 980 : 2100,
+        overTargetBasePenalty: relaxed ? 4200 : 18000,
+        overTargetStepPenalty: relaxed ? 2600 : 9600,
+        pairGapWeight: relaxed ? 12 : 9,
+        randomWeight: relaxed ? 5.2 : 2.2,
+        topSolutionWindow: relaxed ? 6 : 4,
+        optionShuffleWindow: relaxed ? 10 : 6,
+        solutionScoreSlack: relaxed ? 6500 : 3200
+      };
+    }
+
+    function chooseRoundMatches(active, courtCount, roundNo, selectedCount) {
+      const strategy = buildRoundStrategy(active, roundNo, selectedCount);
+      const candidates = buildMatchCandidates(active, strategy).sort((a, b) => a.score - b.score);
       const byPlayer = new Map(active.map((p) => [p.id, []]));
       candidates.forEach((c) => c.players.forEach((p) => byPlayer.get(p.id).push(c)));
 
       let best = null;
+      const solutionPool = [];
       let visited = 0;
       let aborted = false;
       const startedAt = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
@@ -1183,6 +1244,13 @@ button.is-pressed {
         return a.name.localeCompare(b.name, "ja");
       });
 
+      function pushSolution(solution) {
+        if (!best || solution.score < best.score) best = solution;
+        solutionPool.push(solution);
+        solutionPool.sort((a, b) => a.score - b.score);
+        if (solutionPool.length > 12) solutionPool.length = 12;
+      }
+
       function search(selected, usedIds, score) {
         visited += 1;
         const now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
@@ -1191,10 +1259,10 @@ button.is-pressed {
           return;
         }
         if (selected.length === courtCount) {
-          if (!best || score < best.score) best = { matches: selected.slice(), score };
+          pushSolution({ matches: selected.slice(), score });
           return;
         }
-        if (best && score >= best.score) return;
+        if (best && score >= best.score + strategy.solutionScoreSlack) return;
 
         const firstUnused = orderedActive.find((p) => !usedIds.has(p.id));
         if (!firstUnused) return;
@@ -1202,8 +1270,10 @@ button.is-pressed {
         const options = (byPlayer.get(firstUnused.id) || [])
           .filter((c) => !c.players.some((p) => usedIds.has(p.id)))
           .slice(0, SEARCH_OPTION_LIMIT);
+        const shuffledHead = options.slice(0, strategy.optionShuffleWindow).sort(() => Math.random() - 0.5);
+        const orderedOptions = shuffledHead.concat(options.slice(strategy.optionShuffleWindow));
 
-        for (const c of options) {
+        for (const c of orderedOptions) {
           c.players.forEach((p) => usedIds.add(p.id));
           selected.push(c);
           search(selected, usedIds, score + c.score);
@@ -1214,6 +1284,13 @@ button.is-pressed {
       }
 
       search([], new Set(), 0);
+      if (solutionPool.length) {
+        const baseline = solutionPool[0].score;
+        const topPool = solutionPool
+          .filter((sol, idx) => idx < strategy.topSolutionWindow || sol.score <= baseline + strategy.solutionScoreSlack)
+          .slice(0, strategy.topSolutionWindow);
+        return topPool[Math.floor(Math.random() * topPool.length)].matches;
+      }
       if (best) return best.matches;
 
       const used = new Set();
@@ -1227,16 +1304,16 @@ button.is-pressed {
       return greedy;
     }
 
-    function buildMatchCandidates(active) {
+    function buildMatchCandidates(active, strategy) {
       const out = [];
       for (let i = 0; i < active.length - 3; i++) {
         for (let j = i + 1; j < active.length - 2; j++) {
           for (let k = j + 1; k < active.length - 1; k++) {
             for (let l = k + 1; l < active.length; l++) {
               const a = active[i], b = active[j], c = active[k], d = active[l];
-              addPairingCandidate(out, [a, b], [c, d]);
-              addPairingCandidate(out, [a, c], [b, d]);
-              addPairingCandidate(out, [a, d], [b, c]);
+              addPairingCandidate(out, [a, b], [c, d], strategy);
+              addPairingCandidate(out, [a, c], [b, d], strategy);
+              addPairingCandidate(out, [a, d], [b, c], strategy);
             }
           }
         }
@@ -1244,29 +1321,31 @@ button.is-pressed {
       return out;
     }
 
-    function addPairingCandidate(out, teamA, teamB) {
+    function addPairingCandidate(out, teamA, teamB, strategy) {
       const useRatings = appSettings.useRatings;
       const sumA = useRatings ? ((teamA[0].rating || 0) + (teamA[1].rating || 0)) : null;
       const sumB = useRatings ? ((teamB[0].rating || 0) + (teamB[1].rating || 0)) : null;
       const diff = useRatings ? Math.abs(sumA - sumB) : null;
-      const overLimitPenalty = useRatings && diff > MAX_ALLOWED_TEAM_DIFF
-        ? 25000 + (diff - MAX_ALLOWED_TEAM_DIFF) * 8000
+      const overTargetPenalty = useRatings && diff > strategy.targetDiff
+        ? strategy.overTargetBasePenalty + (diff - strategy.targetDiff) * strategy.overTargetStepPenalty
         : 0;
-      const challengeTeam = useRatings && diff > MAX_ALLOWED_TEAM_DIFF
+      const challengeTeam = useRatings && diff >= CHALLENGE_MIN_DIFF
         ? (sumA < sumB ? "A" : "B")
         : null;
       const pairRepeat = partnerRepeatCount(teamA) + partnerRepeatCount(teamB);
+      const recentPairPenalty = recentPartnerPenalty(teamA, strategy.roundNo) + recentPartnerPenalty(teamB, strategy.roundNo);
       const opponentRepeat = opponentPenalty(teamA, teamB);
       const pairGapPenalty = useRatings ? Math.abs(teamA[0].rating - teamA[1].rating) + Math.abs(teamB[0].rating - teamB[1].rating) : 0;
       const playerRepeatBias = (teamA[0].played + teamA[1].played + teamB[0].played + teamB[1].played) * 0.02;
       const score =
-        pairRepeat * 100000 +
-        opponentRepeat * 700 +
-        (useRatings ? diff * 1200 : 0) +
-        overLimitPenalty +
-        pairGapPenalty * 8 +
+        recentPairPenalty * strategy.recentPairWeight +
+        pairRepeat * strategy.pairRepeatWeight +
+        opponentRepeat * strategy.opponentRepeatWeight +
+        (useRatings ? diff * strategy.diffWeight : 0) +
+        overTargetPenalty +
+        pairGapPenalty * strategy.pairGapWeight +
         playerRepeatBias +
-        Math.random();
+        Math.random() * strategy.randomWeight;
 
       out.push({
         players: [teamA[0], teamA[1], teamB[0], teamB[1]],
@@ -1276,6 +1355,7 @@ button.is-pressed {
         sumB,
         diff,
         pairRepeat,
+        recentPairPenalty,
         opponentRepeat,
         challengeTeam,
         score
@@ -1284,6 +1364,16 @@ button.is-pressed {
 
     function partnerRepeatCount(team) {
       return getCount(team[0].partners, team[1].id) + getCount(team[1].partners, team[0].id);
+    }
+
+    function recentPartnerPenalty(team, roundNo) {
+      const rounds = getRecentRounds(team[0].recentPartners, team[1].id);
+      return rounds.reduce((total, prevRoundNo) => {
+        const gap = roundNo - prevRoundNo;
+        if (gap === 1) return total + 1.35;
+        if (gap === 2) return total + 0.85;
+        return total;
+      }, 0);
     }
 
     function opponentPenalty(teamA, teamB) {
@@ -1296,15 +1386,30 @@ button.is-pressed {
       return map instanceof Map ? (map.get(id) || 0) : 0;
     }
 
+    function getRecentRounds(map, id) {
+      return map instanceof Map ? (map.get(id) || []) : [];
+    }
+
+    function addRecentRound(map, id, roundNo) {
+      const prev = Array.isArray(map.get(id)) ? map.get(id) : [];
+      const next = prev.filter((savedRoundNo) => roundNo - savedRoundNo <= RECENT_PAIR_LOOKBACK - 1);
+      next.push(roundNo);
+      map.set(id, next.slice(-RECENT_PAIR_LOOKBACK));
+    }
+
     function addMapCount(map, id) {
       map.set(id, (map.get(id) || 0) + 1);
     }
 
-    function recordHistory(teamA, teamB) {
+    function recordHistory(teamA, teamB, roundNo) {
       addMapCount(teamA[0].partners, teamA[1].id);
       addMapCount(teamA[1].partners, teamA[0].id);
       addMapCount(teamB[0].partners, teamB[1].id);
       addMapCount(teamB[1].partners, teamB[0].id);
+      addRecentRound(teamA[0].recentPartners, teamA[1].id, roundNo);
+      addRecentRound(teamA[1].recentPartners, teamA[0].id, roundNo);
+      addRecentRound(teamB[0].recentPartners, teamB[1].id, roundNo);
+      addRecentRound(teamB[1].recentPartners, teamB[0].id, roundNo);
       teamA.forEach((a) => teamB.forEach((b) => {
         addMapCount(a.opponents, b.id);
         addMapCount(b.opponents, a.id);

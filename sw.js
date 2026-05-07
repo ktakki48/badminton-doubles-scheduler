@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bd-doubles-scheduler-v17';
+const CACHE_NAME = 'bd-doubles-scheduler-v18';
 const ASSETS = [
   './',
   './index.html',
