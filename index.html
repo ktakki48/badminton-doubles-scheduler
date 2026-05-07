@@ -256,10 +256,11 @@ button.is-pressed {
   
 
 .master-grid { display: grid; gap: 12px; }
+.home-master-stack { align-content: start; }
 .selection-list { display: grid; gap: 7px; max-height: 430px; overflow: auto; padding-right: 2px; margin-top: 14px; }
 .selection-row {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto minmax(0, 1fr);
   gap: 10px;
   align-items: center;
   background: rgba(255,255,255,.075);
@@ -277,21 +278,46 @@ button.is-pressed {
   accent-color: var(--accent);
   margin: 0;
 }
-.selection-main strong {
-  display: block;
-  font-size: .96rem;
+.selection-main {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
 }
-.selection-main span {
-  display: block;
-  margin-top: 4px;
-  color: var(--muted);
-  font-size: .82rem;
-  line-height: 1.45;
+.selection-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.selection-name {
+  font-size: .96rem;
+  font-weight: 800;
+  min-width: 0;
+}
+.selection-rating-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: .73rem;
+  font-weight: 800;
+  line-height: 1.1;
+  background: rgba(245,158,11,.16);
+  border: 1px solid rgba(245,158,11,.28);
+  color: #fde68a;
+  white-space: nowrap;
+}
+.selection-bottom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .status-tag {
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  width: fit-content;
   min-width: 62px;
   padding: 4px 8px;
   border-radius: 999px;
@@ -307,8 +333,13 @@ button.is-pressed {
 .member-actions {
   display: flex;
   gap: 6px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: flex-end;
+}
+.member-actions .small-btn {
+  min-height: 36px;
+  padding: 7px 10px;
+  white-space: nowrap;
 }
 .member-row {
   grid-template-columns: minmax(0,1fr) auto auto;
@@ -337,6 +368,31 @@ button.is-pressed {
   height: 1px;
   background: rgba(255,255,255,.08);
   margin: 10px 0;
+}
+.master-summary-list {
+  display: grid;
+  gap: 3px;
+  margin-top: 10px;
+}
+.master-summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 2px;
+  border-bottom: 1px dashed rgba(255,255,255,.10);
+  color: var(--muted);
+  font-size: .84rem;
+}
+.master-summary-row:last-child { border-bottom: 0; }
+.master-summary-name {
+  color: var(--text);
+  font-weight: 700;
+}
+.master-summary-rating {
+  color: #bae6fd;
+  font-weight: 800;
+  white-space: nowrap;
 }
 .ghost-btn {
   background: transparent;
@@ -427,17 +483,26 @@ button.is-pressed {
   }
   .member-row .name-wrap { grid-area: name; }
   .member-row .rating { grid-area: rating; justify-self: end; }
-  .member-actions { grid-area: actions; justify-content: stretch; }
-  .member-actions .small-btn { flex: 1 1 auto; }
+  .member-actions { grid-area: actions; justify-content: flex-end; }
+  .member-actions .small-btn { flex: 0 0 auto; }
   .selection-row {
     grid-template-columns: auto 1fr;
-    grid-template-areas:
-      "check main"
-      "tag tag";
   }
-  .selection-row input[type="checkbox"] { grid-area: check; }
-  .selection-main { grid-area: main; }
-  .status-tag { grid-area: tag; width: 100%; }
+  .selection-top {
+    gap: 6px;
+  }
+}
+@media (max-width: 420px) {
+  .selection-name {
+    font-size: .92rem;
+  }
+  .selection-rating-badge {
+    font-size: .7rem;
+    padding: 4px 8px;
+  }
+  .member-actions {
+    gap: 5px;
+  }
 }
 
   </style>
@@ -445,7 +510,7 @@ button.is-pressed {
 <body>
   <main class="app">
     <header>
-      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V18</span></h1>
+      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V19</span></h1>
       <p class="subtitle">登録メンバーは最大30人まで保持。毎回の開催では、その中から当日参加者だけを選んで対戦表を作成できます。</p>
 
       <div class="install-tip" id="installTip">
@@ -456,32 +521,42 @@ button.is-pressed {
     </header>
 
     <section class="grid two">
-      <div class="card">
-        <h2>メンバーマスター管理</h2>
-        <div class="count" id="memberCount">0 / 30人</div>
-        <div class="form-row">
-          <div>
-            <label for="playerName">名前</label>
-            <input id="playerName" placeholder="例：田中" autocomplete="off" />
+      <div class="section-stack home-master-stack">
+        <div class="card">
+          <h2>メンバーマスター管理</h2>
+          <div class="count" id="memberCount">0 / 30人</div>
+          <div class="form-row">
+            <div>
+              <label for="playerName">名前</label>
+              <input id="playerName" placeholder="例：田中" autocomplete="off" />
+            </div>
+            <div>
+              <label for="playerRating">レーティング</label>
+              <select id="playerRating"></select>
+            </div>
           </div>
-          <div>
-            <label for="playerRating">レーティング</label>
-            <select id="playerRating"></select>
+          <div class="toolbar-inline">
+            <button id="addPlayer">メンバー登録</button>
+            <button class="secondary hidden" id="cancelEdit">編集をやめる</button>
+            <button class="secondary" id="toggleRatings">レーティング表示</button>
           </div>
+          <div class="buttons">
+            <button class="secondary" id="loadSample">サンプル30人</button>
+            <button class="danger" id="clearPlayers">マスター全削除</button>
+          </div>
+          <div class="privacy-pill" id="privacyStatus">共有向け：レーティング非表示</div>
+          <div class="meta-card" id="ratingGuide"><div class="mode-help">登録時にレーティングを入れておくと、当日の組み分けでそのまま使えます。</div><div class="compact-note"><strong>レーティング目安：</strong> C：1～3、B3：4～4.5、B2：5～5.5、B1：6～7、A：8～10</div></div>
+          <div class="master-card-note">新しく登録したメンバーは、当日参加者にも自動で追加されます。不要な場合は右側の参加者選択で外してください。</div>
+          <div class="error" id="error"></div>
         </div>
-        <div class="toolbar-inline">
-          <button id="addPlayer">メンバー登録</button>
-          <button class="secondary hidden" id="cancelEdit">編集をやめる</button>
-          <button class="secondary" id="toggleRatings">レーティング表示</button>
+
+        <div class="card">
+          <h2>登録メンバー一覧</h2>
+          <div class="count" id="masterListCount">0 / 30人</div>
+          <div class="master-summary-list" id="masterSummaryList"></div>
+          <div class="subtle-divider"></div>
+          <div class="players" id="players"></div>
         </div>
-        <div class="buttons">
-          <button class="secondary" id="loadSample">サンプル30人</button>
-          <button class="danger" id="clearPlayers">マスター全削除</button>
-        </div>
-        <div class="privacy-pill" id="privacyStatus">共有向け：レーティング非表示</div>
-        <div class="meta-card" id="ratingGuide"><div class="mode-help">登録時にレーティングを入れておくと、当日の組み分けでそのまま使えます。</div><div class="compact-note"><strong>レーティング目安：</strong> C：1～3、B3：4～4.5、B2：5～5.5、B1：6～7、A：8～10</div></div>
-        <div class="master-card-note">新しく登録したメンバーは、当日参加者にも自動で追加されます。不要な場合は右側の参加者選択で外してください。</div>
-        <div class="error" id="error"></div>
       </div>
 
       <div class="card" id="selectionCard">
@@ -538,13 +613,7 @@ button.is-pressed {
       </div>
     </section>
 
-    <section class="grid two" style="margin-top:12px;">
-      <div class="card">
-        <h2>登録メンバー一覧</h2>
-        <div class="count" id="masterListCount">0 / 30人</div>
-        <div class="players" id="players"></div>
-      </div>
-
+    <section class="section-stack" style="margin-top:12px;">
       <div class="card">
         <h2>出場バランス</h2>
         <div id="stats" class="stats"></div>
@@ -557,6 +626,10 @@ button.is-pressed {
       <details>
         <summary>アップデートノート</summary>
         <div class="release-notes-body">
+          <div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V19</span><span class="release-note-title">メンバー管理画面の配置と一覧性を改善</span></div>
+            <div class="release-note-text">登録メンバー一覧カードをメンバーマスター管理の直下へ移動し、ホーム画面内で管理導線をまとめました。あわせて、レート順のテキスト一覧を追加し、登録メンバー一覧の編集・削除ボタンを同一行でスリム化。今日の参加者セットアップも、名前とレートを上段、参加・未参加を下段に整理したコンパクト表示へ刷新しました。</div>
+          </div>
           <div class="release-note-item">
             <div class="release-note-head"><span class="release-note-version">V18</span><span class="release-note-title">直前2試合同ペア回避と自動ゆらぎ調整を追加</span></div>
             <div class="release-note-text">通常時は「差±3以内を最優先（A1）＋直前2試合の同ペアを強く回避（B2）＋上位候補からランダム選択（C2）」で組みます。候補のうち差5以内に収まる組み合わせが半数未満になる場合（基準X）、または参加者が8人未満の場合（基準Y）は、自動で「差±5目安＋直前2試合回避をやや緩める＋ランダム性を強める」方向へ切り替え、チャレンジが増えそうな局面では固定化しすぎないようにしました。</div>
@@ -606,8 +679,8 @@ button.is-pressed {
     const SEARCH_TIME_LIMIT_MS = 180;
     const IMAGE_BASE_WIDTH = 1680;
     const IMAGE_MAX_HEIGHT = 12000;
-    const STORAGE_KEY = "bd_doubles_scheduler_v18";
-    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v17", "bd_doubles_scheduler_v16", "bd_doubles_scheduler_v15", "bd_doubles_scheduler_v14", "bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
+    const STORAGE_KEY = "bd_doubles_scheduler_v19";
+    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v18", "bd_doubles_scheduler_v17", "bd_doubles_scheduler_v16", "bd_doubles_scheduler_v15", "bd_doubles_scheduler_v14", "bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
     const DEFAULT_SETTINGS = {
       useRatings: true,
       showRatings: false,
@@ -648,6 +721,21 @@ button.is-pressed {
 
     function ratingLabel(p) {
       return Number.isFinite(p.rating) ? formatRatingValue(p.rating) : "—";
+    }
+
+    function ratingTierLabel(value) {
+      if (!Number.isFinite(value)) return "未設定";
+      if (value <= 3) return "C";
+      if (value <= 4.5) return "B3";
+      if (value <= 5.5) return "B2";
+      if (value <= 7) return "B1";
+      return "A";
+    }
+
+    function selectionRatingBadge(member) {
+      if (!appSettings.showRatings) return "レート非表示";
+      if (!Number.isFinite(member.rating)) return "レート未設定";
+      return `${ratingTierLabel(member.rating)} / R${formatRatingValue(member.rating)}`;
     }
 
     function sanitizeMembers(source) {
@@ -869,33 +957,47 @@ button.is-pressed {
       $("memberCount").textContent = `${members.length} / ${MAX_MEMBERS}人`;
       $("masterListCount").textContent = `${members.length} / ${MAX_MEMBERS}人`;
       const wrap = $("players");
+      const summaryWrap = $("masterSummaryList");
       wrap.innerHTML = "";
+      summaryWrap.innerHTML = "";
 
       if (!members.length) {
+        summaryWrap.innerHTML = `<p class="note">レート順の一覧は、メンバー登録後にここへ表示されます。</p>`;
         wrap.innerHTML = `<p class="note">まずはメンバーマスターに参加者を登録してください。</p>`;
         return;
       }
 
       const selectedSet = new Set(selectedIds);
-      members
+      const sortedMembers = members
         .slice()
-        .sort((a, b) => sortRatingValue(b) - sortRatingValue(a) || a.name.localeCompare(b.name, "ja"))
-        .forEach((member) => {
-          const div = document.createElement("div");
-          div.className = "player member-row";
-          div.innerHTML = `
-            <div class="name-wrap">
-              <div class="name">${escapeHtml(member.name)}</div>
-              <div class="mini-note">${selectedSet.has(member.id) ? "今日の参加者に選択中" : "今日は未選択"}</div>
-            </div>
-            <div class="rating">${appSettings.showRatings ? ratingLabel(member) : "非表示"}</div>
-            <div class="member-actions">
-              <button class="small-btn secondary" data-edit="${member.id}">編集</button>
-              <button class="small-btn danger" data-remove="${member.id}">削除</button>
-            </div>
-          `;
-          wrap.appendChild(div);
-        });
+        .sort((a, b) => sortRatingValue(b) - sortRatingValue(a) || a.name.localeCompare(b.name, "ja"));
+
+      sortedMembers.forEach((member) => {
+        const row = document.createElement("div");
+        row.className = "master-summary-row";
+        row.innerHTML = `
+          <span class="master-summary-name">${escapeHtml(member.name)}</span>
+          <span class="master-summary-rating">${appSettings.showRatings ? `R${ratingLabel(member)}` : "レート非表示"}</span>
+        `;
+        summaryWrap.appendChild(row);
+      });
+
+      sortedMembers.forEach((member) => {
+        const div = document.createElement("div");
+        div.className = "player member-row";
+        div.innerHTML = `
+          <div class="name-wrap">
+            <div class="name">${escapeHtml(member.name)}</div>
+            <div class="mini-note">${selectedSet.has(member.id) ? "今日の参加者に選択中" : "今日は未選択"}</div>
+          </div>
+          <div class="rating">${appSettings.showRatings ? `R${ratingLabel(member)}` : "非表示"}</div>
+          <div class="member-actions">
+            <button class="small-btn secondary" data-edit="${member.id}">編集</button>
+            <button class="small-btn danger" data-remove="${member.id}">削除</button>
+          </div>
+        `;
+        wrap.appendChild(div);
+      });
 
       wrap.querySelectorAll("[data-edit]").forEach((btn) => {
         btn.addEventListener("click", () => startEditMember(btn.dataset.edit));
@@ -930,10 +1032,14 @@ button.is-pressed {
           label.innerHTML = `
             <input type="checkbox" data-toggle="${member.id}" ${checked ? "checked" : ""} />
             <div class="selection-main">
-              <strong>${escapeHtml(member.name)}</strong>
-              <span>${appSettings.showRatings ? `R${ratingLabel(member)}` : "レーティングは操作者のみ表示"}</span>
+              <div class="selection-top">
+                <span class="selection-name">${escapeHtml(member.name)}</span>
+                <span class="selection-rating-badge">${selectionRatingBadge(member)}</span>
+              </div>
+              <div class="selection-bottom">
+                <span class="status-tag">${checked ? "参加" : "未参加"}</span>
+              </div>
             </div>
-            <span class="status-tag">${checked ? "参加" : "未参加"}</span>
           `;
           wrap.appendChild(label);
         });
