@@ -434,6 +434,26 @@ button.is-pressed {
   line-height: 1.55;
   margin-top: 8px;
 }
+.zoom-mode-card {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+.zoom-mode-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #e2e8f0;
+}
+.zoom-mode-note {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+#toggleLargeTextMode.is-active {
+  background: linear-gradient(135deg, #38bdf8, #60a5fa);
+  color: #082f49;
+  border: 0;
+}
 .release-notes-card {
   margin-top: 14px;
   padding: 0;
@@ -518,7 +538,15 @@ button.is-pressed {
 }
 @media (max-width: 420px) {
   .master-summary-list {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px 8px;
+  }
+  .master-summary-row {
+    padding: 7px 8px;
+    font-size: .77rem;
+  }
+  .master-summary-rating {
+    font-size: .76rem;
   }
   .selection-name {
     font-size: .92rem;
@@ -531,13 +559,135 @@ button.is-pressed {
     gap: 5px;
   }
 }
+@media (max-width: 340px) {
+  .master-summary-list {
+    grid-template-columns: 1fr;
+  }
+}
+body.large-ui h1 {
+  font-size: 1.78rem;
+  white-space: normal;
+  line-height: 1.28;
+}
+body.large-ui .app {
+  max-width: 1080px;
+}
+body.large-ui .card {
+  padding: 18px;
+}
+body.large-ui .card h2 {
+  font-size: 1.2rem;
+}
+body.large-ui label {
+  font-size: .9rem;
+}
+body.large-ui input,
+body.large-ui select,
+body.large-ui textarea {
+  font-size: 1.06rem;
+  padding: 15px 12px;
+}
+body.large-ui button {
+  font-size: 1.02rem;
+  min-height: 56px;
+}
+body.large-ui .small-btn {
+  min-height: 40px;
+  font-size: .9rem;
+}
+body.large-ui .count,
+body.large-ui .note,
+body.large-ui .mode-help,
+body.large-ui .compact-note,
+body.large-ui .inline-summary,
+body.large-ui .master-card-note,
+body.large-ui .release-note-text,
+body.large-ui .footer-note,
+body.large-ui .zoom-mode-note {
+  font-size: .96rem;
+  line-height: 1.75;
+}
+body.large-ui .name,
+body.large-ui .selection-name,
+body.large-ui .court-title,
+body.large-ui .round-title,
+body.large-ui .pair strong {
+  font-size: 1.1rem;
+}
+body.large-ui .rating,
+body.large-ui .selection-rating-badge,
+body.large-ui .status-tag,
+body.large-ui .privacy-pill,
+body.large-ui .ios-badge,
+body.large-ui .release-note-version {
+  font-size: .86rem;
+}
+body.large-ui .master-summary-list {
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+body.large-ui .master-summary-row {
+  padding: 10px 12px;
+  font-size: .92rem;
+}
+body.large-ui .member-head,
+body.large-ui .member-foot,
+body.large-ui .selection-line {
+  flex-direction: column;
+  align-items: stretch;
+}
+body.large-ui .selection-left {
+  width: 100%;
+}
+body.large-ui .status-tag {
+  margin-left: 0;
+  align-self: flex-end;
+}
+body.large-ui .member-actions {
+  width: 100%;
+  justify-content: flex-end;
+}
+body.large-ui .buttons,
+body.large-ui .toolbar-inline,
+body.large-ui .settings {
+  grid-template-columns: 1fr;
+}
+body.large-ui .buttons {
+  display: grid;
+}
+body.large-ui .toolbar-inline {
+  display: grid;
+}
+body.large-ui .courts {
+  grid-template-columns: 1fr;
+  max-width: 680px;
+  margin: 0 auto;
+}
+body.large-ui .match {
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+body.large-ui .pair {
+  min-height: auto;
+  padding: 14px 12px;
+}
+body.large-ui .vs {
+  font-size: 1rem;
+}
+body.large-ui .release-note-head {
+  align-items: flex-start;
+  flex-direction: column;
+}
+body.large-ui .zoom-mode-title {
+  font-size: .98rem;
+}
 
   </style>
 </head>
 <body>
   <main class="app">
     <header>
-      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V19.1</span></h1>
+      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V20</span></h1>
       <p class="subtitle">登録メンバーは最大30人まで保持。毎回の開催では、その中から当日参加者だけを選んで対戦表を作成できます。</p>
 
       <div class="install-tip" id="installTip">
@@ -654,6 +804,14 @@ button.is-pressed {
         <summary>アップデートノート</summary>
         <div class="release-notes-body">
           <div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V20</span><span class="release-note-title">拡大モードを追加</span></div>
+            <div class="release-note-text">アップデートノート下に、文字を見やすくする拡大モード切替ボタンを追加しました。単純な拡大ではなく、文字サイズを上げつつ、一覧やボタン、対戦カードの並びも読みやすいバランスへ自動調整します。</div>
+          </div>
+          <div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V19.2</span><span class="release-note-title">iPhone幅でもテキスト一覧を2列表示に調整</span></div>
+            <div class="release-note-text">登録メンバー一覧のテキスト一覧について、狭い画面幅で1列に落ちていたレスポンシブ設定を見直しました。通常のiPhone幅では2列表示を維持し、極端に狭い端末幅のみ1列へ切り替わるようにしています。</div>
+          </div>
+          <div class="release-note-item">
             <div class="release-note-head"><span class="release-note-version">V19.1</span><span class="release-note-title">一覧カードと参加者表示のレイアウト不具合を修正</span></div>
             <div class="release-note-text">登録メンバー一覧の編集・削除ボタンを名前カード内で確実に押せる位置へ再配置し、テキスト一覧は2列寄りのバランスに調整しました。今日の参加者セットアップでは、参加・未参加バッジを右寄せ1行表示へ変更し、並び順もレートの高い順へ統一しています。</div>
           </div>
@@ -689,6 +847,12 @@ button.is-pressed {
       </details>
     </section>
 
+    <section class="card zoom-mode-card">
+      <div class="zoom-mode-title">見やすさ調整</div>
+      <button class="secondary" id="toggleLargeTextMode">拡大モードをON</button>
+      <div class="zoom-mode-note" id="largeTextModeNote">文字を大きくしながら、一覧やボタン配置も読みやすいバランスに切り替えます。</div>
+    </section>
+
     <p class="footer-note">ホーム画面追加後はSafariのタブ表示なしで起動できます。登録メンバーと当日参加者は別管理です。</p>
   </main>
 
@@ -710,11 +874,12 @@ button.is-pressed {
     const SEARCH_TIME_LIMIT_MS = 180;
     const IMAGE_BASE_WIDTH = 1680;
     const IMAGE_MAX_HEIGHT = 12000;
-    const STORAGE_KEY = "bd_doubles_scheduler_v19_1";
-    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v19", "bd_doubles_scheduler_v18", "bd_doubles_scheduler_v17", "bd_doubles_scheduler_v16", "bd_doubles_scheduler_v15", "bd_doubles_scheduler_v14", "bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
+    const STORAGE_KEY = "bd_doubles_scheduler_v20";
+    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v19_2", "bd_doubles_scheduler_v19_1", "bd_doubles_scheduler_v19", "bd_doubles_scheduler_v18", "bd_doubles_scheduler_v17", "bd_doubles_scheduler_v16", "bd_doubles_scheduler_v15", "bd_doubles_scheduler_v14", "bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
     const DEFAULT_SETTINGS = {
       useRatings: true,
       showRatings: false,
+      largeTextMode: false,
     };
 
     let members = [];
@@ -950,7 +1115,13 @@ button.is-pressed {
       $("modeHelp").textContent = appSettings.useRatings
         ? "レーティングありでは、通常は差±3以内と直前2試合の同ペア回避を優先します。差5以内に収まる候補が半数未満、または参加者が8人未満のときは、差±5目安＋ランダム性強めへ自動で少し緩めます。"
         : "レーティングなしでは同じペアの重複回避・同じ相手との対戦回避・出場バランスを優先します。";
+      $("toggleLargeTextMode").textContent = appSettings.largeTextMode ? "拡大モードをOFF" : "拡大モードをON";
+      $("toggleLargeTextMode").classList.toggle("is-active", !!appSettings.largeTextMode);
+      $("largeTextModeNote").textContent = appSettings.largeTextMode
+        ? "拡大モード中です。文字を大きくし、一覧・ボタン・対戦カードも読みやすい配置へ自動調整しています。"
+        : "文字を大きくしながら、一覧やボタン配置も読みやすいバランスに切り替えます。";
       document.body.classList.toggle("rating-hidden", !appSettings.showRatings);
+      document.body.classList.toggle("large-ui", !!appSettings.largeTextMode);
     }
 
     function updateSettingsFromControls() {
@@ -1192,6 +1363,20 @@ button.is-pressed {
         updateExportText();
       }
       renderStats(lastSchedule.__state || []);
+    }
+
+    function toggleLargeTextMode() {
+      appSettings.largeTextMode = !appSettings.largeTextMode;
+      applySettingsToControls();
+      save();
+      renderMasterList();
+      renderSelectionList();
+      renderStats(lastSchedule.__state || []);
+      if (lastSchedule.length) {
+        renderSchedule(lastSchedule);
+        updateExportText();
+      }
+      setError(appSettings.largeTextMode ? "拡大モードをONにしました。" : "拡大モードをOFFにしました。");
     }
 
     function toggleMemberSelection(id, checked) {
@@ -2029,6 +2214,7 @@ button.is-pressed {
     $("loadSample").addEventListener("click", loadSampleMembers);
     $("clearPlayers").addEventListener("click", clearMembers);
     $("toggleRatings").addEventListener("click", toggleRatings);
+    $("toggleLargeTextMode").addEventListener("click", toggleLargeTextMode);
     $("selectAllMembers").addEventListener("click", selectAllMembers);
     $("clearTodaySelection").addEventListener("click", clearTodaySelection);
     $("restoreLastSelection").addEventListener("click", restoreLastSelection);
