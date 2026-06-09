@@ -687,7 +687,7 @@ body.large-ui .zoom-mode-title {
 <body>
   <main class="app">
     <header>
-      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V20</span></h1>
+      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V21</span></h1>
       <p class="subtitle">登録メンバーは最大30人まで保持。毎回の開催では、その中から当日参加者だけを選んで対戦表を作成できます。</p>
 
       <div class="install-tip" id="installTip">
@@ -804,6 +804,10 @@ body.large-ui .zoom-mode-title {
         <summary>アップデートノート</summary>
         <div class="release-notes-body">
           <div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V21</span><span class="release-note-title">4人固定ローテーション抑制と画像カード枠を見やすく調整</span></div>
+            <div class="release-note-text">同じ4名だけでペア替えを続けるローテーションが連続しにくいよう、直近2試合で使った4人セットを強く避ける判定を追加しました。あわせて、画像出力時の「第X試合」カード外枠線を少しだけ濃くし、太さもわずかに調整して見やすさを上げています。</div>
+          </div>
+          <div class="release-note-item">
             <div class="release-note-head"><span class="release-note-version">V20</span><span class="release-note-title">拡大モードを追加</span></div>
             <div class="release-note-text">アップデートノート下に、文字を見やすくする拡大モード切替ボタンを追加しました。単純な拡大ではなく、文字サイズを上げつつ、一覧やボタン、対戦カードの並びも読みやすいバランスへ自動調整します。</div>
           </div>
@@ -869,13 +873,14 @@ body.large-ui .zoom-mode-title {
     const RELAX_TRIGGER_GOOD_RATE = 0.5;
     const RELAX_TRIGGER_ACTIVE_COUNT = 8;
     const RECENT_PAIR_LOOKBACK = 2;
+    const RECENT_QUARTET_LOOKBACK = 2;
     const SEARCH_OPTION_LIMIT = 24;
     const SEARCH_NODE_LIMIT = 12000;
     const SEARCH_TIME_LIMIT_MS = 180;
     const IMAGE_BASE_WIDTH = 1680;
     const IMAGE_MAX_HEIGHT = 12000;
-    const STORAGE_KEY = "bd_doubles_scheduler_v20";
-    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v19_2", "bd_doubles_scheduler_v19_1", "bd_doubles_scheduler_v19", "bd_doubles_scheduler_v18", "bd_doubles_scheduler_v17", "bd_doubles_scheduler_v16", "bd_doubles_scheduler_v15", "bd_doubles_scheduler_v14", "bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
+    const STORAGE_KEY = "bd_doubles_scheduler_v21";
+    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v20", "bd_doubles_scheduler_v19_2", "bd_doubles_scheduler_v19_1", "bd_doubles_scheduler_v19", "bd_doubles_scheduler_v18", "bd_doubles_scheduler_v17", "bd_doubles_scheduler_v16", "bd_doubles_scheduler_v15", "bd_doubles_scheduler_v14", "bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
     const DEFAULT_SETTINGS = {
       useRatings: true,
       showRatings: false,
@@ -1445,6 +1450,7 @@ body.large-ui .zoom-mode-title {
         lastSelectedIds = selectedIds.slice();
         const state = cloneStatePlayers(activeMembers);
         const schedule = [];
+        const recentQuartets = new Map();
 
         for (let roundNo = 1; roundNo <= roundCount; roundNo++) {
           const availableCourts = Math.min(courtSetting, Math.floor(state.length / 4));
@@ -1459,11 +1465,12 @@ body.large-ui .zoom-mode-title {
           rests.forEach((p) => { p.rested += 1; p.lastRest = true; });
           active.forEach((p) => { p.lastRest = false; });
 
-          const roundMatches = chooseRoundMatches(active, availableCourts, roundNo, activeMembers.length);
+          const roundMatches = chooseRoundMatches(active, availableCourts, roundNo, activeMembers.length, recentQuartets);
           const courts = roundMatches.map((match, idx) => {
             match.teamA.forEach((p) => p.played += 1);
             match.teamB.forEach((p) => p.played += 1);
             recordHistory(match.teamA, match.teamB, roundNo);
+            recordQuartetHistory(match.teamA, match.teamB, roundNo, recentQuartets);
             return {
               courtNo: idx + 1,
               teamA: match.teamA.map(slim),
@@ -1542,6 +1549,7 @@ body.large-ui .zoom-mode-title {
         relaxed,
         targetDiff: appSettings.useRatings ? (relaxed ? RELAXED_TARGET_TEAM_DIFF : NORMAL_TARGET_TEAM_DIFF) : null,
         recentPairWeight: relaxed ? 76000 : 165000,
+        recentQuartetWeight: relaxed ? 56000 : 118000,
         pairRepeatWeight: relaxed ? 18000 : 32000,
         opponentRepeatWeight: relaxed ? 640 : 880,
         diffWeight: relaxed ? 980 : 2100,
@@ -1555,9 +1563,9 @@ body.large-ui .zoom-mode-title {
       };
     }
 
-    function chooseRoundMatches(active, courtCount, roundNo, selectedCount) {
+    function chooseRoundMatches(active, courtCount, roundNo, selectedCount, recentQuartets) {
       const strategy = buildRoundStrategy(active, roundNo, selectedCount);
-      const candidates = buildMatchCandidates(active, strategy).sort((a, b) => a.score - b.score);
+      const candidates = buildMatchCandidates(active, strategy, recentQuartets).sort((a, b) => a.score - b.score);
       const byPlayer = new Map(active.map((p) => [p.id, []]));
       candidates.forEach((c) => c.players.forEach((p) => byPlayer.get(p.id).push(c)));
 
@@ -1632,16 +1640,16 @@ body.large-ui .zoom-mode-title {
       return greedy;
     }
 
-    function buildMatchCandidates(active, strategy) {
+    function buildMatchCandidates(active, strategy, recentQuartets) {
       const out = [];
       for (let i = 0; i < active.length - 3; i++) {
         for (let j = i + 1; j < active.length - 2; j++) {
           for (let k = j + 1; k < active.length - 1; k++) {
             for (let l = k + 1; l < active.length; l++) {
               const a = active[i], b = active[j], c = active[k], d = active[l];
-              addPairingCandidate(out, [a, b], [c, d], strategy);
-              addPairingCandidate(out, [a, c], [b, d], strategy);
-              addPairingCandidate(out, [a, d], [b, c], strategy);
+              addPairingCandidate(out, [a, b], [c, d], strategy, recentQuartets);
+              addPairingCandidate(out, [a, c], [b, d], strategy, recentQuartets);
+              addPairingCandidate(out, [a, d], [b, c], strategy, recentQuartets);
             }
           }
         }
@@ -1649,7 +1657,7 @@ body.large-ui .zoom-mode-title {
       return out;
     }
 
-    function addPairingCandidate(out, teamA, teamB, strategy) {
+    function addPairingCandidate(out, teamA, teamB, strategy, recentQuartets) {
       const useRatings = appSettings.useRatings;
       const sumA = useRatings ? ((teamA[0].rating || 0) + (teamA[1].rating || 0)) : null;
       const sumB = useRatings ? ((teamB[0].rating || 0) + (teamB[1].rating || 0)) : null;
@@ -1662,10 +1670,12 @@ body.large-ui .zoom-mode-title {
         : null;
       const pairRepeat = partnerRepeatCount(teamA) + partnerRepeatCount(teamB);
       const recentPairPenalty = recentPartnerPenalty(teamA, strategy.roundNo) + recentPartnerPenalty(teamB, strategy.roundNo);
+      const recentQuartetPenalty = getRecentQuartetPenalty([...teamA, ...teamB], strategy.roundNo, recentQuartets);
       const opponentRepeat = opponentPenalty(teamA, teamB);
       const pairGapPenalty = useRatings ? Math.abs(teamA[0].rating - teamA[1].rating) + Math.abs(teamB[0].rating - teamB[1].rating) : 0;
       const playerRepeatBias = (teamA[0].played + teamA[1].played + teamB[0].played + teamB[1].played) * 0.02;
       const score =
+        recentQuartetPenalty * strategy.recentQuartetWeight +
         recentPairPenalty * strategy.recentPairWeight +
         pairRepeat * strategy.pairRepeatWeight +
         opponentRepeat * strategy.opponentRepeatWeight +
@@ -1684,6 +1694,7 @@ body.large-ui .zoom-mode-title {
         diff,
         pairRepeat,
         recentPairPenalty,
+        recentQuartetPenalty,
         opponentRepeat,
         challengeTeam,
         score
@@ -1704,6 +1715,20 @@ body.large-ui .zoom-mode-title {
       }, 0);
     }
 
+    function quartetKey(players) {
+      return players.map((p) => p.id).slice().sort().join('|');
+    }
+
+    function getRecentQuartetPenalty(players, roundNo, recentQuartets) {
+      const rounds = getRecentRounds(recentQuartets, quartetKey(players));
+      return rounds.reduce((total, prevRoundNo) => {
+        const gap = roundNo - prevRoundNo;
+        if (gap === 1) return total + 1.75;
+        if (gap === 2) return total + 1.05;
+        return total;
+      }, 0);
+    }
+
     function opponentPenalty(teamA, teamB) {
       let count = 0;
       teamA.forEach((a) => teamB.forEach((b) => count += getCount(a.opponents, b.id)));
@@ -1718,11 +1743,11 @@ body.large-ui .zoom-mode-title {
       return map instanceof Map ? (map.get(id) || []) : [];
     }
 
-    function addRecentRound(map, id, roundNo) {
+    function addRecentRound(map, id, roundNo, lookback = RECENT_PAIR_LOOKBACK) {
       const prev = Array.isArray(map.get(id)) ? map.get(id) : [];
-      const next = prev.filter((savedRoundNo) => roundNo - savedRoundNo <= RECENT_PAIR_LOOKBACK - 1);
+      const next = prev.filter((savedRoundNo) => roundNo - savedRoundNo <= lookback - 1);
       next.push(roundNo);
-      map.set(id, next.slice(-RECENT_PAIR_LOOKBACK));
+      map.set(id, next.slice(-lookback));
     }
 
     function addMapCount(map, id) {
@@ -1734,14 +1759,18 @@ body.large-ui .zoom-mode-title {
       addMapCount(teamA[1].partners, teamA[0].id);
       addMapCount(teamB[0].partners, teamB[1].id);
       addMapCount(teamB[1].partners, teamB[0].id);
-      addRecentRound(teamA[0].recentPartners, teamA[1].id, roundNo);
-      addRecentRound(teamA[1].recentPartners, teamA[0].id, roundNo);
-      addRecentRound(teamB[0].recentPartners, teamB[1].id, roundNo);
-      addRecentRound(teamB[1].recentPartners, teamB[0].id, roundNo);
+      addRecentRound(teamA[0].recentPartners, teamA[1].id, roundNo, RECENT_PAIR_LOOKBACK);
+      addRecentRound(teamA[1].recentPartners, teamA[0].id, roundNo, RECENT_PAIR_LOOKBACK);
+      addRecentRound(teamB[0].recentPartners, teamB[1].id, roundNo, RECENT_PAIR_LOOKBACK);
+      addRecentRound(teamB[1].recentPartners, teamB[0].id, roundNo, RECENT_PAIR_LOOKBACK);
       teamA.forEach((a) => teamB.forEach((b) => {
         addMapCount(a.opponents, b.id);
         addMapCount(b.opponents, a.id);
       }));
+    }
+
+    function recordQuartetHistory(teamA, teamB, roundNo, recentQuartets) {
+      addRecentRound(recentQuartets, quartetKey([...teamA, ...teamB]), roundNo, RECENT_QUARTET_LOOKBACK);
     }
 
     function renderSchedule(schedule) {
@@ -2079,8 +2108,8 @@ body.large-ui .zoom-mode-title {
           roundedRect(ctx, x, y, cardWidth, block.roundHeight, 22);
           ctx.fillStyle = '#ffffff';
           ctx.fill();
-          ctx.strokeStyle = '#d8e5fb';
-          ctx.lineWidth = 2;
+          ctx.strokeStyle = '#c7d8ef';
+          ctx.lineWidth = 2.35;
           ctx.stroke();
 
           roundedRect(ctx, x + 14, y + 14, cardWidth - 28, roundHeaderHeight, 15);
