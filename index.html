@@ -68,13 +68,33 @@
     .small-btn { padding: 7px 9px; border-radius: 10px; font-size: 12px; }
     .count { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
 
-    .schedule { display: grid; gap: 18px; margin-top: 16px; justify-items: center; }
-    .round { width: min(100%, 1080px); margin: 0 auto; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: rgba(255,255,255,.055); }
+    .schedule { display: block; width: 100%; margin-top: 16px; }
+    .schedule-hint { margin: 0 4px 8px; color: #bae6fd; font-size: 12px; font-weight: 800; text-align: center; letter-spacing: .02em; }
+    .schedule-scroll { width: 100%; overflow-x: auto; overflow-y: visible; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; padding: 2px 2px 12px; scrollbar-width: thin; }
+    .schedule-scroll::-webkit-scrollbar { height: 8px; }
+    .schedule-scroll::-webkit-scrollbar-thumb { background: rgba(186,230,253,.35); border-radius: 999px; }
+    .schedule-track { display: flex; gap: 12px; align-items: stretch; }
+    .round { flex: 0 0 min(92vw, 560px); width: min(92vw, 560px); margin: 0 auto; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: rgba(255,255,255,.055); scroll-snap-align: center; scroll-snap-stop: always; }
     .round-head { display: flex; justify-content: center; gap: 14px; align-items: center; padding: 14px 16px; background: rgba(255,255,255,.08); flex-wrap: wrap; text-align: center; }
     .round-title { font-weight: 900; text-align: center; }
     .rest { color: var(--warn); font-size: 12px; line-height: 1.5; text-align: center; max-width: 100%; }
     .courts { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 420px)); justify-content: center; gap: 12px; padding: 12px; }
-    @media (max-width: 759px) { .courts { grid-template-columns: minmax(0, 1fr); max-width: 560px; margin: 0 auto; } }
+    @media (max-width: 759px) {
+      .schedule { margin-top: 14px; }
+      .schedule-track { gap: 10px; padding: 0 2px; }
+      .round { flex-basis: min(calc(100vw - 28px), 560px); width: min(calc(100vw - 28px), 560px); }
+      .courts { grid-template-columns: minmax(0, 1fr); max-width: 560px; margin: 0 auto; padding: 10px; }
+      .match { grid-template-columns: 1fr; gap: 9px; }
+      .pair { min-height: 64px; padding: 10px 10px; }
+      .vs { font-size: 14px; }
+    }
+    @media (min-width: 760px) {
+      .schedule { display: grid; gap: 18px; justify-items: center; }
+      .schedule-hint { display: none; }
+      .schedule-scroll { overflow: visible; padding: 0; scroll-snap-type: none; }
+      .schedule-track { display: grid; gap: 18px; justify-items: center; width: 100%; }
+      .round { flex: none; width: min(100%, 1080px); scroll-snap-align: none; }
+    }
     .court { width: 100%; max-width: 420px; margin: 0 auto; border: 1px solid rgba(255,255,255,.14); border-radius: 16px; padding: 12px; background: rgba(15,23,42,.32); box-shadow: 0 10px 22px rgba(0,0,0,.14); }
     .court-title { color: #bae6fd; font-weight: 900; margin-bottom: 10px; font-size: 14px; text-align: center; letter-spacing: .03em; }
     .match { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; justify-items: center; }
@@ -84,6 +104,11 @@
     .challenge-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px; font-size: 11px; line-height: 1.2; color: #fff7ed; background: linear-gradient(135deg, #f59e0b, #f97316); box-shadow: 0 6px 14px rgba(249,115,22,.22); }
     .pair span { display: block; font-size: 15px; color: var(--text); line-height: 1.5; text-align: center; font-weight: 700; letter-spacing: .01em; }
     .vs { color: var(--muted); font-weight: 900; text-align: center; justify-self: center; }
+    @media (max-width: 759px) {
+      .match { grid-template-columns: 1fr; gap: 9px; }
+      .pair { min-height: 64px; padding: 10px 10px; }
+      .vs { font-size: 14px; }
+    }
     .diff { margin-top: 10px; font-size: 13px; color: var(--muted); text-align: center; }
     .diff.good { color: var(--good); }
     .diff.warn { color: var(--warn); }
@@ -687,8 +712,8 @@ body.large-ui .zoom-mode-title {
 <body>
   <main class="app">
     <header>
-      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V21</span></h1>
-      <p class="subtitle">登録メンバーは最大30人まで保持。毎回の開催では、その中から当日参加者だけを選んで対戦表を作成できます。</p>
+      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V22.1</span></h1>
+      <p class="subtitle">登録メンバーは最大50人まで保持。クラス・開催ごとに当日参加者だけを選び、見やすい対戦表を作成できます。</p>
 
       <div class="install-tip" id="installTip">
         <div class="ios-badge">iPhone ホーム画面対応</div>
@@ -701,7 +726,7 @@ body.large-ui .zoom-mode-title {
       <div class="section-stack home-master-stack">
         <div class="card">
           <h2>メンバーマスター管理</h2>
-          <div class="count" id="memberCount">0 / 30人</div>
+          <div class="count" id="memberCount">0 / 50人</div>
           <div class="form-row">
             <div>
               <label for="playerName">名前</label>
@@ -721,6 +746,12 @@ body.large-ui .zoom-mode-title {
             <button class="secondary" id="loadSample">サンプル30人</button>
             <button class="danger" id="clearPlayers">マスター全削除</button>
           </div>
+          <div class="buttons">
+            <button class="secondary" id="exportMembersJson">名簿JSON出力</button>
+            <button class="secondary" id="importMembersJson">名簿JSON読込</button>
+          </div>
+          <input class="hidden" id="memberJsonInput" type="file" accept="application/json,.json" />
+          <div class="master-card-note" id="memberJsonStatus">JSON出力／読込は、機種変更や別端末への名簿共有に使えます。読込時は現在のメンバーマスターを置き換えます。</div>
           <div class="privacy-pill" id="privacyStatus">共有向け：レーティング非表示</div>
           <div class="meta-card" id="ratingGuide"><div class="mode-help">登録時にレーティングを入れておくと、当日の組み分けでそのまま使えます。</div><div class="compact-note"><strong>レーティング目安：</strong> C：1～3、B3：4～4.5、B2：5～5.5、B1：6～7、A：8～10</div></div>
           <div class="master-card-note">新しく登録したメンバーは、当日参加者にも自動で追加されます。不要な場合は右側の参加者選択で外してください。</div>
@@ -729,7 +760,7 @@ body.large-ui .zoom-mode-title {
 
         <div class="card">
           <h2>登録メンバー一覧</h2>
-          <div class="count" id="masterListCount">0 / 30人</div>
+          <div class="count" id="masterListCount">0 / 50人</div>
           <div class="master-summary-list" id="masterSummaryList"></div>
           <div class="subtle-divider"></div>
           <div class="players" id="players"></div>
@@ -785,7 +816,7 @@ body.large-ui .zoom-mode-title {
           <div class="mode-help" id="modeHelp">レーティングありでは、まず差が±5以内の対戦を優先し、難しい場合だけチャレンジカードを混ぜます。レーティングなしでは重複回避と出場バランスを優先します。</div>
           <div class="compact-note">共有用画像には、当日選択した参加者だけを載せます。画像にはレーティングを載せません。</div>
         </div>
-        <p class="note">登録人数が30人でも、実際の組み分け計算に使うのは「今日の参加者」にチェックしたメンバーだけです。</p>
+        <p class="note">登録人数が50人でも、実際の組み分け計算に使うのは「今日の参加者」にチェックしたメンバーだけです。</p>
         <textarea id="exportText" class="hidden" readonly></textarea>
       </div>
     </section>
@@ -803,6 +834,15 @@ body.large-ui .zoom-mode-title {
       <details>
         <summary>アップデートノート</summary>
         <div class="release-notes-body">
+          <div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V22.1</span><span class="release-note-title">50人名簿とJSONバックアップ機能を追加</span></div>
+            <div class="release-note-text">メンバーマスターの登録上限を50人へ拡張しました。あわせて、登録済みメンバー名簿をJSONファイルとして出力し、別端末や機種変更後の端末で読み込める機能を追加しています。</div>
+          </div>
+          <div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V22</span><span class="release-note-title">iPhone向け横スクロール表示とGitHub配布構成を追加</span></div>
+            <div class="release-note-text">iPhone幅では、作成した対戦表を第1試合・第2試合のカード単位で左右にスワイプして確認できる横スクロール表示へ変更しました。対戦カード内のペア表示も縦配置にして、名前カードが枠内に収まりやすいよう調整しています。</div>
+            <div class="release-note-text">GitHub Pagesに置きやすいREADME等をパッケージへ追加しました。</div>
+          </div>
           <div class="release-note-item">
             <div class="release-note-head"><span class="release-note-version">V21</span><span class="release-note-title">4人固定ローテーション抑制と画像カード枠を見やすく調整</span></div>
             <div class="release-note-text">同じ4名だけでペア替えを続けるローテーションが連続しにくいよう、直近2試合で使った4人セットを強く避ける判定を追加しました。あわせて、画像出力時の「第X試合」カード外枠線を少しだけ濃くし、太さもわずかに調整して見やすさを上げています。</div>
@@ -845,7 +885,7 @@ body.large-ui .zoom-mode-title {
           </div>
           <div class="release-note-item">
             <div class="release-note-head"><span class="release-note-version">V13以前</span><span class="release-note-title">参加者管理と共有画像の基礎改善</span></div>
-            <div class="release-note-text">30人管理、前回参加者復元、共有画像の複数列化、中央寄せ、チャレンジ強調など、これまでの改善内容を引き継いでいます。</div>
+            <div class="release-note-text">メンバー管理、前回参加者復元、共有画像の複数列化、中央寄せ、チャレンジ強調など、これまでの改善内容を引き継いでいます。</div>
           </div>
         </div>
       </details>
@@ -861,7 +901,7 @@ body.large-ui .zoom-mode-title {
   </main>
 
   <script>
-    const MAX_MEMBERS = 30;
+    const MAX_MEMBERS = 50;
     const MAX_COURTS = 5;
     const MAX_ROUNDS = 30;
     const MIN_RATING = 1;
@@ -879,8 +919,8 @@ body.large-ui .zoom-mode-title {
     const SEARCH_TIME_LIMIT_MS = 180;
     const IMAGE_BASE_WIDTH = 1680;
     const IMAGE_MAX_HEIGHT = 12000;
-    const STORAGE_KEY = "bd_doubles_scheduler_v21";
-    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v20", "bd_doubles_scheduler_v19_2", "bd_doubles_scheduler_v19_1", "bd_doubles_scheduler_v19", "bd_doubles_scheduler_v18", "bd_doubles_scheduler_v17", "bd_doubles_scheduler_v16", "bd_doubles_scheduler_v15", "bd_doubles_scheduler_v14", "bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
+    const STORAGE_KEY = "bd_doubles_scheduler_v22_1";
+    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v22", "bd_doubles_scheduler_v21", "bd_doubles_scheduler_v20", "bd_doubles_scheduler_v19_2", "bd_doubles_scheduler_v19_1", "bd_doubles_scheduler_v19", "bd_doubles_scheduler_v18", "bd_doubles_scheduler_v17", "bd_doubles_scheduler_v16", "bd_doubles_scheduler_v15", "bd_doubles_scheduler_v14", "bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
     const DEFAULT_SETTINGS = {
       useRatings: true,
       showRatings: false,
@@ -1108,6 +1148,11 @@ body.large-ui .zoom-mode-title {
 
     function setError(msg = "") {
       $("error").textContent = msg;
+    }
+
+    function setMemberJsonStatus(msg = "JSON出力／読込は、機種変更や別端末への名簿共有に使えます。読込時は現在のメンバーマスターを置き換えます。") {
+      const status = $("memberJsonStatus");
+      if (status) status.textContent = msg;
     }
 
     function applySettingsToControls() {
@@ -1355,6 +1400,122 @@ body.large-ui .zoom-mode-title {
       renderSelectionList();
       renderStats([]);
       setError("");
+      setMemberJsonStatus();
+    }
+
+    function membersJsonFileName() {
+      const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+      return `doubles_members_${date}.json`;
+    }
+
+    function membersExportPayload() {
+      return {
+        app: "ダブルス対戦メーカー",
+        schema: "doubles-match-maker-members",
+        version: "22.1",
+        exportedAt: new Date().toISOString(),
+        maxMembers: MAX_MEMBERS,
+        members: members.map((m) => ({
+          id: m.id,
+          name: m.name,
+          rating: Number.isFinite(m.rating) ? m.rating : null
+        }))
+      };
+    }
+
+    async function exportMembersJson() {
+      setError("");
+      if (!members.length) return setError("出力できるメンバーがありません。先にメンバーを登録してください。");
+
+      const json = JSON.stringify(membersExportPayload(), null, 2);
+      const blob = new Blob([json], { type: "application/json" });
+      const fileName = membersJsonFileName();
+
+      try {
+        const file = new File([blob], fileName, { type: "application/json" });
+        if (navigator.canShare && navigator.share && navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], title: "ダブルス対戦メーカー 名簿", text: "登録メンバー名簿JSON" });
+          setMemberJsonStatus(`${members.length}人分の名簿JSONを共有しました。`);
+          return;
+        }
+      } catch (err) {
+        if (err && err.name === "AbortError") return;
+      }
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      setMemberJsonStatus(`${members.length}人分の名簿JSONを出力しました。ファイル名：${fileName}`);
+    }
+
+    function readTextFile(file) {
+      if (file && typeof file.text === "function") return file.text();
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ""));
+        reader.onerror = () => reject(reader.error || new Error("ファイルを読み込めませんでした。"));
+        reader.readAsText(file, "utf-8");
+      });
+    }
+
+    function getImportSourceFromJson(data) {
+      if (Array.isArray(data)) return data;
+      if (data && Array.isArray(data.members)) return data.members;
+      if (data && Array.isArray(data.players)) return data.players;
+      return [];
+    }
+
+    function sanitizeImportedMembers(data) {
+      const imported = sanitizeMembers(getImportSourceFromJson(data));
+      const idSet = new Set();
+      return imported.map((m) => {
+        const id = m.id ? String(m.id) : uid();
+        const safeId = idSet.has(id) ? uid() : id;
+        idSet.add(safeId);
+        return { id: safeId, name: m.name, rating: Number.isFinite(m.rating) ? m.rating : null };
+      });
+    }
+
+    async function handleMembersJsonImport(event) {
+      const input = event.target;
+      const file = input.files && input.files[0];
+      if (!file) return;
+      setError("");
+
+      try {
+        const text = await readTextFile(file);
+        const data = JSON.parse(text);
+        const imported = sanitizeImportedMembers(data);
+        if (!imported.length) return setError("読み込めるメンバー名簿が見つかりませんでした。JSON内の members 配列を確認してください。");
+
+        const sourceCount = getImportSourceFromJson(data).length;
+        const suffix = sourceCount > imported.length ? `（重複・空欄・上限超過を除き${imported.length}人）` : "";
+        if (!confirm(`JSONから${imported.length}人の名簿を読み込み、現在のメンバーマスターを置き換えます。${suffix}よろしいですか？`)) return;
+
+        members = imported;
+        selectedIds = members.map((m) => m.id);
+        lastSelectedIds = selectedIds.slice();
+        resetMemberForm();
+        invalidateGeneratedResult();
+        renderMasterList();
+        renderSelectionList();
+        renderStats([]);
+        setMemberJsonStatus(`${members.length}人分の名簿JSONを読み込みました。今日の参加者にも全員選択済みです。`);
+      } catch (err) {
+        setError("JSONファイルを読み込めませんでした。ファイル形式を確認してください。");
+      } finally {
+        input.value = "";
+      }
+    }
+
+    function openMembersJsonImport() {
+      setError("");
+      $("memberJsonInput").click();
     }
 
     function toggleRatings() {
@@ -1778,6 +1939,17 @@ body.large-ui .zoom-mode-title {
       wrap.innerHTML = "";
       if (!schedule.length) return;
 
+      const hint = document.createElement("div");
+      hint.className = "schedule-hint";
+      hint.textContent = "対戦表は左右にスワイプして確認できます";
+      wrap.appendChild(hint);
+
+      const scroll = document.createElement("div");
+      scroll.className = "schedule-scroll";
+      scroll.setAttribute("aria-label", "対戦表の横スクロール表示");
+      const track = document.createElement("div");
+      track.className = "schedule-track";
+
       schedule.forEach((round) => {
         const div = document.createElement("div");
         div.className = "round";
@@ -1793,8 +1965,11 @@ body.large-ui .zoom-mode-title {
             ${round.courts.map(courtHtml).join("")}
           </div>
         `;
-        wrap.appendChild(div);
+        track.appendChild(div);
       });
+
+      scroll.appendChild(track);
+      wrap.appendChild(scroll);
       wrap.scrollIntoView({ block: "start", behavior: "smooth" });
     }
 
@@ -1905,14 +2080,14 @@ body.large-ui .zoom-mode-title {
       await new Promise((resolve) => setTimeout(resolve, 0));
       try {
         const blob = await createScheduleImageBlob(lastSchedule);
-        const file = new File([blob], `badminton_schedule_${new Date().toISOString().slice(0,10)}.png`, { type: "image/png" });
+        const file = new File([blob], `gzb_schedule_${new Date().toISOString().slice(0,10)}.png`, { type: "image/png" });
         if (navigator.canShare && navigator.share && navigator.canShare({ files: [file] })) {
-          await navigator.share({ files: [file], title: "バドミントン対戦表", text: "対戦表画像" });
+          await navigator.share({ files: [file], title: "ダブルス対戦メーカー", text: "対戦表画像" });
           setError("対戦表画像を共有しました。");
           return;
         }
         showImagePreview(blob, file.name);
-        setError("対戦表画像を表示しました。画像を長押しして保存できます。");
+        setError("対戦表画像を表示しました。画像部分は左右スクロールできます。長押しで保存できます。");
       } catch (err) {
         console.error(err);
         setError("画像出力に失敗しました。もう一度お試しください。");
@@ -2005,7 +2180,7 @@ body.large-ui .zoom-mode-title {
       let y = padding;
       ctx.fillStyle = '#0f172a';
       ctx.font = "bold 42px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-      ctx.fillText('バドミントン対戦表', width / 2, y);
+      ctx.fillText('ダブルス対戦メーカー', width / 2, y);
       y += 40;
       ctx.fillStyle = '#334155';
       ctx.font = "24px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
@@ -2180,9 +2355,9 @@ body.large-ui .zoom-mode-title {
           <strong style="color:#fff;font-size:18px;">対戦表画像プレビュー</strong>
           <button id="closeImagePreview" style="border:none;border-radius:12px;padding:10px 14px;background:#1d4ed8;color:#fff;font-weight:700;">閉じる</button>
         </div>
-        <div style="color:#cbd5e1;font-size:13px;line-height:1.6;">共有画像では、チャレンジ側を左の加油！楕円バッジと右の炎アイコンで強調し、常に3列固定で出力します。レート合計差3〜5は🔥1つ、5.5〜7は🔥🔥2つ、8以上は🔥🔥🔥3つで表示されます。</div>
+        <div style="color:#cbd5e1;font-size:13px;line-height:1.6;">共有画像は横幅を縮小せずに表示します。iPhoneでは画像部分を左右にスクロールして全体を確認できます。チャレンジ側は左の加油！楕円バッジと右の炎アイコンで強調します。</div>
         <div style="flex:1;overflow:auto;-webkit-overflow-scrolling:touch;background:#0b1220;border-radius:16px;padding:10px;">
-          <img src="${url}" alt="対戦表画像" style="display:block;max-width:100%;height:auto;margin:0 auto;border-radius:16px;box-shadow:0 14px 36px rgba(0,0,0,.3);background:#fff;" />
+          <img src="${url}" alt="対戦表画像" style="display:block;max-width:none;width:auto;min-width:760px;height:auto;margin:0 auto;border-radius:16px;box-shadow:0 14px 36px rgba(0,0,0,.3);background:#fff;" />
         </div>
         <a href="${url}" download="${fileName}" style="display:inline-flex;justify-content:center;align-items:center;padding:12px 16px;border-radius:12px;background:#38bdf8;color:#082f49;font-weight:800;text-decoration:none;">ダウンロード</a>
       `;
@@ -2242,6 +2417,9 @@ body.large-ui .zoom-mode-title {
     $("playerName").addEventListener("keydown", (e) => { if (e.key === "Enter") addOrUpdateMember(); });
     $("loadSample").addEventListener("click", loadSampleMembers);
     $("clearPlayers").addEventListener("click", clearMembers);
+    $("exportMembersJson").addEventListener("click", exportMembersJson);
+    $("importMembersJson").addEventListener("click", openMembersJsonImport);
+    $("memberJsonInput").addEventListener("change", handleMembersJsonImport);
     $("toggleRatings").addEventListener("click", toggleRatings);
     $("toggleLargeTextMode").addEventListener("click", toggleLargeTextMode);
     $("selectAllMembers").addEventListener("click", selectAllMembers);
