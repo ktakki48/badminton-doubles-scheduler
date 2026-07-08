@@ -1,4 +1,4 @@
-const CACHE_NAME = 'doubles-match-maker-v22-2-1';
+const CACHE_NAME = 'doubles-match-maker-v22-2-2';
 const ASSETS = [
   './',
   './index.html',

@@ -867,13 +867,126 @@ body.large-ui .zoom-mode-title {
       .result-round-card { flex-basis: min(calc(100vw - 88px), 320px); width: min(calc(100vw - 88px), 320px); }
     }
 
+
+    /* V22.2.2 dark result board */
+    .result-shell {
+      background: linear-gradient(145deg, rgba(15,23,42,.82), rgba(30,41,59,.76));
+      border: 1px solid rgba(56,189,248,.22);
+      box-shadow: 0 18px 40px rgba(0,0,0,.26);
+    }
+    .result-shell h2,
+    .result-shell h3,
+    .result-shell p,
+    .result-shell div,
+    .result-shell span { color: inherit; }
+    .result-title-main { color: #f8fafc; }
+    .result-created { color: #cbd5e1; }
+    .result-swipe-note { color: #7dd3fc; }
+    .result-board-card {
+      border: 1px solid rgba(56,189,248,.18);
+      background: rgba(15,23,42,.36);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.02);
+    }
+    .result-board-head {
+      border-bottom: 1px solid rgba(56,189,248,.18);
+      background: rgba(15,23,42,.18);
+    }
+    .result-board-title { color: #f8fafc; }
+    .result-board-meta { color: #cbd5e1; }
+    .result-export-btn {
+      border: 1px solid rgba(125,211,252,.36);
+      background: rgba(255,255,255,.06);
+      color: #bae6fd;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .result-round-scroll {
+      background: transparent;
+      scrollbar-color: rgba(125,211,252,.45) rgba(255,255,255,.04);
+    }
+    .result-round-scroll::-webkit-scrollbar-thumb { background: rgba(125,211,252,.42); }
+    .result-round-track { min-width: max-content; }
+    .result-round-card {
+      background: rgba(15,23,42,.56);
+      border: 2px solid rgba(56,189,248,.54);
+      box-shadow: 0 10px 24px rgba(2,132,199,.12), inset 0 1px 0 rgba(255,255,255,.03);
+    }
+    .result-round-header {
+      background: rgba(59,130,246,.12);
+      border: 1px solid rgba(125,211,252,.3);
+      color: #e0f2fe;
+    }
+    .result-rest-line { color: #cbd5e1; }
+    .result-court-box {
+      border: 1px solid rgba(125,211,252,.25);
+      background: rgba(255,255,255,.04);
+    }
+    .result-court-pill {
+      background: rgba(59,130,246,.14);
+      border: 1px solid rgba(125,211,252,.24);
+      color: #e0f2fe;
+    }
+    .result-team-box {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(125,211,252,.18);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+      color: #f8fafc;
+      padding: 12px 12px 14px;
+    }
+    .result-team-box.challenge {
+      background: rgba(245,158,11,.08);
+      border-color: rgba(251,191,36,.34);
+    }
+    .result-team-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+      min-height: 24px;
+    }
+    .result-cheer-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 68px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #f59e0b, #f97316);
+      border: 1px solid rgba(253,186,116,.8);
+      color: #fff7ed;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .result-flames {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      min-width: 52px;
+      font-size: 18px;
+      line-height: 1;
+      letter-spacing: 1px;
+      filter: saturate(1.15);
+    }
+    .result-team-name {
+      display: block;
+      color: #f8fafc;
+      font-size: 17px;
+      font-weight: 900;
+      line-height: 1.45;
+      text-align: center;
+      word-break: break-word;
+    }
+    .result-vs { color: #cbd5e1; }
+
   </style>
 </head>
 <body>
   <main class="app">
     <header>
-      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V22.2.1</span></h1>
-      <p class="subtitle">登録メンバーは最大50人まで保持。黒ベースのホーム画面のまま、対戦表は横スワイプ表示と見やすい画像出力に対応しています。</p>
+      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V22.2.2</span></h1>
+      <p class="subtitle">登録メンバーは最大50人まで保持。黒ベースUIの統一感を保ちつつ、対戦表は横スワイプ表示とチャレンジ演出に対応しています。</p>
 
       <div class="install-tip" id="installTip">
         <div class="ios-badge">iPhone ホーム画面対応</div>
@@ -995,9 +1108,9 @@ body.large-ui .zoom-mode-title {
         <summary>アップデートノート</summary>
         <div class="release-notes-body">
 <div class="release-note-item">
-            <div class="release-note-head"><span class="release-note-version">V22.2.1</span><span class="release-note-title">横スワイプ挙動と画像チャレンジ表示を調整</span></div>
-            <div class="release-note-text">ホーム画面の対戦表カードに、左右スワイプしやすい横スクロール設定とスナップ挙動を追加しました。あわせて、ホーム画面全体の黒ベース配色を維持するよう調整しています。</div>
-            <div class="release-note-text">画像出力時のチャレンジ表現は、V22以前と同様に、ペアカード左へ「加油！」、右へレート差に応じた炎アイコン1〜3個を表示する仕様へ戻しました。</div>
+            <div class="release-note-head"><span class="release-note-version">V22.2.2</span><span class="release-note-title">黒基調UIでの横スワイプ表示とチャレンジ演出を統一</span></div>
+            <div class="release-note-text">ホーム画面の対戦表結果エリアを黒基調UIへ揃え、枠線や見出しは水色系アクセントで見やすく整えました。iPhoneでは各試合カードを左右スワイプでスライド確認できる構成です。</div>
+            <div class="release-note-text">レート差がある対戦では、画像出力だけでなくホーム画面側の低レートペアにも、同じく「加油！」＋炎1〜3個のチャレンジ演出を連動表示するよう統一しました。</div>
           </div>
                     <div class="release-note-item">
             <div class="release-note-head"><span class="release-note-version">V22.2</span><span class="release-note-title">対戦表表示を見本イメージ寄りへ刷新</span></div>
@@ -2128,6 +2241,14 @@ body.large-ui .zoom-mode-title {
     }
 
 
+    function flameCountFromDiff(diff) {
+      if (!Number.isFinite(diff)) return 0;
+      if (diff >= 8) return 3;
+      if (diff >= 5.5) return 2;
+      if (diff >= 3) return 1;
+      return 0;
+    }
+
     function renderSchedule(schedule) {
       const wrap = $("schedule");
       wrap.innerHTML = "";
@@ -2182,18 +2303,24 @@ body.large-ui .zoom-mode-title {
       return `
         <section class="result-court-box">
           <div class="result-court-pill">Court ${court.courtNo}</div>
-          ${resultTeamHtml(court.teamA, court.challengeTeam === "A")}
+          ${resultTeamHtml(court.teamA, court.challengeTeam === "A", court.diff)}
           <div class="result-vs">VS</div>
-          ${resultTeamHtml(court.teamB, court.challengeTeam === "B")}
+          ${resultTeamHtml(court.teamB, court.challengeTeam === "B", court.diff)}
         </section>
       `;
     }
 
-    function resultTeamHtml(team, isChallenge = false) {
+    function resultTeamHtml(team, isChallenge = false, diff = null) {
       const names = team.map((p) => escapeHtml(formatPersonPlain(p, { includeRating: false }))).join("・");
+      const flameText = isChallenge ? "🔥".repeat(flameCountFromDiff(diff)) : "";
       return `
         <div class="result-team-box ${isChallenge ? "challenge" : ""}">
-          <div>${names}</div>
+          ${isChallenge ? `
+            <div class="result-team-top">
+              <span class="result-cheer-pill">加油！</span>
+              <span class="result-flames">${flameText}</span>
+            </div>` : ''}
+          <span class="result-team-name">${names}</span>
         </div>
       `;
     }
