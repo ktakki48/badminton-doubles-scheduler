@@ -707,13 +707,173 @@ body.large-ui .zoom-mode-title {
   font-size: .98rem;
 }
 
+  
+
+    /* V22.2 result board redesign */
+    .schedule {
+      display: grid;
+      gap: 16px;
+      margin-top: 18px;
+    }
+    .result-shell {
+      background: #f8faf8;
+      border: 1px solid #d7e2d7;
+      border-radius: 26px;
+      padding: 18px;
+      color: #111827;
+      box-shadow: 0 18px 40px rgba(15,23,42,.12);
+    }
+    .result-shell h2,
+    .result-shell h3,
+    .result-shell p,
+    .result-shell div { color: inherit; }
+    .result-title-block { display: grid; gap: 4px; margin-bottom: 14px; }
+    .result-title-main { font-size: 20px; font-weight: 900; color: #111827; }
+    .result-created { font-size: 13px; color: #475569; }
+    .result-board-card {
+      border: 1px solid #d6e4d9;
+      border-radius: 24px;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+    }
+    .result-board-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid #e3ece4;
+      background: #fbfdfb;
+    }
+    .result-board-title { font-size: 18px; font-weight: 900; color: #0f172a; }
+    .result-board-meta { font-size: 13px; color: #475569; margin-top: 4px; }
+    .result-export-btn {
+      flex: 0 0 auto;
+      border: 1px solid #bfd8c1;
+      background: #eef7ef;
+      color: #0f5132;
+      border-radius: 16px;
+      padding: 12px 16px;
+      font-weight: 800;
+      cursor: pointer;
+      min-width: 102px;
+    }
+    .result-round-scroll {
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      padding: 18px;
+      scrollbar-width: thin;
+      background: #fbfdfb;
+    }
+    .result-round-scroll::-webkit-scrollbar { height: 8px; }
+    .result-round-scroll::-webkit-scrollbar-thumb { background: rgba(15,137,84,.30); border-radius: 999px; }
+    .result-round-track {
+      display: flex;
+      gap: 18px;
+      align-items: stretch;
+      width: max-content;
+      min-width: 100%;
+    }
+    .result-round-card {
+      flex: 0 0 min(88vw, 360px);
+      width: min(88vw, 360px);
+      background: #ffffff;
+      border: 7px solid #0f9b56;
+      border-radius: 26px;
+      padding: 12px;
+      box-shadow: 0 10px 24px rgba(15,155,86,.08);
+    }
+    .result-round-header {
+      background: #eef1ff;
+      color: #243b8f;
+      text-align: center;
+      font-weight: 900;
+      font-size: 16px;
+      border-radius: 14px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+    .result-rest-line {
+      text-align: center;
+      color: #6b7280;
+      font-size: 13px;
+      margin-bottom: 10px;
+      line-height: 1.55;
+    }
+    .result-courts { display: grid; gap: 10px; }
+    .result-court-box {
+      border: 2px solid #d8e3da;
+      border-radius: 18px;
+      background: #f5f7fc;
+      padding: 12px;
+    }
+    .result-court-pill {
+      width: fit-content;
+      min-width: 98px;
+      margin: 0 auto 10px;
+      padding: 7px 18px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3a4f97;
+      font-size: 14px;
+      font-weight: 800;
+      text-align: center;
+    }
+    .result-team-box {
+      background: #ffffff;
+      border: 1.5px solid #e6e9ef;
+      border-radius: 14px;
+      text-align: center;
+      padding: 14px 12px;
+      font-size: 17px;
+      font-weight: 900;
+      color: #111827;
+      line-height: 1.45;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.85);
+    }
+    .result-team-box.challenge {
+      background: #fff8ec;
+      border-color: #f7c780;
+    }
+    .result-vs {
+      text-align: center;
+      font-weight: 900;
+      color: #4b5563;
+      font-size: 18px;
+      padding: 9px 0;
+    }
+    .result-challenge-chip {
+      display: inline-flex;
+      margin-top: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #f59e0b, #f97316);
+      color: #fff7ed;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .02em;
+    }
+    @media (min-width: 960px) {
+      .result-round-card { flex-basis: 346px; width: 346px; }
+    }
+    @media (max-width: 720px) {
+      .result-shell { padding: 14px; border-radius: 22px; }
+      .result-board-head { align-items: flex-start; flex-direction: column; }
+      .result-export-btn { width: 100%; }
+      .result-round-scroll { padding: 14px; }
+      .result-round-track { gap: 12px; }
+      .result-round-card { flex-basis: min(calc(100vw - 82px), 330px); width: min(calc(100vw - 82px), 330px); }
+    }
+
   </style>
 </head>
 <body>
   <main class="app">
     <header>
-      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V22.1</span></h1>
-      <p class="subtitle">登録メンバーは最大50人まで保持。クラス・開催ごとに当日参加者だけを選び、見やすい対戦表を作成できます。</p>
+      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V22.2</span></h1>
+      <p class="subtitle">登録メンバーは最大50人まで保持。ホームの対戦表表示と画像出力を、見やすいカード式レイアウトへ刷新しました。</p>
 
       <div class="install-tip" id="installTip">
         <div class="ios-badge">iPhone ホーム画面対応</div>
@@ -834,6 +994,11 @@ body.large-ui .zoom-mode-title {
       <details>
         <summary>アップデートノート</summary>
         <div class="release-notes-body">
+          <div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V22.2</span><span class="release-note-title">対戦表表示を見本イメージ寄りへ刷新</span></div>
+            <div class="release-note-text">ホーム上の対戦表表示を、緑色の太枠カードと薄い見出しを使った見本イメージ寄りのレイアウトへ変更しました。iPhoneでは各試合カードを左右スクロールで確認できます。</div>
+            <div class="release-note-text">画像出力も同系統の見た目へ統一し、作成日時や試合数などのサマリーを上部に表示するようにしました。</div>
+          </div>
           <div class="release-note-item">
             <div class="release-note-head"><span class="release-note-version">V22.1</span><span class="release-note-title">50人名簿とJSONバックアップ機能を追加</span></div>
             <div class="release-note-text">メンバーマスターの登録上限を50人へ拡張しました。あわせて、登録済みメンバー名簿をJSONファイルとして出力し、別端末や機種変更後の端末で読み込める機能を追加しています。</div>
@@ -1649,7 +1814,7 @@ body.large-ui .zoom-mode-title {
         }
 
         schedule.__state = state.map(slim);
-        schedule.__meta = { selectedCount: activeMembers.length, courtCount: courtSetting, roundCount };
+        schedule.__meta = { selectedCount: activeMembers.length, courtCount: courtSetting, roundCount, generatedAt: new Date().toISOString() };
         lastSchedule = schedule;
         save();
         renderSchedule(schedule);
@@ -1934,70 +2099,96 @@ body.large-ui .zoom-mode-title {
       addRecentRound(recentQuartets, quartetKey([...teamA, ...teamB]), roundNo, RECENT_QUARTET_LOOKBACK);
     }
 
+
+    function formatScheduleDateTime(value) {
+      const date = value ? new Date(value) : new Date();
+      if (Number.isNaN(date.getTime())) return '';
+      const pad = (num) => String(num).padStart(2, '0');
+      return `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    }
+
+    function getScheduleSummary(schedule) {
+      const meta = schedule.__meta || {};
+      const selectedCount = meta.selectedCount || getSelectedMembers().length;
+      const courtCount = meta.courtCount || (schedule[0]?.courts?.length || 0);
+      const roundCount = schedule.length;
+      const restCount = schedule[0]?.rests?.length || 0;
+      return {
+        selectedCount,
+        courtCount,
+        roundCount,
+        restCount,
+        createdText: formatScheduleDateTime(meta.generatedAt),
+      };
+    }
+
+
     function renderSchedule(schedule) {
       const wrap = $("schedule");
       wrap.innerHTML = "";
       if (!schedule.length) return;
 
-      const hint = document.createElement("div");
-      hint.className = "schedule-hint";
-      hint.textContent = "対戦表は左右にスワイプして確認できます";
-      wrap.appendChild(hint);
-
-      const scroll = document.createElement("div");
-      scroll.className = "schedule-scroll";
-      scroll.setAttribute("aria-label", "対戦表の横スクロール表示");
-      const track = document.createElement("div");
-      track.className = "schedule-track";
-
-      schedule.forEach((round) => {
-        const div = document.createElement("div");
-        div.className = "round";
-        const restText = round.rests.length
-          ? round.rests.map((p) => formatPersonPlain(p)).join("、")
-          : "休憩なし";
-        div.innerHTML = `
-          <div class="round-head">
-            <div class="round-title">第${round.roundNo}試合</div>
-            <div class="rest">休憩：${escapeHtml(restText)}</div>
+      const summary = getScheduleSummary(schedule);
+      const shell = document.createElement("section");
+      shell.className = "result-shell";
+      shell.innerHTML = `
+        <div class="result-title-block">
+          <div class="result-title-main">対戦表結果</div>
+          <div class="result-created">作成日時: ${escapeHtml(summary.createdText || formatScheduleDateTime())}</div>
+        </div>
+        <div class="result-board-card">
+          <div class="result-board-head">
+            <div>
+              <div class="result-board-title">ダブルス対戦表</div>
+              <div class="result-board-meta">${summary.selectedCount}名 / ${summary.roundCount}試合 / ${summary.courtCount}コート / 毎試合${summary.restCount}名休憩</div>
+            </div>
+            <button class="result-export-btn" id="scheduleExportInline" type="button">画像出力</button>
           </div>
-          <div class="courts">
-            ${round.courts.map(courtHtml).join("")}
+          <div class="result-round-scroll" aria-label="対戦表の横スクロール表示">
+            <div class="result-round-track">
+              ${schedule.map(roundBoardHtml).join("")}
+            </div>
           </div>
-        `;
-        track.appendChild(div);
-      });
-
-      scroll.appendChild(track);
-      wrap.appendChild(scroll);
+        </div>
+      `;
+      wrap.appendChild(shell);
+      const inlineButton = $("scheduleExportInline");
+      if (inlineButton) inlineButton.addEventListener("click", exportImage);
       wrap.scrollIntoView({ block: "start", behavior: "smooth" });
     }
 
-    function courtHtml(c) {
-      const hasRatingInfo = appSettings.useRatings && Number.isFinite(c.diff);
-      const cls = !hasRatingInfo ? "warn" : c.diff <= 1 ? "good" : c.diff <= 3 ? "warn" : "bad";
-      const footer = hasRatingInfo
-        ? `チーム合計：${formatRatingValue(c.sumA)} - ${formatRatingValue(c.sumB)} / 差 ${formatRatingValue(c.diff)}${c.challengeTeam ? " / チャレンジカード" : ""}`
-        : `レーティングなしモード：重複回避と公平性を優先`;
+    function roundBoardHtml(round) {
+      const restText = round.rests.length
+        ? round.rests.map((p) => formatPersonPlain(p, { includeRating: false })).join("、")
+        : "なし";
       return `
-        <div class="court">
-          <div class="court-title">Court ${c.courtNo}</div>
-          <div class="match">
-            ${pairHtml(c.teamA, c.sumA, c.challengeTeam === "A")}
-            <div class="vs">VS</div>
-            ${pairHtml(c.teamB, c.sumB, c.challengeTeam === "B")}
+        <article class="result-round-card">
+          <div class="result-round-header">第${round.roundNo}試合</div>
+          <div class="result-rest-line">休憩：${escapeHtml(restText)}</div>
+          <div class="result-courts">
+            ${round.courts.map(resultCourtHtml).join("")}
           </div>
-          <div class="diff ${cls}">${footer}</div>
-        </div>
+        </article>
       `;
     }
 
-    function pairHtml(team, sum, isChallenge = false) {
-      const heading = appSettings.useRatings && Number.isFinite(sum) ? `合計 ${formatRatingValue(sum)}` : `ペア`;
+    function resultCourtHtml(court) {
       return `
-        <div class="pair ${isChallenge ? "challenge" : ""}">
-          <strong>${heading}${isChallenge ? `<span class="challenge-badge">チャレンジ！</span>` : ""}</strong>
-          ${team.map((p) => `<span>${formatPerson(p)}</span>`).join("")}
+        <section class="result-court-box">
+          <div class="result-court-pill">Court ${court.courtNo}</div>
+          ${resultTeamHtml(court.teamA, court.challengeTeam === "A")}
+          <div class="result-vs">VS</div>
+          ${resultTeamHtml(court.teamB, court.challengeTeam === "B")}
+        </section>
+      `;
+    }
+
+    function resultTeamHtml(team, isChallenge = false) {
+      const names = team.map((p) => escapeHtml(formatPersonPlain(p, { includeRating: false }))).join("・");
+      return `
+        <div class="result-team-box ${isChallenge ? "challenge" : ""}">
+          <div>${names}</div>
+          ${isChallenge ? '<div class="result-challenge-chip">チャレンジ</div>' : ''}
         </div>
       `;
     }
@@ -2080,77 +2271,63 @@ body.large-ui .zoom-mode-title {
       await new Promise((resolve) => setTimeout(resolve, 0));
       try {
         const blob = await createScheduleImageBlob(lastSchedule);
-        const file = new File([blob], `gzb_schedule_${new Date().toISOString().slice(0,10)}.png`, { type: "image/png" });
+        const file = new File([blob], `doubles_schedule_${new Date().toISOString().slice(0,10)}.png`, { type: "image/png" });
         if (navigator.canShare && navigator.share && navigator.canShare({ files: [file] })) {
           await navigator.share({ files: [file], title: "ダブルス対戦メーカー", text: "対戦表画像" });
           setError("対戦表画像を共有しました。");
           return;
         }
         showImagePreview(blob, file.name);
-        setError("対戦表画像を表示しました。画像部分は左右スクロールできます。長押しで保存できます。");
+        setError("対戦表画像を表示しました。画像部分は左右スクロールできます。長押しまたはダウンロードで保存できます。");
       } catch (err) {
         console.error(err);
         setError("画像出力に失敗しました。もう一度お試しください。");
       }
     }
 
+
     async function createScheduleImageBlob(schedule) {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
       const width = IMAGE_BASE_WIDTH;
-      const padding = 34;
-      const topHeaderHeight = 120;
-      const sectionGap = 22;
-      const columnGap = 20;
-      const roundHeaderHeight = 46;
+      const padding = 24;
+      const headerBlockHeight = 112;
+      const groupGap = 24;
+      const columnGap = 18;
       const columns = 3;
       const contentWidth = width - padding * 2;
       const cardWidth = Math.floor((contentWidth - columnGap * (columns - 1)) / columns);
-      const decoSlotWidth = 92;
-      const nameGap = 10;
-      const teamBoxSidePadding = 16;
-      const nameLineHeight = 31;
-      const teamBoxMinHeight = 86;
-      const cheerPillWidth = 76;
-      const cheerPillHeight = 34;
+      const roundHeaderHeight = 52;
+      const roundInnerPadding = 14;
+      const restLineHeight = 24;
+      const courtOuterPadding = 12;
+      const courtLabelHeight = 32;
+      const teamLineHeight = 28;
+      const teamBoxMinHeight = 64;
+      const teamGap = 10;
+      const vsBlockHeight = 30;
 
-      const selectedCount = schedule.__meta && schedule.__meta.selectedCount ? schedule.__meta.selectedCount : getSelectedMembers().length;
-      const courtCount = schedule.__meta && schedule.__meta.courtCount ? schedule.__meta.courtCount : $("courtCount").value;
-      const metaText = `${selectedCount}人 / ${courtCount}コート / ${schedule.length}試合`;
+      const summary = getScheduleSummary(schedule);
+      const metaText = `${summary.selectedCount}名 / ${summary.roundCount}試合 / ${summary.courtCount}コート / 毎試合${summary.restCount}名休憩 / 作成 ${summary.createdText}`;
       const blocks = [];
 
       schedule.forEach((round) => {
-        ctx.font = "21px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-        const restText = round.rests.length ? round.rests.map((p) => p.name).join("、") : "なし";
-        const restLines = wrapText(ctx, `休憩：${restText}`, cardWidth - 48);
-        let roundHeight = 18 + roundHeaderHeight + restLines.length * 28 + 16;
-        const rows = [];
-
-        round.courts.forEach((c) => {
-          const teamAText = `${c.teamA.map((p) => p.name).join("・")}`;
-          const teamBText = `${c.teamB.map((p) => p.name).join("・")}`;
+        ctx.font = "20px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+        const restText = `休憩：${round.rests.length ? round.rests.map((p) => p.name).join('、') : 'なし'}`;
+        const restLines = wrapText(ctx, restText, cardWidth - 50);
+        const courtRows = round.courts.map((court) => {
           ctx.font = "bold 27px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-          const usableNameWidth = cardWidth - 28 - teamBoxSidePadding * 2 - decoSlotWidth * 2 - nameGap * 2;
-          const teamALines = wrapText(ctx, teamAText, usableNameWidth);
-          const teamBLines = wrapText(ctx, teamBText, usableNameWidth);
-          const aBoxHeight = Math.max(teamBoxMinHeight, teamALines.length * nameLineHeight + 34);
-          const bBoxHeight = Math.max(teamBoxMinHeight, teamBLines.length * nameLineHeight + 34);
-          const rowHeight = 20 + 28 + 16 + aBoxHeight + 16 + 24 + 14 + bBoxHeight + 16;
-          rows.push({
-            note: `Court ${c.courtNo}`,
-            teamALines,
-            teamBLines,
-            rowHeight,
-            challengeTeam: c.challengeTeam || null,
-            aBoxHeight,
-            bBoxHeight,
-            diff: Number.isFinite(c.diff) ? c.diff : null,
-          });
-          roundHeight += rowHeight + 12;
+          const teamAText = court.teamA.map((p) => p.name).join('・');
+          const teamBText = court.teamB.map((p) => p.name).join('・');
+          const teamALines = wrapText(ctx, teamAText, cardWidth - 96);
+          const teamBLines = wrapText(ctx, teamBText, cardWidth - 96);
+          const aHeight = Math.max(teamBoxMinHeight, teamALines.length * teamLineHeight + 28);
+          const bHeight = Math.max(teamBoxMinHeight, teamBLines.length * teamLineHeight + 28);
+          const outerHeight = courtOuterPadding + courtLabelHeight + 10 + aHeight + teamGap + vsBlockHeight + teamGap + bHeight + courtOuterPadding;
+          return { court, teamALines, teamBLines, aHeight, bHeight, outerHeight };
         });
-
-        roundHeight += 12;
-        blocks.push({ round, restLines, rows, roundHeight });
+        const roundHeight = roundInnerPadding + roundHeaderHeight + 10 + restLines.length * restLineHeight + 12 + courtRows.reduce((sum, row) => sum + row.outerHeight, 0) + Math.max(0, courtRows.length - 1) * 12 + roundInnerPadding;
+        blocks.push({ round, restLines, courtRows, roundHeight });
       });
 
       const rowGroups = [];
@@ -2159,185 +2336,130 @@ body.large-ui .zoom-mode-title {
         rowGroups.push({ items, rowHeight: Math.max(...items.map((item) => item.roundHeight)) });
       }
 
-      let totalHeight = padding + topHeaderHeight;
-      rowGroups.forEach((group) => {
-        totalHeight += group.rowHeight + sectionGap;
-      });
-      totalHeight += 10;
+      let totalHeight = padding + headerBlockHeight;
+      rowGroups.forEach((group) => { totalHeight += group.rowHeight + groupGap; });
+      totalHeight += 12;
 
       const scale = Math.min(1, IMAGE_MAX_HEIGHT / totalHeight);
       canvas.width = Math.max(1, Math.round(width * scale));
       canvas.height = Math.max(1, Math.round(totalHeight * scale));
       if (scale !== 1) ctx.scale(scale, scale);
 
-      const bg = ctx.createLinearGradient(0, 0, width, totalHeight);
-      bg.addColorStop(0, '#f8fbff');
-      bg.addColorStop(1, '#e4efff');
-      ctx.fillStyle = bg;
+      ctx.fillStyle = '#edf0ed';
       ctx.fillRect(0, 0, width, totalHeight);
 
-      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
       let y = padding;
-      ctx.fillStyle = '#0f172a';
-      ctx.font = "bold 42px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-      ctx.fillText('ダブルス対戦メーカー', width / 2, y);
-      y += 40;
-      ctx.fillStyle = '#334155';
-      ctx.font = "24px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-      ctx.fillText(metaText, width / 2, y);
-      y += 34;
-      y += 6;
+      ctx.fillStyle = '#1f3b73';
+      ctx.font = "bold 34px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+      ctx.fillText('ダブルス対戦表', padding, y);
+      y += 46;
+      ctx.fillStyle = '#5b6470';
+      ctx.font = "20px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+      ctx.fillText(metaText, padding, y);
+      y += 42;
 
-      const flameCountFromDiff = (diff) => {
-        if (!Number.isFinite(diff)) return 0;
-        if (diff >= 8) return 3;
-        if (diff >= 5.5) return 2;
-        if (diff >= 3) return 1;
-        return 0;
-      };
-
-      const drawFlames = (cx, cy, count) => {
-        if (!count || count <= 0) return;
-        ctx.save();
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.font = "26px -apple-system, BlinkMacSystemFont, 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif";
-        ctx.shadowColor = 'rgba(234,88,12,.18)';
-        ctx.shadowBlur = 10;
-        ctx.shadowOffsetY = 2;
-        const flameSpacing = 18;
-        if (count >= 3) {
-          ctx.fillText('🔥', cx - flameSpacing, cy);
-          ctx.fillText('🔥', cx, cy);
-          ctx.fillText('🔥', cx + flameSpacing, cy);
-        } else if (count === 2) {
-          ctx.fillText('🔥', cx - flameSpacing / 2, cy);
-          ctx.fillText('🔥', cx + flameSpacing / 2, cy);
-        } else {
-          ctx.fillText('🔥', cx, cy);
-        }
-        ctx.restore();
-      };
-
-      const drawCheerPill = (cx, cy) => {
-        const pillX = cx - cheerPillWidth / 2;
-        const pillY = cy - cheerPillHeight / 2;
-        const grad = ctx.createLinearGradient(pillX, pillY, pillX + cheerPillWidth, pillY + cheerPillHeight);
-        grad.addColorStop(0, '#f59e0b');
-        grad.addColorStop(1, '#f97316');
-        roundedRect(ctx, pillX, pillY, cheerPillWidth, cheerPillHeight, cheerPillHeight / 2);
-        ctx.fillStyle = grad;
+      const drawTeamBox = (boxX, boxY, boxW, boxH, lines, isChallenge = false) => {
+        roundedRect(ctx, boxX, boxY, boxW, boxH, 14);
+        ctx.fillStyle = isChallenge ? '#fff7eb' : '#ffffff';
         ctx.fill();
-        ctx.shadowColor = 'rgba(249,115,22,.2)';
-        ctx.shadowBlur = 12;
-        ctx.shadowOffsetY = 4;
-        ctx.strokeStyle = '#fdba74';
-        ctx.lineWidth = 1.4;
+        ctx.strokeStyle = isChallenge ? '#f6bf6a' : '#e3e7ef';
+        ctx.lineWidth = 1.6;
         ctx.stroke();
-        ctx.shadowColor = 'transparent';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#fff7ed';
-        ctx.font = "bold 18px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-        ctx.fillText('加油！', cx, cy + 1);
-      };
-
-      const drawTeamBox = (boxX, boxY, boxW, boxH, teamLines, isChallenge, diff) => {
-        roundedRect(ctx, boxX, boxY, boxW, boxH, 16);
-        ctx.fillStyle = isChallenge ? '#fff1d6' : '#ffffff';
-        ctx.fill();
-        ctx.strokeStyle = isChallenge ? '#f59e0b' : '#dbe7f8';
-        ctx.lineWidth = isChallenge ? 2.1 : 1.2;
-        ctx.stroke();
-
-        const contentLeft = boxX + teamBoxSidePadding;
-        const contentRight = boxX + boxW - teamBoxSidePadding;
-        const centerY = boxY + boxH / 2;
-        const leftX = contentLeft + decoSlotWidth / 2;
-        const rightX = contentRight - decoSlotWidth / 2;
-        const nameCenterX = boxX + boxW / 2;
-        const textBlockHeight = (teamLines.length - 1) * nameLineHeight;
-        const firstLineY = centerY - textBlockHeight / 2;
-
-        if (isChallenge) {
-          drawCheerPill(leftX, centerY);
-          drawFlames(rightX, centerY, flameCountFromDiff(diff));
-          ctx.fillStyle = '#9a3412';
-        } else {
-          ctx.fillStyle = '#0f172a';
-        }
-
-        ctx.save();
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#111827';
         ctx.font = "bold 27px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-        teamLines.forEach((line, index) => {
-          ctx.fillText(line, nameCenterX, firstLineY + index * nameLineHeight);
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        const centerX = boxX + boxW / 2;
+        const textBlockHeight = (lines.length - 1) * teamLineHeight;
+        const firstY = boxY + boxH / 2 - textBlockHeight / 2;
+        lines.forEach((line, idx) => {
+          ctx.fillText(line, centerX, firstY + idx * teamLineHeight);
         });
-        ctx.restore();
+        if (isChallenge) {
+          const chipW = 86;
+          const chipH = 24;
+          const chipX = centerX - chipW / 2;
+          const chipY = boxY + boxH - chipH - 8;
+          roundedRect(ctx, chipX, chipY, chipW, chipH, 12);
+          const grad = ctx.createLinearGradient(chipX, chipY, chipX + chipW, chipY + chipH);
+          grad.addColorStop(0, '#f59e0b');
+          grad.addColorStop(1, '#f97316');
+          ctx.fillStyle = grad;
+          ctx.fill();
+          ctx.fillStyle = '#fff7ed';
+          ctx.font = "bold 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+          ctx.fillText('チャレンジ', centerX, chipY + chipH / 2 + 1);
+        }
       };
 
       rowGroups.forEach((group) => {
         group.items.forEach((block, idx) => {
           const x = padding + idx * (cardWidth + columnGap);
-          roundedRect(ctx, x, y, cardWidth, block.roundHeight, 22);
+          roundedRect(ctx, x, y, cardWidth, block.roundHeight, 24);
           ctx.fillStyle = '#ffffff';
           ctx.fill();
-          ctx.strokeStyle = '#c7d8ef';
-          ctx.lineWidth = 2.35;
+          ctx.strokeStyle = '#0f9b56';
+          ctx.lineWidth = 8;
           ctx.stroke();
 
-          roundedRect(ctx, x + 14, y + 14, cardWidth - 28, roundHeaderHeight, 15);
-          ctx.fillStyle = '#e8f0ff';
+          roundedRect(ctx, x + 16, y + 12, cardWidth - 32, roundHeaderHeight, 14);
+          ctx.fillStyle = '#eef1ff';
           ctx.fill();
-          ctx.fillStyle = '#1d4ed8';
-          ctx.font = "bold 25px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-          ctx.fillText(`第${block.round.roundNo}試合`, x + cardWidth / 2, y + 44);
+          ctx.fillStyle = '#243b8f';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.font = "bold 24px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+          ctx.fillText(`第${block.round.roundNo}試合`, x + cardWidth / 2, y + 12 + roundHeaderHeight / 2 + 1);
 
-          let innerY = y + 78;
-          ctx.fillStyle = '#475569';
-          ctx.font = "20px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+          let innerY = y + 12 + roundHeaderHeight + 18;
+          ctx.fillStyle = '#6b7280';
+          ctx.font = "18px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
           block.restLines.forEach((line) => {
-            ctx.fillText(line, x + cardWidth / 2, innerY);
-            innerY += 28;
+            ctx.fillText(line, x + cardWidth / 2, innerY + 10);
+            innerY += restLineHeight;
           });
-          innerY += 4;
+          innerY += 2;
 
-          block.rows.forEach((row, rowIndex) => {
-            const rowX = x + 14;
-            const rowW = cardWidth - 28;
-            roundedRect(ctx, rowX, innerY - 10, rowW, row.rowHeight, 16);
-            ctx.fillStyle = rowIndex % 2 === 0 ? '#f8fbff' : '#eef5ff';
+          block.courtRows.forEach((row) => {
+            const boxX = x + 14;
+            const boxW = cardWidth - 28;
+            roundedRect(ctx, boxX, innerY, boxW, row.outerHeight, 18);
+            ctx.fillStyle = '#f5f7fc';
             ctx.fill();
-            ctx.strokeStyle = '#e0eaf9';
-            ctx.lineWidth = 1.25;
+            ctx.strokeStyle = '#d8e3da';
+            ctx.lineWidth = 2;
             ctx.stroke();
 
-            roundedRect(ctx, x + cardWidth / 2 - 72, innerY, 144, 30, 15);
-            ctx.fillStyle = '#e2ecff';
+            const pillW = 112;
+            const pillX = x + cardWidth / 2 - pillW / 2;
+            const pillY = innerY + 12;
+            roundedRect(ctx, pillX, pillY, pillW, courtLabelHeight, 16);
+            ctx.fillStyle = '#eef2ff';
             ctx.fill();
-            ctx.fillStyle = '#1e40af';
-            ctx.font = "bold 17px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-            ctx.fillText(row.note, x + cardWidth / 2, innerY + 20);
+            ctx.fillStyle = '#3a4f97';
+            ctx.font = "bold 19px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+            ctx.fillText(`Court ${row.court.courtNo}`, x + cardWidth / 2, pillY + courtLabelHeight / 2 + 1);
 
-            let lineY = innerY + 44;
-            const boxX = rowX + 14;
-            const boxW = rowW - 28;
-            drawTeamBox(boxX, lineY, boxW, row.aBoxHeight, row.teamALines, row.challengeTeam === 'A', row.diff);
-            lineY += row.aBoxHeight + 14;
-            ctx.fillStyle = '#64748b';
-            ctx.font = "bold 21px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-            ctx.fillText('VS', x + cardWidth / 2, lineY + 16);
-            lineY += 30;
-            drawTeamBox(boxX, lineY, boxW, row.bBoxHeight, row.teamBLines, row.challengeTeam === 'B', row.diff);
+            const teamBoxX = boxX + 16;
+            const teamBoxW = boxW - 32;
+            let laneY = pillY + courtLabelHeight + 12;
+            drawTeamBox(teamBoxX, laneY, teamBoxW, row.aHeight, row.teamALines, row.court.challengeTeam === 'A');
+            laneY += row.aHeight + teamGap;
+            ctx.fillStyle = '#4b5563';
+            ctx.font = "bold 22px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+            ctx.fillText('VS', x + cardWidth / 2, laneY + vsBlockHeight / 2);
+            laneY += vsBlockHeight + teamGap;
+            drawTeamBox(teamBoxX, laneY, teamBoxW, row.bHeight, row.teamBLines, row.court.challengeTeam === 'B');
 
-            innerY += row.rowHeight + 12;
+            innerY += row.outerHeight + 12;
           });
         });
-        y += group.rowHeight + sectionGap;
+        y += group.rowHeight + groupGap;
       });
 
       ctx.textAlign = 'start';
+      ctx.textBaseline = 'alphabetic';
       return await new Promise((resolve, reject) => {
         canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('blob error')), 'image/png');
       });
@@ -2355,7 +2477,7 @@ body.large-ui .zoom-mode-title {
           <strong style="color:#fff;font-size:18px;">対戦表画像プレビュー</strong>
           <button id="closeImagePreview" style="border:none;border-radius:12px;padding:10px 14px;background:#1d4ed8;color:#fff;font-weight:700;">閉じる</button>
         </div>
-        <div style="color:#cbd5e1;font-size:13px;line-height:1.6;">共有画像は横幅を縮小せずに表示します。iPhoneでは画像部分を左右にスクロールして全体を確認できます。チャレンジ側は左の加油！楕円バッジと右の炎アイコンで強調します。</div>
+        <div style="color:#cbd5e1;font-size:13px;line-height:1.6;">共有画像は見本に近い横長レイアウトです。iPhoneでは画像部分を左右にスクロールして全体を確認できます。</div>
         <div style="flex:1;overflow:auto;-webkit-overflow-scrolling:touch;background:#0b1220;border-radius:16px;padding:10px;">
           <img src="${url}" alt="対戦表画像" style="display:block;max-width:none;width:auto;min-width:760px;height:auto;margin:0 auto;border-radius:16px;box-shadow:0 14px 36px rgba(0,0,0,.3);background:#fff;" />
         </div>
