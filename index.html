@@ -716,20 +716,22 @@ body.large-ui .zoom-mode-title {
       margin-top: 18px;
     }
     .result-shell {
-      background: #f8faf8;
-      border: 1px solid #d7e2d7;
+      background: linear-gradient(145deg, var(--panel), rgba(255,255,255,.045));
+      border: 1px solid var(--line);
       border-radius: 26px;
       padding: 18px;
-      color: #111827;
-      box-shadow: 0 18px 40px rgba(15,23,42,.12);
+      color: var(--text);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
     }
     .result-shell h2,
     .result-shell h3,
     .result-shell p,
     .result-shell div { color: inherit; }
     .result-title-block { display: grid; gap: 4px; margin-bottom: 14px; }
-    .result-title-main { font-size: 20px; font-weight: 900; color: #111827; }
-    .result-created { font-size: 13px; color: #475569; }
+    .result-title-main { font-size: 20px; font-weight: 900; color: var(--text); }
+    .result-created { font-size: 13px; color: var(--muted); }
+    .result-swipe-note { font-size: 12px; color: #bae6fd; margin-top: 4px; }
     .result-board-card {
       border: 1px solid #d6e4d9;
       border-radius: 24px;
@@ -763,10 +765,16 @@ body.large-ui .zoom-mode-title {
       overflow-x: auto;
       overflow-y: hidden;
       -webkit-overflow-scrolling: touch;
+      touch-action: pan-x pinch-zoom;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
       padding: 18px;
       scrollbar-width: thin;
       background: #fbfdfb;
+      cursor: grab;
     }
+    .result-round-scroll:active { cursor: grabbing; }
     .result-round-scroll::-webkit-scrollbar { height: 8px; }
     .result-round-scroll::-webkit-scrollbar-thumb { background: rgba(15,137,84,.30); border-radius: 999px; }
     .result-round-track {
@@ -775,15 +783,18 @@ body.large-ui .zoom-mode-title {
       align-items: stretch;
       width: max-content;
       min-width: 100%;
+      padding-right: 6px;
     }
     .result-round-card {
-      flex: 0 0 min(88vw, 360px);
-      width: min(88vw, 360px);
+      flex: 0 0 min(84vw, 340px);
+      width: min(84vw, 340px);
       background: #ffffff;
       border: 7px solid #0f9b56;
       border-radius: 26px;
       padding: 12px;
       box-shadow: 0 10px 24px rgba(15,155,86,.08);
+      scroll-snap-align: center;
+      scroll-snap-stop: always;
     }
     .result-round-header {
       background: #eef1ff;
@@ -844,19 +855,8 @@ body.large-ui .zoom-mode-title {
       font-size: 18px;
       padding: 9px 0;
     }
-    .result-challenge-chip {
-      display: inline-flex;
-      margin-top: 8px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #f59e0b, #f97316);
-      color: #fff7ed;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: .02em;
-    }
-    @media (min-width: 960px) {
-      .result-round-card { flex-basis: 346px; width: 346px; }
+        @media (min-width: 960px) {
+      .result-round-card { flex-basis: 332px; width: 332px; }
     }
     @media (max-width: 720px) {
       .result-shell { padding: 14px; border-radius: 22px; }
@@ -864,7 +864,7 @@ body.large-ui .zoom-mode-title {
       .result-export-btn { width: 100%; }
       .result-round-scroll { padding: 14px; }
       .result-round-track { gap: 12px; }
-      .result-round-card { flex-basis: min(calc(100vw - 82px), 330px); width: min(calc(100vw - 82px), 330px); }
+      .result-round-card { flex-basis: min(calc(100vw - 88px), 320px); width: min(calc(100vw - 88px), 320px); }
     }
 
   </style>
@@ -872,8 +872,8 @@ body.large-ui .zoom-mode-title {
 <body>
   <main class="app">
     <header>
-      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V22.2</span></h1>
-      <p class="subtitle">登録メンバーは最大50人まで保持。ホームの対戦表表示と画像出力を、見やすいカード式レイアウトへ刷新しました。</p>
+      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V22.2.1</span></h1>
+      <p class="subtitle">登録メンバーは最大50人まで保持。黒ベースのホーム画面のまま、対戦表は横スワイプ表示と見やすい画像出力に対応しています。</p>
 
       <div class="install-tip" id="installTip">
         <div class="ios-badge">iPhone ホーム画面対応</div>
@@ -994,7 +994,12 @@ body.large-ui .zoom-mode-title {
       <details>
         <summary>アップデートノート</summary>
         <div class="release-notes-body">
-          <div class="release-note-item">
+<div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V22.2.1</span><span class="release-note-title">横スワイプ挙動と画像チャレンジ表示を調整</span></div>
+            <div class="release-note-text">ホーム画面の対戦表カードに、左右スワイプしやすい横スクロール設定とスナップ挙動を追加しました。あわせて、ホーム画面全体の黒ベース配色を維持するよう調整しています。</div>
+            <div class="release-note-text">画像出力時のチャレンジ表現は、V22以前と同様に、ペアカード左へ「加油！」、右へレート差に応じた炎アイコン1〜3個を表示する仕様へ戻しました。</div>
+          </div>
+                    <div class="release-note-item">
             <div class="release-note-head"><span class="release-note-version">V22.2</span><span class="release-note-title">対戦表表示を見本イメージ寄りへ刷新</span></div>
             <div class="release-note-text">ホーム上の対戦表表示を、緑色の太枠カードと薄い見出しを使った見本イメージ寄りのレイアウトへ変更しました。iPhoneでは各試合カードを左右スクロールで確認できます。</div>
             <div class="release-note-text">画像出力も同系統の見た目へ統一し、作成日時や試合数などのサマリーを上部に表示するようにしました。</div>
@@ -2135,6 +2140,7 @@ body.large-ui .zoom-mode-title {
         <div class="result-title-block">
           <div class="result-title-main">対戦表結果</div>
           <div class="result-created">作成日時: ${escapeHtml(summary.createdText || formatScheduleDateTime())}</div>
+          <div class="result-swipe-note">試合カードは左右にスワイプして確認できます</div>
         </div>
         <div class="result-board-card">
           <div class="result-board-head">
@@ -2188,7 +2194,6 @@ body.large-ui .zoom-mode-title {
       return `
         <div class="result-team-box ${isChallenge ? "challenge" : ""}">
           <div>${names}</div>
-          ${isChallenge ? '<div class="result-challenge-chip">チャレンジ</div>' : ''}
         </div>
       `;
     }
@@ -2319,8 +2324,10 @@ body.large-ui .zoom-mode-title {
           ctx.font = "bold 27px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
           const teamAText = court.teamA.map((p) => p.name).join('・');
           const teamBText = court.teamB.map((p) => p.name).join('・');
-          const teamALines = wrapText(ctx, teamAText, cardWidth - 96);
-          const teamBLines = wrapText(ctx, teamBText, cardWidth - 96);
+          const challengeNameWidth = cardWidth - 220;
+          const normalNameWidth = cardWidth - 96;
+          const teamALines = wrapText(ctx, teamAText, court.challengeTeam === 'A' ? challengeNameWidth : normalNameWidth);
+          const teamBLines = wrapText(ctx, teamBText, court.challengeTeam === 'B' ? challengeNameWidth : normalNameWidth);
           const aHeight = Math.max(teamBoxMinHeight, teamALines.length * teamLineHeight + 28);
           const bHeight = Math.max(teamBoxMinHeight, teamBLines.length * teamLineHeight + 28);
           const outerHeight = courtOuterPadding + courtLabelHeight + 10 + aHeight + teamGap + vsBlockHeight + teamGap + bHeight + courtOuterPadding;
@@ -2359,38 +2366,82 @@ body.large-ui .zoom-mode-title {
       ctx.fillText(metaText, padding, y);
       y += 42;
 
-      const drawTeamBox = (boxX, boxY, boxW, boxH, lines, isChallenge = false) => {
+      const flameCountFromDiff = (diff) => {
+        if (!Number.isFinite(diff)) return 0;
+        if (diff >= 8) return 3;
+        if (diff >= 5.5) return 2;
+        if (diff >= 3) return 1;
+        return 0;
+      };
+
+      const drawFlames = (cx, cy, count) => {
+        if (!count || count <= 0) return;
+        ctx.save();
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = "24px -apple-system, BlinkMacSystemFont, 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif";
+        const spacing = 18;
+        if (count >= 3) {
+          ctx.fillText('🔥', cx - spacing, cy);
+          ctx.fillText('🔥', cx, cy);
+          ctx.fillText('🔥', cx + spacing, cy);
+        } else if (count === 2) {
+          ctx.fillText('🔥', cx - spacing / 2, cy);
+          ctx.fillText('🔥', cx + spacing / 2, cy);
+        } else {
+          ctx.fillText('🔥', cx, cy);
+        }
+        ctx.restore();
+      };
+
+      const drawCheerPill = (cx, cy) => {
+        const pillW = 84;
+        const pillH = 32;
+        const pillX = cx - pillW / 2;
+        const pillY = cy - pillH / 2;
+        const grad = ctx.createLinearGradient(pillX, pillY, pillX + pillW, pillY + pillH);
+        grad.addColorStop(0, '#f59e0b');
+        grad.addColorStop(1, '#f97316');
+        roundedRect(ctx, pillX, pillY, pillW, pillH, 16);
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.strokeStyle = '#fdba74';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+        ctx.fillStyle = '#fff7ed';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = "bold 18px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+        ctx.fillText('加油！', cx, cy + 1);
+      };
+
+      const drawTeamBox = (boxX, boxY, boxW, boxH, lines, isChallenge = false, diff = null) => {
         roundedRect(ctx, boxX, boxY, boxW, boxH, 14);
         ctx.fillStyle = isChallenge ? '#fff7eb' : '#ffffff';
         ctx.fill();
         ctx.strokeStyle = isChallenge ? '#f6bf6a' : '#e3e7ef';
         ctx.lineWidth = 1.6;
         ctx.stroke();
+
+        const sideSlot = isChallenge ? 82 : 12;
+        const leftCenterX = boxX + sideSlot / 2 + 10;
+        const rightCenterX = boxX + boxW - sideSlot / 2 - 10;
+        const nameCenterX = boxX + boxW / 2;
+        const textBlockHeight = (lines.length - 1) * teamLineHeight;
+        const firstY = boxY + boxH / 2 - textBlockHeight / 2;
+
+        if (isChallenge) {
+          drawCheerPill(leftCenterX, boxY + boxH / 2);
+          drawFlames(rightCenterX, boxY + boxH / 2, flameCountFromDiff(diff));
+        }
+
         ctx.fillStyle = '#111827';
         ctx.font = "bold 27px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        const centerX = boxX + boxW / 2;
-        const textBlockHeight = (lines.length - 1) * teamLineHeight;
-        const firstY = boxY + boxH / 2 - textBlockHeight / 2;
         lines.forEach((line, idx) => {
-          ctx.fillText(line, centerX, firstY + idx * teamLineHeight);
+          ctx.fillText(line, nameCenterX, firstY + idx * teamLineHeight);
         });
-        if (isChallenge) {
-          const chipW = 86;
-          const chipH = 24;
-          const chipX = centerX - chipW / 2;
-          const chipY = boxY + boxH - chipH - 8;
-          roundedRect(ctx, chipX, chipY, chipW, chipH, 12);
-          const grad = ctx.createLinearGradient(chipX, chipY, chipX + chipW, chipY + chipH);
-          grad.addColorStop(0, '#f59e0b');
-          grad.addColorStop(1, '#f97316');
-          ctx.fillStyle = grad;
-          ctx.fill();
-          ctx.fillStyle = '#fff7ed';
-          ctx.font = "bold 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-          ctx.fillText('チャレンジ', centerX, chipY + chipH / 2 + 1);
-        }
       };
 
       rowGroups.forEach((group) => {
@@ -2444,13 +2495,13 @@ body.large-ui .zoom-mode-title {
             const teamBoxX = boxX + 16;
             const teamBoxW = boxW - 32;
             let laneY = pillY + courtLabelHeight + 12;
-            drawTeamBox(teamBoxX, laneY, teamBoxW, row.aHeight, row.teamALines, row.court.challengeTeam === 'A');
+            drawTeamBox(teamBoxX, laneY, teamBoxW, row.aHeight, row.teamALines, row.court.challengeTeam === 'A', row.court.diff);
             laneY += row.aHeight + teamGap;
             ctx.fillStyle = '#4b5563';
             ctx.font = "bold 22px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
             ctx.fillText('VS', x + cardWidth / 2, laneY + vsBlockHeight / 2);
             laneY += vsBlockHeight + teamGap;
-            drawTeamBox(teamBoxX, laneY, teamBoxW, row.bHeight, row.teamBLines, row.court.challengeTeam === 'B');
+            drawTeamBox(teamBoxX, laneY, teamBoxW, row.bHeight, row.teamBLines, row.court.challengeTeam === 'B', row.court.diff);
 
             innerY += row.outerHeight + 12;
           });
