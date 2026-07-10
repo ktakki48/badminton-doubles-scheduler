@@ -1222,12 +1222,74 @@ body.large-ui .zoom-mode-title {
       .result-round-slide { padding: 10px; }
     }
 
+
+    /* V22.3.3: challenge indicators and pair name in one row */
+    .result-team-box.challenge {
+      display: grid;
+      grid-template-columns: minmax(58px, auto) minmax(0, 1fr) minmax(36px, auto);
+      align-items: center;
+      column-gap: 8px;
+      padding: 12px 10px;
+      min-height: 70px;
+    }
+    .result-team-box.challenge .result-cheer-pill {
+      grid-column: 1;
+      justify-self: start;
+      min-width: 58px;
+      max-width: 72px;
+      padding: 5px 8px;
+      margin: 0;
+      font-size: 11px;
+      line-height: 1;
+    }
+    .result-team-box.challenge .result-team-name {
+      grid-column: 2;
+      min-width: 0;
+      margin: 0;
+      text-align: center;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      font-size: clamp(14px, 4vw, 17px);
+      line-height: 1.35;
+    }
+    .result-team-box.challenge .result-flames {
+      grid-column: 3;
+      justify-self: end;
+      min-width: 34px;
+      max-width: 72px;
+      margin: 0;
+      font-size: clamp(15px, 4vw, 18px);
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+    .result-team-box:not(.challenge) .result-team-name {
+      display: block;
+      margin: 0;
+    }
+    @media (max-width: 380px) {
+      .result-team-box.challenge {
+        grid-template-columns: 56px minmax(0, 1fr) 44px;
+        column-gap: 5px;
+        padding-left: 7px;
+        padding-right: 7px;
+      }
+      .result-team-box.challenge .result-cheer-pill {
+        min-width: 54px;
+        padding-left: 6px;
+        padding-right: 6px;
+        font-size: 10px;
+      }
+      .result-team-box.challenge .result-flames {
+        font-size: 15px;
+      }
+    }
+
   </style>
 </head>
 <body>
   <main class="app">
     <header>
-      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V22.3.1</span></h1>
+      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V22.3.3</span></h1>
       <p class="subtitle">登録メンバーは最大50人まで保持。固定された対戦結果枠内で、1スワイプにつき1試合ずつ切り替えて確認できます。</p>
 
       <div class="install-tip" id="installTip">
@@ -1349,6 +1411,15 @@ body.large-ui .zoom-mode-title {
       <details>
         <summary>アップデートノート</summary>
         <div class="release-notes-body">
+          <div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V22.3.3</span><span class="release-note-title">チャレンジ表示をペア名と同じ行に統合</span></div>
+            <div class="release-note-text">ホーム画面のレート差があるペアカードで、「加油！」・ペア名・炎1〜3個を同一行に収めるレイアウトへ変更しました。狭いiPhone幅でもカード外へはみ出さないよう、3列グリッドと可変文字サイズを使用しています。</div>
+          </div>
+          <div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V22.3.2</span><span class="release-note-title">同ペア回避を段階式の禁止条件へ変更</span></div>
+            <div class="release-note-text">直近6試合以内の同ペアを含む候補は、まず候補から除外して対戦表成立を試す方式へ変更しました。同じ4人でのペア替えも直近4試合以内は最初の探索対象から除外します。</div>
+            <div class="release-note-text">厳格条件で成立しない場合のみ、4人組条件、同ペア条件の順に段階的に緩和します。レート差の小ささだけを理由に同じペアが繰り返される傾向を抑えています。</div>
+          </div>
           <div class="release-note-item">
             <div class="release-note-head"><span class="release-note-version">V22.3.1</span><span class="release-note-title">ペア重複と4人固定ローテーションを強く抑制</span></div>
             <div class="release-note-text">合計レート差を小さく保ちながら、同じペアは直近6試合以内、同じ4人によるペア替え対戦は直近4試合以内の再登場を強く避けるよう、組み分け評価ロジックを調整しました。</div>
@@ -2260,79 +2331,110 @@ body.large-ui .zoom-mode-title {
 
     function chooseRoundMatches(active, courtCount, roundNo, selectedCount, recentQuartets) {
       const strategy = buildRoundStrategy(active, roundNo, selectedCount);
-      const candidates = buildMatchCandidates(active, strategy, recentQuartets).sort((a, b) => a.score - b.score);
-      const byPlayer = new Map(active.map((p) => [p.id, []]));
-      candidates.forEach((c) => c.players.forEach((p) => byPlayer.get(p.id).push(c)));
+      const allCandidates = buildMatchCandidates(active, strategy, recentQuartets).sort((a, b) => a.score - b.score);
 
-      let best = null;
-      const solutionPool = [];
-      let visited = 0;
-      let aborted = false;
-      const startedAt = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
-      const orderedActive = active.slice().sort((a, b) => {
-        if (a.played !== b.played) return a.played - b.played;
-        if (appSettings.useRatings) return sortRatingValue(b) - sortRatingValue(a) || a.name.localeCompare(b.name, "ja");
-        return a.name.localeCompare(b.name, "ja");
-      });
-
-      function pushSolution(solution) {
-        if (!best || solution.score < best.score) best = solution;
-        solutionPool.push(solution);
-        solutionPool.sort((a, b) => a.score - b.score);
-        if (solutionPool.length > 12) solutionPool.length = 12;
-      }
-
-      function search(selected, usedIds, score) {
-        visited += 1;
-        const now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
-        if (visited > SEARCH_NODE_LIMIT || now - startedAt > SEARCH_TIME_LIMIT_MS) {
-          aborted = true;
-          return;
+      const stages = [
+        {
+          name: "strict",
+          candidates: allCandidates.filter((c) => c.pairCooldownViolations === 0 && c.quartetCooldownViolation === 0),
+          optionLimit: Math.max(SEARCH_OPTION_LIMIT * 3, 72),
+          randomize: false
+        },
+        {
+          name: "pair-strict",
+          candidates: allCandidates.filter((c) => c.pairCooldownViolations === 0),
+          optionLimit: Math.max(SEARCH_OPTION_LIMIT * 3, 72),
+          randomize: false
+        },
+        {
+          name: "relaxed",
+          candidates: allCandidates,
+          optionLimit: Math.max(SEARCH_OPTION_LIMIT * 2, 48),
+          randomize: true
         }
-        if (selected.length === courtCount) {
-          pushSolution({ matches: selected.slice(), score });
-          return;
-        }
-        if (best && score >= best.score + strategy.solutionScoreSlack) return;
+      ];
 
-        const firstUnused = orderedActive.find((p) => !usedIds.has(p.id));
-        if (!firstUnused) return;
-
-        const options = (byPlayer.get(firstUnused.id) || [])
-          .filter((c) => !c.players.some((p) => usedIds.has(p.id)))
-          .slice(0, SEARCH_OPTION_LIMIT);
-        const shuffledHead = options.slice(0, strategy.optionShuffleWindow).sort(() => Math.random() - 0.5);
-        const orderedOptions = shuffledHead.concat(options.slice(strategy.optionShuffleWindow));
-
-        for (const c of orderedOptions) {
-          c.players.forEach((p) => usedIds.add(p.id));
-          selected.push(c);
-          search(selected, usedIds, score + c.score);
-          selected.pop();
-          c.players.forEach((p) => usedIds.delete(p.id));
-          if (aborted) break;
-        }
+      for (const stage of stages) {
+        if (!stage.candidates.length) continue;
+        const solved = solveRoundCandidatePool(
+          stage.candidates,
+          active,
+          courtCount,
+          strategy,
+          stage.optionLimit,
+          stage.randomize
+        );
+        if (solved && solved.length === courtCount) return solved;
       }
-
-      search([], new Set(), 0);
-      if (solutionPool.length) {
-        const baseline = solutionPool[0].score;
-        const topPool = solutionPool
-          .filter((sol, idx) => idx < strategy.topSolutionWindow || sol.score <= baseline + strategy.solutionScoreSlack)
-          .slice(0, strategy.topSolutionWindow);
-        return topPool[Math.floor(Math.random() * topPool.length)].matches;
-      }
-      if (best) return best.matches;
 
       const used = new Set();
       const greedy = [];
-      for (const c of candidates) {
+      const fallback = allCandidates.slice().sort((a, b) => {
+        if (a.pairCooldownViolations !== b.pairCooldownViolations) return a.pairCooldownViolations - b.pairCooldownViolations;
+        if (a.quartetCooldownViolation !== b.quartetCooldownViolation) return a.quartetCooldownViolation - b.quartetCooldownViolation;
+        return a.score - b.score;
+      });
+      for (const c of fallback) {
         if (greedy.length >= courtCount) break;
         if (c.players.some((p) => used.has(p.id))) continue;
         c.players.forEach((p) => used.add(p.id));
         greedy.push(c);
       }
       return greedy;
+    }
+
+    function solveRoundCandidatePool(candidates, active, courtCount, strategy, optionLimit, randomize) {
+      const byPlayer = new Map(active.map((p) => [p.id, []]));
+      candidates.forEach((c) => c.players.forEach((p) => byPlayer.get(p.id).push(c)));
+      byPlayer.forEach((list) => list.sort((a, b) => a.score - b.score));
+
+      let best = null;
+      let visited = 0;
+      const nodeLimit = SEARCH_NODE_LIMIT * 2;
+      const timeLimit = SEARCH_TIME_LIMIT_MS * 2.5;
+      const startedAt = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+      const orderedActive = active.slice().sort((a, b) => {
+        const aOptions = (byPlayer.get(a.id) || []).length;
+        const bOptions = (byPlayer.get(b.id) || []).length;
+        if (aOptions !== bOptions) return aOptions - bOptions;
+        if (a.played !== b.played) return a.played - b.played;
+        return a.name.localeCompare(b.name, "ja");
+      });
+
+      function search(selected, usedIds, score) {
+        visited += 1;
+        const now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+        if (visited > nodeLimit || now - startedAt > timeLimit) return;
+        if (selected.length === courtCount) {
+          if (!best || score < best.score) best = { matches: selected.slice(), score };
+          return;
+        }
+        if (best && score >= best.score) return;
+
+        const firstUnused = orderedActive.find((p) => !usedIds.has(p.id));
+        if (!firstUnused) return;
+
+        let options = (byPlayer.get(firstUnused.id) || [])
+          .filter((c) => !c.players.some((p) => usedIds.has(p.id)))
+          .slice(0, optionLimit);
+
+        if (randomize && options.length > 1) {
+          const headCount = Math.min(strategy.optionShuffleWindow, options.length);
+          const head = options.slice(0, headCount).sort(() => Math.random() - 0.5);
+          options = head.concat(options.slice(headCount));
+        }
+
+        for (const c of options) {
+          c.players.forEach((p) => usedIds.add(p.id));
+          selected.push(c);
+          search(selected, usedIds, score + c.score);
+          selected.pop();
+          c.players.forEach((p) => usedIds.delete(p.id));
+        }
+      }
+
+      search([], new Set(), 0);
+      return best ? best.matches : null;
     }
 
     function buildMatchCandidates(active, strategy, recentQuartets) {
@@ -2697,12 +2799,9 @@ body.large-ui .zoom-mode-title {
       const flameText = isChallenge ? "🔥".repeat(flameCountFromDiff(diff)) : "";
       return `
         <div class="result-team-box ${isChallenge ? "challenge" : ""}">
-          ${isChallenge ? `
-            <div class="result-team-top">
-              <span class="result-cheer-pill">加油！</span>
-              <span class="result-flames">${flameText}</span>
-            </div>` : ''}
+          ${isChallenge ? '<span class="result-cheer-pill">加油！</span>' : ''}
           <span class="result-team-name">${names}</span>
+          ${isChallenge ? `<span class="result-flames" aria-label="レート差 ${flameCountFromDiff(diff)}段階">${flameText}</span>` : ''}
         </div>
       `;
     }
