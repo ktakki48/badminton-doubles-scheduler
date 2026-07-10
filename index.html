@@ -1227,7 +1227,7 @@ body.large-ui .zoom-mode-title {
 <body>
   <main class="app">
     <header>
-      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V22.2.4</span></h1>
+      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V22.3.1</span></h1>
       <p class="subtitle">登録メンバーは最大50人まで保持。固定された対戦結果枠内で、1スワイプにつき1試合ずつ切り替えて確認できます。</p>
 
       <div class="install-tip" id="installTip">
@@ -1350,6 +1350,10 @@ body.large-ui .zoom-mode-title {
         <summary>アップデートノート</summary>
         <div class="release-notes-body">
           <div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V22.3.1</span><span class="release-note-title">ペア重複と4人固定ローテーションを強く抑制</span></div>
+            <div class="release-note-text">合計レート差を小さく保ちながら、同じペアは直近6試合以内、同じ4人によるペア替え対戦は直近4試合以内の再登場を強く避けるよう、組み分け評価ロジックを調整しました。</div>
+          </div>
+          <div class="release-note-item">
             <div class="release-note-head"><span class="release-note-version">V22.3</span><span class="release-note-title">対戦結果カルーセルを構造から再構築</span></div>
             <div class="release-note-text">対戦結果カードを他のカードと同じ横幅・左右余白へ統一し、外枠が画面外へ広がらない構造へ変更しました。</div>
             <div class="release-note-text">外枠は固定したまま、内側の1試合だけをtranslateXで横スワイプ切替し、表示中の試合に合わせて高さも自動調整します。</div>
@@ -1442,8 +1446,8 @@ body.large-ui .zoom-mode-title {
     const RELAXED_TARGET_TEAM_DIFF = 5;
     const RELAX_TRIGGER_GOOD_RATE = 0.5;
     const RELAX_TRIGGER_ACTIVE_COUNT = 8;
-    const RECENT_PAIR_LOOKBACK = 2;
-    const RECENT_QUARTET_LOOKBACK = 2;
+    const RECENT_PAIR_LOOKBACK = 6;
+    const RECENT_QUARTET_LOOKBACK = 4;
     const SEARCH_OPTION_LIMIT = 24;
     const SEARCH_NODE_LIMIT = 12000;
     const SEARCH_TIME_LIMIT_MS = 180;
@@ -2239,13 +2243,13 @@ body.large-ui .zoom-mode-title {
         roundNo,
         relaxed,
         targetDiff: appSettings.useRatings ? (relaxed ? RELAXED_TARGET_TEAM_DIFF : NORMAL_TARGET_TEAM_DIFF) : null,
-        recentPairWeight: relaxed ? 76000 : 165000,
-        recentQuartetWeight: relaxed ? 56000 : 118000,
-        pairRepeatWeight: relaxed ? 18000 : 32000,
+        recentPairWeight: relaxed ? 240000 : 420000,
+        recentQuartetWeight: relaxed ? 150000 : 280000,
+        pairRepeatWeight: relaxed ? 32000 : 52000,
         opponentRepeatWeight: relaxed ? 640 : 880,
-        diffWeight: relaxed ? 980 : 2100,
-        overTargetBasePenalty: relaxed ? 4200 : 18000,
-        overTargetStepPenalty: relaxed ? 2600 : 9600,
+        diffWeight: relaxed ? 1800 : 3200,
+        overTargetBasePenalty: relaxed ? 12000 : 36000,
+        overTargetStepPenalty: relaxed ? 6200 : 14000,
         pairGapWeight: relaxed ? 12 : 9,
         randomWeight: relaxed ? 5.2 : 2.2,
         topSolutionWindow: relaxed ? 6 : 4,
@@ -2362,10 +2366,14 @@ body.large-ui .zoom-mode-title {
       const pairRepeat = partnerRepeatCount(teamA) + partnerRepeatCount(teamB);
       const recentPairPenalty = recentPartnerPenalty(teamA, strategy.roundNo) + recentPartnerPenalty(teamB, strategy.roundNo);
       const recentQuartetPenalty = getRecentQuartetPenalty([...teamA, ...teamB], strategy.roundNo, recentQuartets);
+      const pairCooldownViolations = countPairCooldownViolations(teamA, strategy.roundNo) + countPairCooldownViolations(teamB, strategy.roundNo);
+      const quartetCooldownViolation = hasQuartetCooldownViolation([...teamA, ...teamB], strategy.roundNo, recentQuartets) ? 1 : 0;
       const opponentRepeat = opponentPenalty(teamA, teamB);
       const pairGapPenalty = useRatings ? Math.abs(teamA[0].rating - teamA[1].rating) + Math.abs(teamB[0].rating - teamB[1].rating) : 0;
       const playerRepeatBias = (teamA[0].played + teamA[1].played + teamB[0].played + teamB[1].played) * 0.02;
       const score =
+        pairCooldownViolations * 900000 +
+        quartetCooldownViolation * 520000 +
         recentQuartetPenalty * strategy.recentQuartetWeight +
         recentPairPenalty * strategy.recentPairWeight +
         pairRepeat * strategy.pairRepeatWeight +
@@ -2386,6 +2394,8 @@ body.large-ui .zoom-mode-title {
         pairRepeat,
         recentPairPenalty,
         recentQuartetPenalty,
+        pairCooldownViolations,
+        quartetCooldownViolation,
         opponentRepeat,
         challengeTeam,
         score
@@ -2400,10 +2410,26 @@ body.large-ui .zoom-mode-title {
       const rounds = getRecentRounds(team[0].recentPartners, team[1].id);
       return rounds.reduce((total, prevRoundNo) => {
         const gap = roundNo - prevRoundNo;
-        if (gap === 1) return total + 1.35;
-        if (gap === 2) return total + 0.85;
-        return total;
+        if (gap <= 0 || gap > RECENT_PAIR_LOOKBACK) return total;
+        const weights = { 1: 8.0, 2: 6.3, 3: 4.9, 4: 3.6, 5: 2.4, 6: 1.4 };
+        return total + (weights[gap] || 0);
       }, 0);
+    }
+
+    function countPairCooldownViolations(team, roundNo) {
+      const rounds = getRecentRounds(team[0].recentPartners, team[1].id);
+      return rounds.some((prevRoundNo) => {
+        const gap = roundNo - prevRoundNo;
+        return gap >= 1 && gap <= RECENT_PAIR_LOOKBACK;
+      }) ? 1 : 0;
+    }
+
+    function hasQuartetCooldownViolation(players, roundNo, recentQuartets) {
+      const rounds = getRecentRounds(recentQuartets, quartetKey(players));
+      return rounds.some((prevRoundNo) => {
+        const gap = roundNo - prevRoundNo;
+        return gap >= 1 && gap <= RECENT_QUARTET_LOOKBACK;
+      });
     }
 
     function quartetKey(players) {
@@ -2414,9 +2440,9 @@ body.large-ui .zoom-mode-title {
       const rounds = getRecentRounds(recentQuartets, quartetKey(players));
       return rounds.reduce((total, prevRoundNo) => {
         const gap = roundNo - prevRoundNo;
-        if (gap === 1) return total + 1.75;
-        if (gap === 2) return total + 1.05;
-        return total;
+        if (gap <= 0 || gap > RECENT_QUARTET_LOOKBACK) return total;
+        const weights = { 1: 6.0, 2: 4.4, 3: 3.0, 4: 1.8 };
+        return total + (weights[gap] || 0);
       }, 0);
     }
 
