@@ -724,20 +724,20 @@ body.large-ui .zoom-mode-title {
       box-shadow: var(--shadow);
       backdrop-filter: blur(10px);
     }
-    .result-shell h2,
-    .result-shell h3,
-    .result-shell p,
-    .result-shell div { color: inherit; }
+    /* 個別カードの文字色を上書きしない（旧版の白文字継承バグを解消）。 */
     .result-title-block { display: grid; gap: 4px; margin-bottom: 14px; }
     .result-title-main { font-size: 20px; font-weight: 900; color: var(--text); }
     .result-created { font-size: 13px; color: var(--muted); }
     .result-swipe-note { font-size: 12px; color: #bae6fd; margin-top: 4px; }
+    /* 結果領域の幅は画面内に固定し、横方向の移動は試合カードだけに限定。 */
+    .schedule { width: 100%; max-width: 100%; min-width: 0; grid-template-columns: minmax(0, 1fr); }
+    .result-shell { width: 100%; max-width: 100%; min-width: 0; overflow: hidden; }
     .result-board-card {
-      border: 1px solid #d6e4d9;
-      border-radius: 24px;
+      width: 100%; max-width: 100%; min-width: 0;
+      border: 1px solid #35566b;
+      border-radius: 20px;
       overflow: hidden;
-      background: #ffffff;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+      background: #122439;
     }
     .result-board-head {
       display: flex;
@@ -745,79 +745,79 @@ body.large-ui .zoom-mode-title {
       align-items: center;
       gap: 12px;
       padding: 16px 18px;
-      border-bottom: 1px solid #e3ece4;
-      background: #fbfdfb;
+      border-bottom: 1px solid #35566b;
+      background: #152a41;
     }
-    .result-board-title { font-size: 18px; font-weight: 900; color: #0f172a; }
-    .result-board-meta { font-size: 13px; color: #475569; margin-top: 4px; }
+    .result-board-title { font-size: 18px; font-weight: 900; color: #f8fafc; }
+    .result-board-meta { font-size: 13px; color: #cbd5e1; margin-top: 4px; }
     .result-export-btn {
       flex: 0 0 auto;
-      border: 1px solid #bfd8c1;
-      background: #eef7ef;
-      color: #0f5132;
-      border-radius: 16px;
+      border: 1px solid #34d399;
+      background: #0f7c59;
+      color: #ffffff;
+      border-radius: 14px;
       padding: 12px 16px;
       font-weight: 800;
       cursor: pointer;
       min-width: 102px;
     }
     .result-round-scroll {
+      width: 100%; max-width: 100%; min-width: 0;
       overflow-x: auto;
       overflow-y: hidden;
       -webkit-overflow-scrolling: touch;
-      touch-action: pan-x pinch-zoom;
+      touch-action: auto;
       overscroll-behavior-x: contain;
       scroll-snap-type: x mandatory;
-      scroll-behavior: smooth;
-      padding: 18px;
+      padding: 16px;
       scrollbar-width: thin;
-      background: #fbfdfb;
-      cursor: grab;
+      background: #0f1d30;
     }
-    .result-round-scroll:active { cursor: grabbing; }
     .result-round-scroll::-webkit-scrollbar { height: 8px; }
-    .result-round-scroll::-webkit-scrollbar-thumb { background: rgba(15,137,84,.30); border-radius: 999px; }
+    .result-round-scroll::-webkit-scrollbar-thumb { background: #26a77b; border-radius: 999px; }
     .result-round-track {
       display: flex;
-      gap: 18px;
+      gap: 14px;
       align-items: stretch;
       width: max-content;
       min-width: 100%;
-      padding-right: 6px;
+      padding-right: 4px;
     }
     .result-round-card {
-      flex: 0 0 min(84vw, 340px);
-      width: min(84vw, 340px);
-      background: #ffffff;
-      border: 7px solid #0f9b56;
-      border-radius: 26px;
+      flex: 0 0 332px;
+      width: 332px;
+      background: #1a3047;
+      border: 5px solid #16a66f;
+      border-radius: 22px;
       padding: 12px;
-      box-shadow: 0 10px 24px rgba(15,155,86,.08);
-      scroll-snap-align: center;
+      box-shadow: 0 8px 22px rgba(0,0,0,.23);
+      scroll-snap-align: start;
       scroll-snap-stop: always;
     }
     .result-round-header {
-      background: #eef1ff;
-      color: #243b8f;
+      background: #284973;
+      color: #ffffff;
       text-align: center;
       font-weight: 900;
-      font-size: 16px;
-      border-radius: 14px;
+      font-size: 17px;
+      border-radius: 13px;
       padding: 10px 12px;
       margin-bottom: 12px;
     }
     .result-rest-line {
       text-align: center;
-      color: #6b7280;
+      color: #fde68a;
       font-size: 13px;
-      margin-bottom: 10px;
-      line-height: 1.55;
+      font-weight: 750;
+      margin-bottom: 12px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
     }
     .result-courts { display: grid; gap: 10px; }
     .result-court-box {
-      border: 2px solid #d8e3da;
-      border-radius: 18px;
-      background: #f5f7fc;
+      border: 1px solid #53718b;
+      border-radius: 15px;
+      background: #14273d;
       padding: 12px;
     }
     .result-court-pill {
@@ -826,45 +826,43 @@ body.large-ui .zoom-mode-title {
       margin: 0 auto 10px;
       padding: 7px 18px;
       border-radius: 999px;
-      background: #eef2ff;
-      color: #3a4f97;
+      background: #365a83;
+      color: #f8fafc;
       font-size: 14px;
       font-weight: 800;
       text-align: center;
     }
     .result-team-box {
-      background: #ffffff;
-      border: 1.5px solid #e6e9ef;
-      border-radius: 14px;
+      background: #e9f1f7;
+      border: 1px solid #abc3d9;
+      border-radius: 12px;
       text-align: center;
-      padding: 14px 12px;
+      padding: 14px 10px;
       font-size: 17px;
       font-weight: 900;
-      color: #111827;
+      color: #0f2339;
       line-height: 1.45;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.85);
+      overflow-wrap: anywhere;
     }
     .result-team-box.challenge {
-      background: #fff8ec;
-      border-color: #f7c780;
+      background: #fff1d7;
+      border-color: #fbbf24;
+      color: #572e00;
     }
     .result-vs {
       text-align: center;
       font-weight: 900;
-      color: #4b5563;
+      color: #d8e6fa;
       font-size: 18px;
       padding: 9px 0;
     }
-        @media (min-width: 960px) {
-      .result-round-card { flex-basis: 332px; width: 332px; }
-    }
     @media (max-width: 720px) {
-      .result-shell { padding: 14px; border-radius: 22px; }
+      .result-shell { padding: 12px; border-radius: 18px; }
       .result-board-head { align-items: flex-start; flex-direction: column; }
       .result-export-btn { width: 100%; }
-      .result-round-scroll { padding: 14px; }
-      .result-round-track { gap: 12px; }
-      .result-round-card { flex-basis: min(calc(100vw - 88px), 320px); width: min(calc(100vw - 88px), 320px); }
+      .result-round-scroll { padding: 12px; }
+      .result-round-track { gap: 10px; }
+      .result-round-card { flex-basis: min(calc(100vw - 96px), 320px); width: min(calc(100vw - 96px), 320px); }
     }
 
   </style>
@@ -872,7 +870,7 @@ body.large-ui .zoom-mode-title {
 <body>
   <main class="app">
     <header>
-      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V23</span></h1>
+      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V23.1</span></h1>
       <p class="subtitle">登録メンバーは最大50人まで保持。黒ベースのホーム画面のまま、対戦表は横スワイプ表示と見やすい画像出力に対応しています。</p>
 
       <div class="install-tip" id="installTip">
@@ -973,7 +971,7 @@ body.large-ui .zoom-mode-title {
             <option value="tournament">大会ペア固定モード</option>
           </select>
           <div id="fixedPairPanel" class="hidden" style="margin-top:12px">
-            <div class="mode-help">大会の確定ペアを登録してください。両名参加時のみ固定され、どちらか欠席時は参加者をフリー扱いにします。固定ペアは休憩も必ず一緒です。</div>
+            <div class="mode-help">大会の確定ペアを登録してください。両名参加時のみ固定され、どちらか欠席時は参加者をフリー扱いにします。休憩は1人ずつ選びます。2人とも出場するときは固定ペアで、片方が休憩中はもう片方をフリー参加者と組み合わせます。</div>
             <div class="settings" style="margin-top:8px">
               <div><label for="fixedPersonA">ペアの1人目</label><select id="fixedPersonA"></select></div>
               <div><label for="fixedPersonB">ペアの2人目</label><select id="fixedPersonB"></select></div>
@@ -1011,8 +1009,8 @@ body.large-ui .zoom-mode-title {
         <summary>アップデートノート</summary>
         <div class="release-notes-body">
 <div class="release-note-item">
-            <div class="release-note-head"><span class="release-note-version">V23</span><span class="release-note-title">大会ペア固定モードを追加</span></div>
-            <div class="release-note-text">大会ペアを登録して固定。両名参加時だけ有効とし、片方欠席時はフリー参加者扱い。休憩は固定ペアを同時に選定し、通常モードに切り替え可能です。</div>
+            <div class="release-note-head"><span class="release-note-version">V23.1</span><span class="release-note-title">大会モード休憩柔軟化・対戦表の表示改善</span></div>
+            <div class="release-note-text">大会ペアを登録して固定。両名参加時だけ有効とし、片方欠席時はフリー参加者扱い。休憩は個人単位で選び、片方だけ休憩ならもう片方はフリー参加者と組めます。通常モードに切り替え可能です。</div>
             <div class="release-note-head"><span class="release-note-version">V22.2.1</span><span class="release-note-title">横スワイプ挙動と画像チャレンジ表示を調整</span></div>
             <div class="release-note-text">ホーム画面の対戦表カードに、左右スワイプしやすい横スクロール設定とスナップ挙動を追加しました。あわせて、ホーム画面全体の黒ベース配色を維持するよう調整しています。</div>
             <div class="release-note-text">画像出力時のチャレンジ表現は、V22以前と同様に、ペアカード左へ「加油！」、右へレート差に応じた炎アイコン1〜3個を表示する仕様へ戻しました。</div>
@@ -1107,7 +1105,7 @@ body.large-ui .zoom-mode-title {
     const SEARCH_TIME_LIMIT_MS = 180;
     const IMAGE_BASE_WIDTH = 1680;
     const IMAGE_MAX_HEIGHT = 12000;
-    const STORAGE_KEY = "bd_doubles_scheduler_v23";
+    const STORAGE_KEY = "bd_doubles_scheduler_v23"; // V23の保存キーを引き継ぐ
     const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v22_1", "bd_doubles_scheduler_v22", "bd_doubles_scheduler_v21", "bd_doubles_scheduler_v20", "bd_doubles_scheduler_v19_2", "bd_doubles_scheduler_v19_1", "bd_doubles_scheduler_v19", "bd_doubles_scheduler_v18", "bd_doubles_scheduler_v17", "bd_doubles_scheduler_v16", "bd_doubles_scheduler_v15", "bd_doubles_scheduler_v14", "bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
     const DEFAULT_SETTINGS = {
       useRatings: true,
@@ -1846,18 +1844,6 @@ body.large-ui .zoom-mode-title {
       return units;
     }
 
-    function isTournamentFeasible(activeMembers) {
-      const total = Math.min(Number($("courtCount").value), Math.floor(activeMembers.length / 4)) * 4;
-      const units = tournamentUnits(activeMembers);
-      let possible = new Set([0]);
-      for (const unit of units) {
-        const next = new Set(possible);
-        for (const n of possible) if (n + unit.length <= total) next.add(n + unit.length);
-        possible = next;
-      }
-      return possible.has(total);
-    }
-
     function shuffleCopy(items) {
       const copy = items.slice();
       for (let i = copy.length - 1; i > 0; i--) {
@@ -1867,49 +1853,60 @@ body.large-ui .zoom-mode-title {
       return copy;
     }
 
+    // 大会モードは休憩を個人単位で選ぶ。出場中の固定ペアだけを不可分のチームにする。
+    // 固定ペアの片方が休憩なら、残りの1人はその試合に限りフリー扱い。
     function chooseTournamentRound(state, courtCount, roundNo, recentQuartets) {
-      const units = tournamentUnits(state);
       const slots = courtCount * 4;
+      const restCount = state.length - slots;
       const strategy = buildRoundStrategy(state, roundNo, state.length);
+      const fixedKeys = new Set(fixedPairs.map((pair) => pair.slice().sort().join("|")));
+      const restPriority = new Map(state.map((p) => [p.id, restScore(p)]));
+      const presentIds = new Set(state.map((p) => p.id));
+      const idealRestScore = [...restPriority.values()].sort((a, b) => b - a)
+        .slice(0, restCount).reduce((sum, value) => sum + value, 0);
       let best = null;
-      // 複数回のシャッフルを比較して休憩・出場偏りと対戦重複を抑える。
+
       for (let attempt = 0; attempt < 240; attempt++) {
-        const ordered = shuffleCopy(units).sort((a, b) => {
-          const sa = a.reduce((sum, p) => sum + restScore(p), 0) / a.length;
-          const sb = b.reduce((sum, p) => sum + restScore(p), 0) / b.length;
-          return sa - sb;
-        });
-        // DPで必ず4人×コート数に合う参加単位を選定。
-        const dp = new Map([[0, { kept: [], score: 0 }]]);
-        for (const unit of ordered) {
-          const weight = unit.reduce((sum, p) => sum + restScore(p), 0);
-          const entries = [...dp.entries()].sort((a, b) => b[0] - a[0]);
-          for (const [count, value] of entries) {
-            const next = count + unit.length;
-            if (next > slots) continue;
-            const candidate = { kept: [...value.kept, unit], score: value.score + weight + Math.random() * 7 };
-            if (!dp.has(next) || candidate.score < dp.get(next).score) dp.set(next, candidate);
+        // 適度な揺らぎを入れて候補を複数作り、個人別の出場公平性も評価する。
+        const rests = state.map((p) => ({ p, priority: restPriority.get(p.id) + Math.random() * 13 }))
+          .sort((a, b) => b.priority - a.priority)
+          .slice(0, restCount).map((entry) => entry.p);
+        const restIds = new Set(rests.map((p) => p.id));
+        const onCourt = state.filter((p) => !restIds.has(p.id));
+        const units = tournamentUnits(onCourt);
+        const fixedTeams = units.filter((unit) => unit.length === 2);
+        const freePlayers = shuffleCopy(units.filter((unit) => unit.length === 1).flat());
+        const freeTeams = [];
+        for (let i = 0; i < freePlayers.length; i += 2) {
+          if (!freePlayers[i + 1]) break;
+          freeTeams.push([freePlayers[i], freePlayers[i + 1]]);
+        }
+        const teams = shuffleCopy([...fixedTeams, ...freeTeams]);
+        if (teams.length !== courtCount * 2) continue;
+
+        const matches = [];
+        let matchScore = 0;
+        for (let i = 0; i < teams.length; i += 2) {
+          const candidates = [];
+          addPairingCandidate(candidates, teams[i], teams[i + 1], strategy, recentQuartets);
+          const match = candidates[0];
+          matches.push(match);
+          matchScore += match.score;
+          // 毎試合同じペアで出ることが「固定ペア」の仕様。
+          // そのペアの再結成ペナルティは候補評価から除く（通常モードには非適用）。
+          for (const team of [match.teamA, match.teamB]) {
+            const key = team.map((p) => p.id).sort().join("|");
+            if (!fixedKeys.has(key)) continue;
+            matchScore -= partnerRepeatCount(team) * strategy.pairRepeatWeight;
+            matchScore -= recentPartnerPenalty(team, roundNo) * strategy.recentPairWeight;
           }
         }
-        if (!dp.has(slots)) continue;
-        const kept = dp.get(slots).kept;
-        const ids = new Set(kept.flat().map((p) => p.id));
-        const rests = state.filter((p) => !ids.has(p.id));
-        const fixedTeams = kept.filter((unit) => unit.length === 2);
-        const freePlayers = shuffleCopy(kept.filter((unit) => unit.length === 1).flat());
-        const freeTeams = [];
-        for (let i = 0; i < freePlayers.length; i += 2) freeTeams.push([freePlayers[i], freePlayers[i + 1]]);
-        const teams = shuffleCopy([...fixedTeams, ...freeTeams]);
-        if (teams.length !== courtCount * 2 || teams.some((team) => team.length !== 2)) continue;
-        const matches = [];
-        for (let i = 0; i < teams.length; i += 2) {
-          const arr = [];
-          addPairingCandidate(arr, teams[i], teams[i + 1], strategy, recentQuartets);
-          matches.push(arr[0]);
-        }
-        const fairnessPenalty = rests.reduce((sum, p) => sum + (30 - restScore(p)) * 700, 0);
-        const totalScore = matches.reduce((sum, match) => sum + match.score, 0) + fairnessPenalty;
-        if (!best || totalScore < best.score) best = { rests, matches, score: totalScore };
+        // 公平性を重視。固定ペアは可能な限り共に出場するが、休憩の強制同期はしない。
+        const missedRestPriority = Math.max(0, idealRestScore - rests.reduce((sum, p) => sum + restPriority.get(p.id), 0));
+        const splitPairCount = fixedPairs.reduce((count, [a, b]) =>
+          count + (presentIds.has(a) && presentIds.has(b) && (restIds.has(a) !== restIds.has(b)) ? 1 : 0), 0);
+        const score = matchScore + missedRestPriority * 4800 + splitPairCount * 4500;
+        if (!best || score < best.score) best = { rests, matches, score };
       }
       return best;
     }
@@ -1944,9 +1941,6 @@ body.large-ui .zoom-mode-title {
           return setError("レーティングありモードでは、当日参加者全員のレーティング設定が必要です。未設定の人がいます。");
         }
 
-        if (appSettings.competitionMode === "tournament" && !isTournamentFeasible(activeMembers)) {
-          return setError("固定ペアの人数構成上、設定コート数で4人単位の試合を組めません。参加者・固定ペアを調整してください。");
-        }
         lastSelectedIds = selectedIds.slice();
         const state = cloneStatePlayers(activeMembers);
         const schedule = [];
@@ -2315,7 +2309,7 @@ body.large-ui .zoom-mode-title {
         <div class="result-title-block">
           <div class="result-title-main">対戦表結果</div>
           <div class="result-created">作成日時: ${escapeHtml(summary.createdText || formatScheduleDateTime())}</div>
-          <div class="result-swipe-note">試合カードは左右にスワイプして確認できます</div>
+          <div class="result-swipe-note">試合カード部分だけを左右にスワイプできます（画面全体は動きません）</div>
         </div>
         <div class="result-board-card">
           <div class="result-board-head">
@@ -2325,7 +2319,7 @@ body.large-ui .zoom-mode-title {
             </div>
             <button class="result-export-btn" id="scheduleExportInline" type="button">画像出力</button>
           </div>
-          <div class="result-round-scroll" aria-label="対戦表の横スクロール表示">
+          <div class="result-round-scroll" tabindex="0" aria-label="対戦表の横スクロール表示">
             <div class="result-round-track">
               ${schedule.map(roundBoardHtml).join("")}
             </div>
