@@ -867,430 +867,13 @@ body.large-ui .zoom-mode-title {
       .result-round-card { flex-basis: min(calc(100vw - 88px), 320px); width: min(calc(100vw - 88px), 320px); }
     }
 
-
-    /* V22.2.2 dark result board */
-    .result-shell {
-      background: linear-gradient(145deg, rgba(15,23,42,.82), rgba(30,41,59,.76));
-      border: 1px solid rgba(56,189,248,.22);
-      box-shadow: 0 18px 40px rgba(0,0,0,.26);
-    }
-    .result-shell h2,
-    .result-shell h3,
-    .result-shell p,
-    .result-shell div,
-    .result-shell span { color: inherit; }
-    .result-title-main { color: #f8fafc; }
-    .result-created { color: #cbd5e1; }
-    .result-swipe-note { color: #7dd3fc; }
-    .result-board-card {
-      border: 1px solid rgba(56,189,248,.18);
-      background: rgba(15,23,42,.36);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.02);
-    }
-    .result-board-head {
-      border-bottom: 1px solid rgba(56,189,248,.18);
-      background: rgba(15,23,42,.18);
-    }
-    .result-board-title { color: #f8fafc; }
-    .result-board-meta { color: #cbd5e1; }
-    .result-export-btn {
-      border: 1px solid rgba(125,211,252,.36);
-      background: rgba(255,255,255,.06);
-      color: #bae6fd;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
-    }
-    .result-round-scroll {
-      background: transparent;
-      scrollbar-color: rgba(125,211,252,.45) rgba(255,255,255,.04);
-    }
-    .result-round-scroll::-webkit-scrollbar-thumb { background: rgba(125,211,252,.42); }
-    .result-round-track { min-width: max-content; }
-    .result-round-card {
-      background: rgba(15,23,42,.56);
-      border: 2px solid rgba(56,189,248,.54);
-      box-shadow: 0 10px 24px rgba(2,132,199,.12), inset 0 1px 0 rgba(255,255,255,.03);
-    }
-    .result-round-header {
-      background: rgba(59,130,246,.12);
-      border: 1px solid rgba(125,211,252,.3);
-      color: #e0f2fe;
-    }
-    .result-rest-line { color: #cbd5e1; }
-    .result-court-box {
-      border: 1px solid rgba(125,211,252,.25);
-      background: rgba(255,255,255,.04);
-    }
-    .result-court-pill {
-      background: rgba(59,130,246,.14);
-      border: 1px solid rgba(125,211,252,.24);
-      color: #e0f2fe;
-    }
-    .result-team-box {
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(125,211,252,.18);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
-      color: #f8fafc;
-      padding: 12px 12px 14px;
-    }
-    .result-team-box.challenge {
-      background: rgba(245,158,11,.08);
-      border-color: rgba(251,191,36,.34);
-    }
-    .result-team-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 8px;
-      min-height: 24px;
-    }
-    .result-cheer-pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 68px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #f59e0b, #f97316);
-      border: 1px solid rgba(253,186,116,.8);
-      color: #fff7ed;
-      font-size: 11px;
-      font-weight: 800;
-      line-height: 1;
-      white-space: nowrap;
-    }
-    .result-flames {
-      display: inline-flex;
-      align-items: center;
-      justify-content: flex-end;
-      min-width: 52px;
-      font-size: 18px;
-      line-height: 1;
-      letter-spacing: 1px;
-      filter: saturate(1.15);
-    }
-    .result-team-name {
-      display: block;
-      color: #f8fafc;
-      font-size: 17px;
-      font-weight: 900;
-      line-height: 1.45;
-      text-align: center;
-      word-break: break-word;
-    }
-    .result-vs { color: #cbd5e1; }
-
-
-    /* V22.2.3 fixed result frame / inner carousel only */
-    .result-board-card {
-      position: relative;
-      overflow: hidden;
-    }
-    .result-round-viewport {
-      position: relative;
-      width: 100%;
-      overflow: hidden;
-      background: transparent;
-    }
-    .result-round-scroll {
-      width: 100%;
-      max-width: 100%;
-      overflow-x: auto;
-      overflow-y: hidden;
-      padding: 14px 0 10px;
-      scroll-padding-inline: 0;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      touch-action: pan-x;
-      overscroll-behavior-x: contain;
-      scrollbar-width: none;
-      cursor: grab;
-    }
-    .result-round-scroll::-webkit-scrollbar { display: none; }
-    .result-round-scroll:active { cursor: grabbing; }
-    .result-round-track {
-      display: flex;
-      align-items: stretch;
-      gap: 0;
-      width: 100%;
-      min-width: 100%;
-      padding: 0;
-    }
-    .result-round-slide {
-      flex: 0 0 100%;
-      width: 100%;
-      min-width: 100%;
-      padding: 0 14px;
-      scroll-snap-align: start;
-      scroll-snap-stop: always;
-    }
-    .result-round-card {
-      width: 100%;
-      max-width: 100%;
-      min-width: 0;
-      height: 100%;
-      margin: 0;
-      box-sizing: border-box;
-      scroll-snap-align: none;
-    }
-    .result-carousel-footer {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 2px 14px 14px;
-      border-top: 1px solid rgba(56,189,248,.12);
-      background: rgba(15,23,42,.12);
-    }
-    .result-carousel-count {
-      min-width: 52px;
-      color: #bae6fd;
-      font-size: 12px;
-      font-weight: 800;
-      text-align: center;
-    }
-    .result-carousel-dots {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      max-width: calc(100% - 70px);
-      overflow: hidden;
-    }
-    .result-carousel-dot {
-      width: 6px;
-      height: 6px;
-      flex: 0 0 6px;
-      border-radius: 999px;
-      background: rgba(186,230,253,.28);
-      transition: width .18s ease, background .18s ease;
-    }
-    .result-carousel-dot.active {
-      width: 18px;
-      flex-basis: 18px;
-      background: #7dd3fc;
-    }
-    @media (min-width: 760px) {
-      .result-round-slide { padding: 0 18px; }
-      .result-round-card { max-width: 560px; margin: 0 auto; }
-    }
-
-
-    /* V22.2.4: one round per swipe */
-    .result-round-viewport { width: 100%; overflow: hidden; }
-    .result-round-scroll {
-      width: 100%; overflow-x: auto; overflow-y: hidden;
-      scroll-snap-type: x mandatory; scroll-padding: 0;
-      -webkit-overflow-scrolling: touch; touch-action: pan-x;
-    }
-    .result-round-track {
-      display: flex; width: 100%; min-width: 100%; gap: 0; padding: 0;
-    }
-    .result-round-slide {
-      flex: 0 0 100%; width: 100%; min-width: 100%; max-width: 100%;
-      padding: 0 12px; scroll-snap-align: start; scroll-snap-stop: always;
-      box-sizing: border-box;
-    }
-    .result-round-card {
-      width: 100%; max-width: none; min-width: 0; margin: 0; box-sizing: border-box;
-    }
-    @media (min-width: 760px) {
-      .result-round-slide { padding: 0 14px; }
-      .result-round-card { width: 100%; max-width: none; margin: 0; }
-    }
-
-
-    /* V22.3 rebuilt fixed-width single-match carousel */
-    .schedule {
-      width: 100%;
-      max-width: 100%;
-      margin-top: 12px;
-      display: block;
-    }
-    .result-shell.card {
-      width: 100%;
-      max-width: 100%;
-      margin: 0;
-      padding: 14px;
-      overflow: hidden;
-      background: linear-gradient(145deg, var(--panel), rgba(255,255,255,.045));
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      color: var(--text);
-    }
-    .result-title-block { margin: 0 0 10px; }
-    .result-board-card {
-      width: 100%;
-      max-width: 100%;
-      margin: 0;
-      overflow: hidden;
-      border: 1px solid rgba(56,189,248,.20);
-      border-radius: 16px;
-      background: rgba(15,23,42,.32);
-    }
-    .result-board-head {
-      width: 100%;
-      display: grid;
-      grid-template-columns: minmax(0,1fr) auto;
-      align-items: center;
-      gap: 10px;
-      padding: 12px;
-      background: rgba(255,255,255,.025);
-      border-bottom: 1px solid rgba(56,189,248,.16);
-    }
-    .result-board-head > div { min-width: 0; }
-    .result-board-title { font-size: 16px; }
-    .result-board-meta { font-size: 11px; line-height: 1.45; }
-    .result-export-btn {
-      min-width: 0;
-      padding: 9px 11px;
-      border-radius: 10px;
-      font-size: 12px;
-      white-space: nowrap;
-    }
-    .result-round-viewport {
-      width: 100%;
-      max-width: 100%;
-      overflow: hidden;
-      position: relative;
-      transition: height .22s ease;
-    }
-    .result-round-scroll {
-      width: 100%;
-      max-width: 100%;
-      overflow: hidden;
-      padding: 0;
-      touch-action: pan-y;
-      cursor: grab;
-    }
-    .result-round-scroll:active { cursor: grabbing; }
-    .result-round-track {
-      display: flex;
-      width: 100%;
-      min-width: 100%;
-      gap: 0;
-      padding: 0;
-      align-items: flex-start;
-      transform: translate3d(0,0,0);
-      transition: transform .26s ease;
-      will-change: transform;
-    }
-    .result-round-slide {
-      flex: 0 0 100%;
-      width: 100%;
-      min-width: 100%;
-      max-width: 100%;
-      padding: 12px;
-      box-sizing: border-box;
-    }
-    .result-round-card {
-      width: 100%;
-      max-width: 100%;
-      min-width: 0;
-      height: auto;
-      margin: 0;
-      padding: 12px;
-      box-sizing: border-box;
-      border: 1px solid rgba(56,189,248,.48);
-      border-radius: 14px;
-      background: rgba(15,23,42,.52);
-    }
-    .result-round-header {
-      padding: 9px 10px;
-      margin-bottom: 9px;
-      border-radius: 10px;
-      font-size: 15px;
-    }
-    .result-rest-line { margin-bottom: 9px; font-size: 12px; }
-    .result-courts { gap: 8px; }
-    .result-court-box { padding: 10px; border-radius: 12px; }
-    .result-court-pill { margin-bottom: 8px; padding: 5px 12px; font-size: 12px; }
-    .result-team-box { padding: 10px; border-radius: 10px; }
-    .result-team-name { font-size: 15px; }
-    .result-vs { padding: 6px 0; font-size: 15px; }
-    .result-carousel-footer {
-      width: 100%;
-      padding: 8px 10px 10px;
-      border-top: 1px solid rgba(56,189,248,.12);
-    }
-    .result-carousel-dots { max-width: calc(100% - 60px); }
-    @media (max-width: 420px) {
-      .result-shell.card { padding: 12px; }
-      .result-board-head { grid-template-columns: 1fr; align-items: stretch; }
-      .result-export-btn { width: 100%; }
-      .result-round-slide { padding: 10px; }
-    }
-
-
-    /* V22.3.3: challenge indicators and pair name in one row */
-    .result-team-box.challenge {
-      display: grid;
-      grid-template-columns: minmax(58px, auto) minmax(0, 1fr) minmax(36px, auto);
-      align-items: center;
-      column-gap: 8px;
-      padding: 12px 10px;
-      min-height: 70px;
-    }
-    .result-team-box.challenge .result-cheer-pill {
-      grid-column: 1;
-      justify-self: start;
-      min-width: 58px;
-      max-width: 72px;
-      padding: 5px 8px;
-      margin: 0;
-      font-size: 11px;
-      line-height: 1;
-    }
-    .result-team-box.challenge .result-team-name {
-      grid-column: 2;
-      min-width: 0;
-      margin: 0;
-      text-align: center;
-      white-space: normal;
-      overflow-wrap: anywhere;
-      font-size: clamp(14px, 4vw, 17px);
-      line-height: 1.35;
-    }
-    .result-team-box.challenge .result-flames {
-      grid-column: 3;
-      justify-self: end;
-      min-width: 34px;
-      max-width: 72px;
-      margin: 0;
-      font-size: clamp(15px, 4vw, 18px);
-      letter-spacing: 0;
-      white-space: nowrap;
-    }
-    .result-team-box:not(.challenge) .result-team-name {
-      display: block;
-      margin: 0;
-    }
-    @media (max-width: 380px) {
-      .result-team-box.challenge {
-        grid-template-columns: 56px minmax(0, 1fr) 44px;
-        column-gap: 5px;
-        padding-left: 7px;
-        padding-right: 7px;
-      }
-      .result-team-box.challenge .result-cheer-pill {
-        min-width: 54px;
-        padding-left: 6px;
-        padding-right: 6px;
-        font-size: 10px;
-      }
-      .result-team-box.challenge .result-flames {
-        font-size: 15px;
-      }
-    }
-
   </style>
 </head>
 <body>
   <main class="app">
     <header>
-      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V22.3.3</span></h1>
-      <p class="subtitle">登録メンバーは最大50人まで保持。固定された対戦結果枠内で、1スワイプにつき1試合ずつ切り替えて確認できます。</p>
+      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V23</span></h1>
+      <p class="subtitle">登録メンバーは最大50人まで保持。黒ベースのホーム画面のまま、対戦表は横スワイプ表示と見やすい画像出力に対応しています。</p>
 
       <div class="install-tip" id="installTip">
         <div class="ios-badge">iPhone ホーム画面対応</div>
@@ -1383,6 +966,22 @@ body.large-ui .zoom-mode-title {
             </select>
           </div>
         </div>
+        <div class="meta-card" style="margin-top:12px">
+          <label for="competitionMode">対戦形式</label>
+          <select id="competitionMode" style="width:100%;margin-top:6px">
+            <option value="normal">通常モード（従来どおり）</option>
+            <option value="tournament">大会ペア固定モード</option>
+          </select>
+          <div id="fixedPairPanel" class="hidden" style="margin-top:12px">
+            <div class="mode-help">大会の確定ペアを登録してください。両名参加時のみ固定され、どちらか欠席時は参加者をフリー扱いにします。固定ペアは休憩も必ず一緒です。</div>
+            <div class="settings" style="margin-top:8px">
+              <div><label for="fixedPersonA">ペアの1人目</label><select id="fixedPersonA"></select></div>
+              <div><label for="fixedPersonB">ペアの2人目</label><select id="fixedPersonB"></select></div>
+            </div>
+            <button class="secondary" type="button" id="addFixedPair" style="margin-top:8px">固定ペアを追加</button>
+            <div id="fixedPairList" style="margin-top:10px"></div>
+          </div>
+        </div>
         <div class="buttons">
           <button id="generateBtn">対戦表を作成</button>
           <button class="secondary" id="copyText">テキストコピー</button>
@@ -1411,28 +1010,12 @@ body.large-ui .zoom-mode-title {
       <details>
         <summary>アップデートノート</summary>
         <div class="release-notes-body">
-          <div class="release-note-item">
-            <div class="release-note-head"><span class="release-note-version">V22.3.3</span><span class="release-note-title">チャレンジ表示をペア名と同じ行に統合</span></div>
-            <div class="release-note-text">ホーム画面のレート差があるペアカードで、「加油！」・ペア名・炎1〜3個を同一行に収めるレイアウトへ変更しました。狭いiPhone幅でもカード外へはみ出さないよう、3列グリッドと可変文字サイズを使用しています。</div>
-          </div>
-          <div class="release-note-item">
-            <div class="release-note-head"><span class="release-note-version">V22.3.2</span><span class="release-note-title">同ペア回避を段階式の禁止条件へ変更</span></div>
-            <div class="release-note-text">直近6試合以内の同ペアを含む候補は、まず候補から除外して対戦表成立を試す方式へ変更しました。同じ4人でのペア替えも直近4試合以内は最初の探索対象から除外します。</div>
-            <div class="release-note-text">厳格条件で成立しない場合のみ、4人組条件、同ペア条件の順に段階的に緩和します。レート差の小ささだけを理由に同じペアが繰り返される傾向を抑えています。</div>
-          </div>
-          <div class="release-note-item">
-            <div class="release-note-head"><span class="release-note-version">V22.3.1</span><span class="release-note-title">ペア重複と4人固定ローテーションを強く抑制</span></div>
-            <div class="release-note-text">合計レート差を小さく保ちながら、同じペアは直近6試合以内、同じ4人によるペア替え対戦は直近4試合以内の再登場を強く避けるよう、組み分け評価ロジックを調整しました。</div>
-          </div>
-          <div class="release-note-item">
-            <div class="release-note-head"><span class="release-note-version">V22.3</span><span class="release-note-title">対戦結果カルーセルを構造から再構築</span></div>
-            <div class="release-note-text">対戦結果カードを他のカードと同じ横幅・左右余白へ統一し、外枠が画面外へ広がらない構造へ変更しました。</div>
-            <div class="release-note-text">外枠は固定したまま、内側の1試合だけをtranslateXで横スワイプ切替し、表示中の試合に合わせて高さも自動調整します。</div>
-          </div>
 <div class="release-note-item">
-            <div class="release-note-head"><span class="release-note-version">V22.2.4</span><span class="release-note-title">対戦結果枠を固定し、試合カードだけを横送り</span></div>
-            <div class="release-note-text">対戦結果の外枠・タイトル・サマリー・画像出力ボタンは固定したまま、その内側の試合カードだけを左右スワイプで1試合ずつ送るカルーセル構造へ変更しました。</div>
-            <div class="release-note-text">レート差がある対戦では、画像出力だけでなくホーム画面側の低レートペアにも、同じく「加油！」＋炎1〜3個のチャレンジ演出を連動表示するよう統一しました。</div>
+            <div class="release-note-head"><span class="release-note-version">V23</span><span class="release-note-title">大会ペア固定モードを追加</span></div>
+            <div class="release-note-text">大会ペアを登録して固定。両名参加時だけ有効とし、片方欠席時はフリー参加者扱い。休憩は固定ペアを同時に選定し、通常モードに切り替え可能です。</div>
+            <div class="release-note-head"><span class="release-note-version">V22.2.1</span><span class="release-note-title">横スワイプ挙動と画像チャレンジ表示を調整</span></div>
+            <div class="release-note-text">ホーム画面の対戦表カードに、左右スワイプしやすい横スクロール設定とスナップ挙動を追加しました。あわせて、ホーム画面全体の黒ベース配色を維持するよう調整しています。</div>
+            <div class="release-note-text">画像出力時のチャレンジ表現は、V22以前と同様に、ペアカード左へ「加油！」、右へレート差に応じた炎アイコン1〜3個を表示する仕様へ戻しました。</div>
           </div>
                     <div class="release-note-item">
             <div class="release-note-head"><span class="release-note-version">V22.2</span><span class="release-note-title">対戦表表示を見本イメージ寄りへ刷新</span></div>
@@ -1517,19 +1100,20 @@ body.large-ui .zoom-mode-title {
     const RELAXED_TARGET_TEAM_DIFF = 5;
     const RELAX_TRIGGER_GOOD_RATE = 0.5;
     const RELAX_TRIGGER_ACTIVE_COUNT = 8;
-    const RECENT_PAIR_LOOKBACK = 6;
-    const RECENT_QUARTET_LOOKBACK = 4;
+    const RECENT_PAIR_LOOKBACK = 2;
+    const RECENT_QUARTET_LOOKBACK = 2;
     const SEARCH_OPTION_LIMIT = 24;
     const SEARCH_NODE_LIMIT = 12000;
     const SEARCH_TIME_LIMIT_MS = 180;
     const IMAGE_BASE_WIDTH = 1680;
     const IMAGE_MAX_HEIGHT = 12000;
-    const STORAGE_KEY = "bd_doubles_scheduler_v22_1";
-    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v22", "bd_doubles_scheduler_v21", "bd_doubles_scheduler_v20", "bd_doubles_scheduler_v19_2", "bd_doubles_scheduler_v19_1", "bd_doubles_scheduler_v19", "bd_doubles_scheduler_v18", "bd_doubles_scheduler_v17", "bd_doubles_scheduler_v16", "bd_doubles_scheduler_v15", "bd_doubles_scheduler_v14", "bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
+    const STORAGE_KEY = "bd_doubles_scheduler_v23";
+    const LEGACY_STORAGE_KEYS = ["bd_doubles_scheduler_v22_1", "bd_doubles_scheduler_v22", "bd_doubles_scheduler_v21", "bd_doubles_scheduler_v20", "bd_doubles_scheduler_v19_2", "bd_doubles_scheduler_v19_1", "bd_doubles_scheduler_v19", "bd_doubles_scheduler_v18", "bd_doubles_scheduler_v17", "bd_doubles_scheduler_v16", "bd_doubles_scheduler_v15", "bd_doubles_scheduler_v14", "bd_doubles_scheduler_v13", "bd_doubles_scheduler_v12", "bd_doubles_scheduler_v11", "bd_doubles_scheduler_v10", "bd_doubles_scheduler_v9", "bd_doubles_scheduler_v8", "bd_doubles_scheduler_v7", "bd_doubles_scheduler_v6", "bd_doubles_scheduler_v5", "bd_doubles_scheduler_v4", "bd_doubles_scheduler_v3", "bd_doubles_scheduler_v2", "bd_doubles_scheduler_v1"];
     const DEFAULT_SETTINGS = {
       useRatings: true,
       showRatings: false,
       largeTextMode: false,
+      competitionMode: "normal",
     };
 
     let members = [];
@@ -1538,6 +1122,7 @@ body.large-ui .zoom-mode-title {
     let lastSchedule = [];
     let appSettings = { ...DEFAULT_SETTINGS };
     let editingMemberId = null;
+    let fixedPairs = [];
 
     const $ = (id) => document.getElementById(id);
 
@@ -1706,6 +1291,7 @@ body.large-ui .zoom-mode-title {
         selectedIds,
         lastSelectedIds,
         settings: appSettings,
+        fixedPairs,
         lastResult: scheduleSnapshot()
       }));
     }
@@ -1729,6 +1315,7 @@ body.large-ui .zoom-mode-title {
           const explicitLast = uniqueIds(data.lastSelectedIds);
           lastSelectedIds = (explicitLast.length ? explicitLast : selectedIds).filter((id) => members.some((m) => m.id === id));
           appSettings = { ...DEFAULT_SETTINGS, ...(data.settings || {}) };
+          fixedPairs = sanitizeFixedPairs(data.fixedPairs || []);
           if (data.lastResult) restoreScheduleSnapshot(data.lastResult);
           if (members.length || data.lastResult) return;
         } catch (_) {}
@@ -1744,6 +1331,7 @@ body.large-ui .zoom-mode-title {
           selectedIds = uniqueIds(data.selectedIds).filter((id) => members.some((m) => m.id === id));
           lastSelectedIds = uniqueIds(data.lastSelectedIds).filter((id) => members.some((m) => m.id === id));
           appSettings = { ...DEFAULT_SETTINGS, ...(data.settings || {}) };
+          fixedPairs = sanitizeFixedPairs(data.fixedPairs || []);
           restoreScheduleSnapshot(data.lastResult);
           return;
         }
@@ -1762,6 +1350,9 @@ body.large-ui .zoom-mode-title {
 
     function applySettingsToControls() {
       $("matchMode").value = appSettings.useRatings ? "rating" : "free";
+      $("competitionMode").value = appSettings.competitionMode === "tournament" ? "tournament" : "normal";
+      $("fixedPairPanel").classList.toggle("hidden", appSettings.competitionMode !== "tournament");
+      renderFixedPairControls();
       $("toggleRatings").textContent = appSettings.showRatings ? "レーティング非表示" : "レーティング表示";
       $("privacyStatus").textContent = appSettings.showRatings ? "操作者向け：レーティング表示中" : "共有向け：レーティング非表示";
       $("ratingGuide").innerHTML = appSettings.useRatings
@@ -1781,10 +1372,15 @@ body.large-ui .zoom-mode-title {
 
     function updateSettingsFromControls() {
       appSettings.useRatings = $("matchMode").value === "rating";
+      const previousMode = appSettings.competitionMode;
+      appSettings.competitionMode = $("competitionMode").value;
+      if (previousMode !== appSettings.competitionMode) clearScheduleSnapshot();
       applySettingsToControls();
+      if (previousMode !== appSettings.competitionMode) renderSchedule([]);
       save();
       renderMasterList();
       renderSelectionList();
+      renderFixedPairControls();
       renderStats(lastSchedule.__state || []);
       if (lastSchedule.length) {
         renderSchedule(lastSchedule);
@@ -1954,6 +1550,7 @@ body.large-ui .zoom-mode-title {
       invalidateGeneratedResult();
       renderMasterList();
       renderSelectionList();
+      renderFixedPairControls();
       $("playerName").focus();
     }
 
@@ -1973,18 +1570,21 @@ body.large-ui .zoom-mode-title {
       if (!member) return;
       if (!confirm(`${member.name} をマスターから削除しますか？`)) return;
       members = members.filter((m) => m.id !== id);
+      fixedPairs = fixedPairs.filter((pair) => !pair.includes(id));
       selectedIds = selectedIds.filter((memberId) => memberId !== id);
       lastSelectedIds = lastSelectedIds.filter((memberId) => memberId !== id);
       if (editingMemberId === id) resetMemberForm();
       invalidateGeneratedResult();
       renderMasterList();
       renderSelectionList();
+      renderFixedPairControls();
     }
 
     function loadSampleMembers() {
       const names = ["田中","佐藤","鈴木","高橋","伊藤","山本","中村","小林","加藤","吉田","山田","佐々木","山口","松本","井上","木村","林","清水","斎藤","森","池田","橋本","石川","阿部","前田","藤田","後藤","岡田","長谷川","村上"];
       const ratings = [10,10,9,9,8,8,8,7,7,7,6,6,6,5.5,5.5,5,5,5,4.5,4.5,4,4,4,3,3,3,2,2,1,1];
       members = names.map((name, i) => ({ id: uid(), name, rating: ratings[i] }));
+      fixedPairs = [];
       selectedIds = members.map((m) => m.id);
       lastSelectedIds = selectedIds.slice();
       resetMemberForm();
@@ -1997,6 +1597,7 @@ body.large-ui .zoom-mode-title {
     function clearMembers() {
       if (!confirm("登録メンバーと当日参加者をすべて削除しますか？")) return;
       members = [];
+      fixedPairs = [];
       selectedIds = [];
       lastSelectedIds = [];
       resetMemberForm();
@@ -2017,7 +1618,7 @@ body.large-ui .zoom-mode-title {
       return {
         app: "ダブルス対戦メーカー",
         schema: "doubles-match-maker-members",
-        version: "22.1",
+        version: "23",
         exportedAt: new Date().toISOString(),
         maxMembers: MAX_MEMBERS,
         members: members.map((m) => ({
@@ -2103,6 +1704,7 @@ body.large-ui .zoom-mode-title {
         if (!confirm(`JSONから${imported.length}人の名簿を読み込み、現在のメンバーマスターを置き換えます。${suffix}よろしいですか？`)) return;
 
         members = imported;
+        fixedPairs = [];
         selectedIds = members.map((m) => m.id);
         lastSelectedIds = selectedIds.slice();
         resetMemberForm();
@@ -2142,6 +1744,7 @@ body.large-ui .zoom-mode-title {
       save();
       renderMasterList();
       renderSelectionList();
+      renderFixedPairControls();
       renderStats(lastSchedule.__state || []);
       if (lastSchedule.length) {
         renderSchedule(lastSchedule);
@@ -2158,6 +1761,7 @@ body.large-ui .zoom-mode-title {
       invalidateGeneratedResult();
       renderMasterList();
       renderSelectionList();
+      renderFixedPairControls();
     }
 
     function selectAllMembers() {
@@ -2165,6 +1769,7 @@ body.large-ui .zoom-mode-title {
       invalidateGeneratedResult();
       renderMasterList();
       renderSelectionList();
+      renderFixedPairControls();
     }
 
     function clearTodaySelection() {
@@ -2172,6 +1777,7 @@ body.large-ui .zoom-mode-title {
       invalidateGeneratedResult();
       renderMasterList();
       renderSelectionList();
+      renderFixedPairControls();
     }
 
     function restoreLastSelection() {
@@ -2181,6 +1787,131 @@ body.large-ui .zoom-mode-title {
       renderMasterList();
       renderSelectionList();
       setError("前回参加者を復元しました。");
+    }
+
+    // 固定ペアは名簿IDで保持し、双方参加中だけ有効にする。
+    function sanitizeFixedPairs(source) {
+      if (!Array.isArray(source)) return [];
+      const used = new Set(), valid = new Set(members.map((m) => m.id));
+      return source.filter((pair) => {
+        if (!Array.isArray(pair) || pair.length !== 2) return false;
+        const [a, b] = pair;
+        if (a === b || !valid.has(a) || !valid.has(b) || used.has(a) || used.has(b)) return false;
+        used.add(a); used.add(b);
+        return true;
+      }).map((pair) => pair.slice());
+    }
+
+    function renderFixedPairControls() {
+      fixedPairs = sanitizeFixedPairs(fixedPairs);
+      const occupied = new Set(fixedPairs.flat());
+      for (const selectId of ["fixedPersonA", "fixedPersonB"]) {
+        const select = $(selectId), current = select.value;
+        select.innerHTML = '<option value="">選択してください</option>';
+        for (const m of members) {
+          if (occupied.has(m.id)) continue;
+          const option = document.createElement("option");
+          option.value = m.id; option.textContent = m.name;
+          select.appendChild(option);
+        }
+        if ([...select.options].some((option) => option.value === current)) select.value = current;
+      }
+      $("fixedPairList").innerHTML = fixedPairs.length ? fixedPairs.map((pair, index) => {
+        const a = members.find((m) => m.id === pair[0]);
+        const b = members.find((m) => m.id === pair[1]);
+        const present = selectedIds.includes(pair[0]) && selectedIds.includes(pair[1]);
+        return `<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #8884"><span>${escapeHtml(a.name)} ＆ ${escapeHtml(b.name)} <small>（${present ? '本日有効' : '本日片方以上欠席'}）</small></span><button class="secondary" type="button" data-remove-pair="${index}">解除</button></div>`;
+      }).join("") : '<div class="compact-note">固定ペアは未登録です。フリー同士で組み合わせます。</div>';
+    }
+
+    function addFixedPair() {
+      const a = $("fixedPersonA").value, b = $("fixedPersonB").value;
+      if (!a || !b || a === b) return setError("異なる2名を選択してください。");
+      if (fixedPairs.some((pair) => pair.includes(a) || pair.includes(b))) return setError("すでに別の固定ペアに登録された人がいます。");
+      fixedPairs.push([a, b]);
+      invalidateGeneratedResult();
+      renderFixedPairControls();
+      setError("固定ペアを登録しました。");
+    }
+
+    function tournamentUnits(state) {
+      const byId = new Map(state.map((p) => [p.id, p]));
+      const used = new Set(), units = [];
+      for (const [a, b] of fixedPairs) {
+        if (!byId.has(a) || !byId.has(b)) continue;
+        units.push([byId.get(a), byId.get(b)]);
+        used.add(a); used.add(b);
+      }
+      for (const p of state) if (!used.has(p.id)) units.push([p]);
+      return units;
+    }
+
+    function isTournamentFeasible(activeMembers) {
+      const total = Math.min(Number($("courtCount").value), Math.floor(activeMembers.length / 4)) * 4;
+      const units = tournamentUnits(activeMembers);
+      let possible = new Set([0]);
+      for (const unit of units) {
+        const next = new Set(possible);
+        for (const n of possible) if (n + unit.length <= total) next.add(n + unit.length);
+        possible = next;
+      }
+      return possible.has(total);
+    }
+
+    function shuffleCopy(items) {
+      const copy = items.slice();
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function chooseTournamentRound(state, courtCount, roundNo, recentQuartets) {
+      const units = tournamentUnits(state);
+      const slots = courtCount * 4;
+      const strategy = buildRoundStrategy(state, roundNo, state.length);
+      let best = null;
+      // 複数回のシャッフルを比較して休憩・出場偏りと対戦重複を抑える。
+      for (let attempt = 0; attempt < 240; attempt++) {
+        const ordered = shuffleCopy(units).sort((a, b) => {
+          const sa = a.reduce((sum, p) => sum + restScore(p), 0) / a.length;
+          const sb = b.reduce((sum, p) => sum + restScore(p), 0) / b.length;
+          return sa - sb;
+        });
+        // DPで必ず4人×コート数に合う参加単位を選定。
+        const dp = new Map([[0, { kept: [], score: 0 }]]);
+        for (const unit of ordered) {
+          const weight = unit.reduce((sum, p) => sum + restScore(p), 0);
+          const entries = [...dp.entries()].sort((a, b) => b[0] - a[0]);
+          for (const [count, value] of entries) {
+            const next = count + unit.length;
+            if (next > slots) continue;
+            const candidate = { kept: [...value.kept, unit], score: value.score + weight + Math.random() * 7 };
+            if (!dp.has(next) || candidate.score < dp.get(next).score) dp.set(next, candidate);
+          }
+        }
+        if (!dp.has(slots)) continue;
+        const kept = dp.get(slots).kept;
+        const ids = new Set(kept.flat().map((p) => p.id));
+        const rests = state.filter((p) => !ids.has(p.id));
+        const fixedTeams = kept.filter((unit) => unit.length === 2);
+        const freePlayers = shuffleCopy(kept.filter((unit) => unit.length === 1).flat());
+        const freeTeams = [];
+        for (let i = 0; i < freePlayers.length; i += 2) freeTeams.push([freePlayers[i], freePlayers[i + 1]]);
+        const teams = shuffleCopy([...fixedTeams, ...freeTeams]);
+        if (teams.length !== courtCount * 2 || teams.some((team) => team.length !== 2)) continue;
+        const matches = [];
+        for (let i = 0; i < teams.length; i += 2) {
+          const arr = [];
+          addPairingCandidate(arr, teams[i], teams[i + 1], strategy, recentQuartets);
+          matches.push(arr[0]);
+        }
+        const fairnessPenalty = rests.reduce((sum, p) => sum + (30 - restScore(p)) * 700, 0);
+        const totalScore = matches.reduce((sum, match) => sum + match.score, 0) + fairnessPenalty;
+        if (!best || totalScore < best.score) best = { rests, matches, score: totalScore };
+      }
+      return best;
     }
 
     function cloneStatePlayers(source) {
@@ -2213,6 +1944,9 @@ body.large-ui .zoom-mode-title {
           return setError("レーティングありモードでは、当日参加者全員のレーティング設定が必要です。未設定の人がいます。");
         }
 
+        if (appSettings.competitionMode === "tournament" && !isTournamentFeasible(activeMembers)) {
+          return setError("固定ペアの人数構成上、設定コート数で4人単位の試合を組めません。参加者・固定ペアを調整してください。");
+        }
         lastSelectedIds = selectedIds.slice();
         const state = cloneStatePlayers(activeMembers);
         const schedule = [];
@@ -2223,7 +1957,12 @@ body.large-ui .zoom-mode-title {
           const activeCount = availableCourts * 4;
           const restCount = state.length - activeCount;
 
-          const restIds = chooseRestPlayers(state, restCount).map((p) => p.id);
+          const tournamentRound = appSettings.competitionMode === "tournament"
+            ? chooseTournamentRound(state, availableCourts, roundNo, recentQuartets) : null;
+          if (appSettings.competitionMode === "tournament" && !tournamentRound) {
+            return setError(`第${roundNo}試合の組み合わせを生成できませんでした。条件を調整してください。`);
+          }
+          const restIds = (tournamentRound ? tournamentRound.rests : chooseRestPlayers(state, restCount)).map((p) => p.id);
           const restSet = new Set(restIds);
           const rests = state.filter((p) => restSet.has(p.id));
           const active = state.filter((p) => !restSet.has(p.id));
@@ -2231,7 +1970,8 @@ body.large-ui .zoom-mode-title {
           rests.forEach((p) => { p.rested += 1; p.lastRest = true; });
           active.forEach((p) => { p.lastRest = false; });
 
-          const roundMatches = chooseRoundMatches(active, availableCourts, roundNo, activeMembers.length, recentQuartets);
+          const roundMatches = tournamentRound
+            ? tournamentRound.matches : chooseRoundMatches(active, availableCourts, roundNo, activeMembers.length, recentQuartets);
           const courts = roundMatches.map((match, idx) => {
             match.teamA.forEach((p) => p.played += 1);
             match.teamB.forEach((p) => p.played += 1);
@@ -2254,7 +1994,7 @@ body.large-ui .zoom-mode-title {
         }
 
         schedule.__state = state.map(slim);
-        schedule.__meta = { selectedCount: activeMembers.length, courtCount: courtSetting, roundCount, generatedAt: new Date().toISOString() };
+        schedule.__meta = { selectedCount: activeMembers.length, courtCount: courtSetting, roundCount, competitionMode: appSettings.competitionMode, generatedAt: new Date().toISOString() };
         lastSchedule = schedule;
         save();
         renderSchedule(schedule);
@@ -2314,13 +2054,13 @@ body.large-ui .zoom-mode-title {
         roundNo,
         relaxed,
         targetDiff: appSettings.useRatings ? (relaxed ? RELAXED_TARGET_TEAM_DIFF : NORMAL_TARGET_TEAM_DIFF) : null,
-        recentPairWeight: relaxed ? 240000 : 420000,
-        recentQuartetWeight: relaxed ? 150000 : 280000,
-        pairRepeatWeight: relaxed ? 32000 : 52000,
+        recentPairWeight: relaxed ? 76000 : 165000,
+        recentQuartetWeight: relaxed ? 56000 : 118000,
+        pairRepeatWeight: relaxed ? 18000 : 32000,
         opponentRepeatWeight: relaxed ? 640 : 880,
-        diffWeight: relaxed ? 1800 : 3200,
-        overTargetBasePenalty: relaxed ? 12000 : 36000,
-        overTargetStepPenalty: relaxed ? 6200 : 14000,
+        diffWeight: relaxed ? 980 : 2100,
+        overTargetBasePenalty: relaxed ? 4200 : 18000,
+        overTargetStepPenalty: relaxed ? 2600 : 9600,
         pairGapWeight: relaxed ? 12 : 9,
         randomWeight: relaxed ? 5.2 : 2.2,
         topSolutionWindow: relaxed ? 6 : 4,
@@ -2331,110 +2071,79 @@ body.large-ui .zoom-mode-title {
 
     function chooseRoundMatches(active, courtCount, roundNo, selectedCount, recentQuartets) {
       const strategy = buildRoundStrategy(active, roundNo, selectedCount);
-      const allCandidates = buildMatchCandidates(active, strategy, recentQuartets).sort((a, b) => a.score - b.score);
+      const candidates = buildMatchCandidates(active, strategy, recentQuartets).sort((a, b) => a.score - b.score);
+      const byPlayer = new Map(active.map((p) => [p.id, []]));
+      candidates.forEach((c) => c.players.forEach((p) => byPlayer.get(p.id).push(c)));
 
-      const stages = [
-        {
-          name: "strict",
-          candidates: allCandidates.filter((c) => c.pairCooldownViolations === 0 && c.quartetCooldownViolation === 0),
-          optionLimit: Math.max(SEARCH_OPTION_LIMIT * 3, 72),
-          randomize: false
-        },
-        {
-          name: "pair-strict",
-          candidates: allCandidates.filter((c) => c.pairCooldownViolations === 0),
-          optionLimit: Math.max(SEARCH_OPTION_LIMIT * 3, 72),
-          randomize: false
-        },
-        {
-          name: "relaxed",
-          candidates: allCandidates,
-          optionLimit: Math.max(SEARCH_OPTION_LIMIT * 2, 48),
-          randomize: true
-        }
-      ];
+      let best = null;
+      const solutionPool = [];
+      let visited = 0;
+      let aborted = false;
+      const startedAt = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+      const orderedActive = active.slice().sort((a, b) => {
+        if (a.played !== b.played) return a.played - b.played;
+        if (appSettings.useRatings) return sortRatingValue(b) - sortRatingValue(a) || a.name.localeCompare(b.name, "ja");
+        return a.name.localeCompare(b.name, "ja");
+      });
 
-      for (const stage of stages) {
-        if (!stage.candidates.length) continue;
-        const solved = solveRoundCandidatePool(
-          stage.candidates,
-          active,
-          courtCount,
-          strategy,
-          stage.optionLimit,
-          stage.randomize
-        );
-        if (solved && solved.length === courtCount) return solved;
+      function pushSolution(solution) {
+        if (!best || solution.score < best.score) best = solution;
+        solutionPool.push(solution);
+        solutionPool.sort((a, b) => a.score - b.score);
+        if (solutionPool.length > 12) solutionPool.length = 12;
       }
+
+      function search(selected, usedIds, score) {
+        visited += 1;
+        const now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+        if (visited > SEARCH_NODE_LIMIT || now - startedAt > SEARCH_TIME_LIMIT_MS) {
+          aborted = true;
+          return;
+        }
+        if (selected.length === courtCount) {
+          pushSolution({ matches: selected.slice(), score });
+          return;
+        }
+        if (best && score >= best.score + strategy.solutionScoreSlack) return;
+
+        const firstUnused = orderedActive.find((p) => !usedIds.has(p.id));
+        if (!firstUnused) return;
+
+        const options = (byPlayer.get(firstUnused.id) || [])
+          .filter((c) => !c.players.some((p) => usedIds.has(p.id)))
+          .slice(0, SEARCH_OPTION_LIMIT);
+        const shuffledHead = options.slice(0, strategy.optionShuffleWindow).sort(() => Math.random() - 0.5);
+        const orderedOptions = shuffledHead.concat(options.slice(strategy.optionShuffleWindow));
+
+        for (const c of orderedOptions) {
+          c.players.forEach((p) => usedIds.add(p.id));
+          selected.push(c);
+          search(selected, usedIds, score + c.score);
+          selected.pop();
+          c.players.forEach((p) => usedIds.delete(p.id));
+          if (aborted) break;
+        }
+      }
+
+      search([], new Set(), 0);
+      if (solutionPool.length) {
+        const baseline = solutionPool[0].score;
+        const topPool = solutionPool
+          .filter((sol, idx) => idx < strategy.topSolutionWindow || sol.score <= baseline + strategy.solutionScoreSlack)
+          .slice(0, strategy.topSolutionWindow);
+        return topPool[Math.floor(Math.random() * topPool.length)].matches;
+      }
+      if (best) return best.matches;
 
       const used = new Set();
       const greedy = [];
-      const fallback = allCandidates.slice().sort((a, b) => {
-        if (a.pairCooldownViolations !== b.pairCooldownViolations) return a.pairCooldownViolations - b.pairCooldownViolations;
-        if (a.quartetCooldownViolation !== b.quartetCooldownViolation) return a.quartetCooldownViolation - b.quartetCooldownViolation;
-        return a.score - b.score;
-      });
-      for (const c of fallback) {
+      for (const c of candidates) {
         if (greedy.length >= courtCount) break;
         if (c.players.some((p) => used.has(p.id))) continue;
         c.players.forEach((p) => used.add(p.id));
         greedy.push(c);
       }
       return greedy;
-    }
-
-    function solveRoundCandidatePool(candidates, active, courtCount, strategy, optionLimit, randomize) {
-      const byPlayer = new Map(active.map((p) => [p.id, []]));
-      candidates.forEach((c) => c.players.forEach((p) => byPlayer.get(p.id).push(c)));
-      byPlayer.forEach((list) => list.sort((a, b) => a.score - b.score));
-
-      let best = null;
-      let visited = 0;
-      const nodeLimit = SEARCH_NODE_LIMIT * 2;
-      const timeLimit = SEARCH_TIME_LIMIT_MS * 2.5;
-      const startedAt = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
-      const orderedActive = active.slice().sort((a, b) => {
-        const aOptions = (byPlayer.get(a.id) || []).length;
-        const bOptions = (byPlayer.get(b.id) || []).length;
-        if (aOptions !== bOptions) return aOptions - bOptions;
-        if (a.played !== b.played) return a.played - b.played;
-        return a.name.localeCompare(b.name, "ja");
-      });
-
-      function search(selected, usedIds, score) {
-        visited += 1;
-        const now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
-        if (visited > nodeLimit || now - startedAt > timeLimit) return;
-        if (selected.length === courtCount) {
-          if (!best || score < best.score) best = { matches: selected.slice(), score };
-          return;
-        }
-        if (best && score >= best.score) return;
-
-        const firstUnused = orderedActive.find((p) => !usedIds.has(p.id));
-        if (!firstUnused) return;
-
-        let options = (byPlayer.get(firstUnused.id) || [])
-          .filter((c) => !c.players.some((p) => usedIds.has(p.id)))
-          .slice(0, optionLimit);
-
-        if (randomize && options.length > 1) {
-          const headCount = Math.min(strategy.optionShuffleWindow, options.length);
-          const head = options.slice(0, headCount).sort(() => Math.random() - 0.5);
-          options = head.concat(options.slice(headCount));
-        }
-
-        for (const c of options) {
-          c.players.forEach((p) => usedIds.add(p.id));
-          selected.push(c);
-          search(selected, usedIds, score + c.score);
-          selected.pop();
-          c.players.forEach((p) => usedIds.delete(p.id));
-        }
-      }
-
-      search([], new Set(), 0);
-      return best ? best.matches : null;
     }
 
     function buildMatchCandidates(active, strategy, recentQuartets) {
@@ -2468,14 +2177,10 @@ body.large-ui .zoom-mode-title {
       const pairRepeat = partnerRepeatCount(teamA) + partnerRepeatCount(teamB);
       const recentPairPenalty = recentPartnerPenalty(teamA, strategy.roundNo) + recentPartnerPenalty(teamB, strategy.roundNo);
       const recentQuartetPenalty = getRecentQuartetPenalty([...teamA, ...teamB], strategy.roundNo, recentQuartets);
-      const pairCooldownViolations = countPairCooldownViolations(teamA, strategy.roundNo) + countPairCooldownViolations(teamB, strategy.roundNo);
-      const quartetCooldownViolation = hasQuartetCooldownViolation([...teamA, ...teamB], strategy.roundNo, recentQuartets) ? 1 : 0;
       const opponentRepeat = opponentPenalty(teamA, teamB);
       const pairGapPenalty = useRatings ? Math.abs(teamA[0].rating - teamA[1].rating) + Math.abs(teamB[0].rating - teamB[1].rating) : 0;
       const playerRepeatBias = (teamA[0].played + teamA[1].played + teamB[0].played + teamB[1].played) * 0.02;
       const score =
-        pairCooldownViolations * 900000 +
-        quartetCooldownViolation * 520000 +
         recentQuartetPenalty * strategy.recentQuartetWeight +
         recentPairPenalty * strategy.recentPairWeight +
         pairRepeat * strategy.pairRepeatWeight +
@@ -2496,8 +2201,6 @@ body.large-ui .zoom-mode-title {
         pairRepeat,
         recentPairPenalty,
         recentQuartetPenalty,
-        pairCooldownViolations,
-        quartetCooldownViolation,
         opponentRepeat,
         challengeTeam,
         score
@@ -2512,26 +2215,10 @@ body.large-ui .zoom-mode-title {
       const rounds = getRecentRounds(team[0].recentPartners, team[1].id);
       return rounds.reduce((total, prevRoundNo) => {
         const gap = roundNo - prevRoundNo;
-        if (gap <= 0 || gap > RECENT_PAIR_LOOKBACK) return total;
-        const weights = { 1: 8.0, 2: 6.3, 3: 4.9, 4: 3.6, 5: 2.4, 6: 1.4 };
-        return total + (weights[gap] || 0);
+        if (gap === 1) return total + 1.35;
+        if (gap === 2) return total + 0.85;
+        return total;
       }, 0);
-    }
-
-    function countPairCooldownViolations(team, roundNo) {
-      const rounds = getRecentRounds(team[0].recentPartners, team[1].id);
-      return rounds.some((prevRoundNo) => {
-        const gap = roundNo - prevRoundNo;
-        return gap >= 1 && gap <= RECENT_PAIR_LOOKBACK;
-      }) ? 1 : 0;
-    }
-
-    function hasQuartetCooldownViolation(players, roundNo, recentQuartets) {
-      const rounds = getRecentRounds(recentQuartets, quartetKey(players));
-      return rounds.some((prevRoundNo) => {
-        const gap = roundNo - prevRoundNo;
-        return gap >= 1 && gap <= RECENT_QUARTET_LOOKBACK;
-      });
     }
 
     function quartetKey(players) {
@@ -2542,9 +2229,9 @@ body.large-ui .zoom-mode-title {
       const rounds = getRecentRounds(recentQuartets, quartetKey(players));
       return rounds.reduce((total, prevRoundNo) => {
         const gap = roundNo - prevRoundNo;
-        if (gap <= 0 || gap > RECENT_QUARTET_LOOKBACK) return total;
-        const weights = { 1: 6.0, 2: 4.4, 3: 3.0, 4: 1.8 };
-        return total + (weights[gap] || 0);
+        if (gap === 1) return total + 1.75;
+        if (gap === 2) return total + 1.05;
+        return total;
       }, 0);
     }
 
@@ -2616,14 +2303,6 @@ body.large-ui .zoom-mode-title {
     }
 
 
-    function flameCountFromDiff(diff) {
-      if (!Number.isFinite(diff)) return 0;
-      if (diff >= 8) return 3;
-      if (diff >= 5.5) return 2;
-      if (diff >= 3) return 1;
-      return 0;
-    }
-
     function renderSchedule(schedule) {
       const wrap = $("schedule");
       wrap.innerHTML = "";
@@ -2631,7 +2310,7 @@ body.large-ui .zoom-mode-title {
 
       const summary = getScheduleSummary(schedule);
       const shell = document.createElement("section");
-      shell.className = "card result-shell";
+      shell.className = "result-shell";
       shell.innerHTML = `
         <div class="result-title-block">
           <div class="result-title-main">対戦表結果</div>
@@ -2646,17 +2325,9 @@ body.large-ui .zoom-mode-title {
             </div>
             <button class="result-export-btn" id="scheduleExportInline" type="button">画像出力</button>
           </div>
-          <div class="result-round-viewport">
-            <div class="result-round-scroll" id="resultRoundScroll" aria-label="対戦表の横スワイプ表示">
-              <div class="result-round-track" id="resultRoundTrack">
-                ${schedule.map(roundBoardHtml).join("")}
-              </div>
-            </div>
-          </div>
-          <div class="result-carousel-footer" aria-hidden="true">
-            <div class="result-carousel-count" id="resultCarouselCount">1 / ${schedule.length}</div>
-            <div class="result-carousel-dots" id="resultCarouselDots">
-              ${schedule.map((_, index) => `<span class="result-carousel-dot ${index === 0 ? "active" : ""}"></span>`).join("")}
+          <div class="result-round-scroll" aria-label="対戦表の横スクロール表示">
+            <div class="result-round-track">
+              ${schedule.map(roundBoardHtml).join("")}
             </div>
           </div>
         </div>
@@ -2664,106 +2335,7 @@ body.large-ui .zoom-mode-title {
       wrap.appendChild(shell);
       const inlineButton = $("scheduleExportInline");
       if (inlineButton) inlineButton.addEventListener("click", exportImage);
-      setupResultCarousel(schedule.length);
       wrap.scrollIntoView({ block: "start", behavior: "smooth" });
-    }
-
-    function setupResultCarousel(totalRounds) {
-      const viewport = document.querySelector(".result-round-viewport");
-      const scroller = $("resultRoundScroll");
-      const track = $("resultRoundTrack");
-      const count = $("resultCarouselCount");
-      const dotsWrap = $("resultCarouselDots");
-      if (!viewport || !scroller || !track || totalRounds <= 0) return;
-
-      const slides = Array.from(track.querySelectorAll(".result-round-slide"));
-      const dots = dotsWrap ? Array.from(dotsWrap.querySelectorAll(".result-carousel-dot")) : [];
-      let currentIndex = 0;
-      let startX = 0;
-      let currentX = 0;
-      let dragging = false;
-
-      const updateHeight = () => {
-        const slide = slides[currentIndex];
-        if (!slide) return;
-        requestAnimationFrame(() => {
-          viewport.style.height = `${slide.offsetHeight}px`;
-        });
-      };
-
-      const renderPosition = (animate = true) => {
-        track.style.transition = animate ? "transform .26s ease" : "none";
-        track.style.transform = `translate3d(${-currentIndex * 100}%,0,0)`;
-        if (count) count.textContent = `${currentIndex + 1} / ${totalRounds}`;
-        dots.forEach((dot, index) => dot.classList.toggle("active", index === currentIndex));
-        updateHeight();
-      };
-
-      const goTo = (index) => {
-        currentIndex = Math.max(0, Math.min(totalRounds - 1, index));
-        renderPosition(true);
-      };
-
-      scroller.addEventListener("touchstart", (event) => {
-        if (!event.touches.length) return;
-        dragging = true;
-        startX = event.touches[0].clientX;
-        currentX = startX;
-        track.style.transition = "none";
-      }, { passive: true });
-
-      scroller.addEventListener("touchmove", (event) => {
-        if (!dragging || !event.touches.length) return;
-        currentX = event.touches[0].clientX;
-        const delta = currentX - startX;
-        const width = scroller.clientWidth || 1;
-        const percent = (-currentIndex * 100) + (delta / width) * 100;
-        track.style.transform = `translate3d(${percent}%,0,0)`;
-      }, { passive: true });
-
-      scroller.addEventListener("touchend", () => {
-        if (!dragging) return;
-        dragging = false;
-        const delta = currentX - startX;
-        const threshold = Math.min(70, (scroller.clientWidth || 1) * 0.18);
-        if (delta <= -threshold) goTo(currentIndex + 1);
-        else if (delta >= threshold) goTo(currentIndex - 1);
-        else renderPosition(true);
-      }, { passive: true });
-
-      let pointerId = null;
-      scroller.addEventListener("pointerdown", (event) => {
-        if (event.pointerType === "touch") return;
-        pointerId = event.pointerId;
-        dragging = true;
-        startX = event.clientX;
-        currentX = startX;
-        scroller.setPointerCapture(pointerId);
-        track.style.transition = "none";
-      });
-      scroller.addEventListener("pointermove", (event) => {
-        if (!dragging || pointerId !== event.pointerId) return;
-        currentX = event.clientX;
-        const delta = currentX - startX;
-        const width = scroller.clientWidth || 1;
-        const percent = (-currentIndex * 100) + (delta / width) * 100;
-        track.style.transform = `translate3d(${percent}%,0,0)`;
-      });
-      const endPointer = (event) => {
-        if (!dragging || pointerId !== event.pointerId) return;
-        dragging = false;
-        const delta = currentX - startX;
-        const threshold = Math.min(70, (scroller.clientWidth || 1) * 0.18);
-        if (delta <= -threshold) goTo(currentIndex + 1);
-        else if (delta >= threshold) goTo(currentIndex - 1);
-        else renderPosition(true);
-        pointerId = null;
-      };
-      scroller.addEventListener("pointerup", endPointer);
-      scroller.addEventListener("pointercancel", endPointer);
-
-      window.addEventListener("resize", updateHeight, { passive: true });
-      renderPosition(false);
     }
 
     function roundBoardHtml(round) {
@@ -2771,15 +2343,13 @@ body.large-ui .zoom-mode-title {
         ? round.rests.map((p) => formatPersonPlain(p, { includeRating: false })).join("、")
         : "なし";
       return `
-        <div class="result-round-slide">
-          <article class="result-round-card">
-            <div class="result-round-header">第${round.roundNo}試合</div>
-            <div class="result-rest-line">休憩：${escapeHtml(restText)}</div>
-            <div class="result-courts">
-              ${round.courts.map(resultCourtHtml).join("")}
-            </div>
-          </article>
-        </div>
+        <article class="result-round-card">
+          <div class="result-round-header">第${round.roundNo}試合</div>
+          <div class="result-rest-line">休憩：${escapeHtml(restText)}</div>
+          <div class="result-courts">
+            ${round.courts.map(resultCourtHtml).join("")}
+          </div>
+        </article>
       `;
     }
 
@@ -2787,21 +2357,18 @@ body.large-ui .zoom-mode-title {
       return `
         <section class="result-court-box">
           <div class="result-court-pill">Court ${court.courtNo}</div>
-          ${resultTeamHtml(court.teamA, court.challengeTeam === "A", court.diff)}
+          ${resultTeamHtml(court.teamA, court.challengeTeam === "A")}
           <div class="result-vs">VS</div>
-          ${resultTeamHtml(court.teamB, court.challengeTeam === "B", court.diff)}
+          ${resultTeamHtml(court.teamB, court.challengeTeam === "B")}
         </section>
       `;
     }
 
-    function resultTeamHtml(team, isChallenge = false, diff = null) {
+    function resultTeamHtml(team, isChallenge = false) {
       const names = team.map((p) => escapeHtml(formatPersonPlain(p, { includeRating: false }))).join("・");
-      const flameText = isChallenge ? "🔥".repeat(flameCountFromDiff(diff)) : "";
       return `
         <div class="result-team-box ${isChallenge ? "challenge" : ""}">
-          ${isChallenge ? '<span class="result-cheer-pill">加油！</span>' : ''}
-          <span class="result-team-name">${names}</span>
-          ${isChallenge ? `<span class="result-flames" aria-label="レート差 ${flameCountFromDiff(diff)}段階">${flameText}</span>` : ''}
+          <div>${names}</div>
         </div>
       `;
     }
@@ -3211,6 +2778,15 @@ body.large-ui .zoom-mode-title {
     $("toggleExport").addEventListener("click", toggleExport);
     $("exportImage").addEventListener("click", exportImage);
     $("matchMode").addEventListener("change", updateSettingsFromControls);
+    $("competitionMode").addEventListener("change", updateSettingsFromControls);
+    $("addFixedPair").addEventListener("click", addFixedPair);
+    $("fixedPairList").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-remove-pair]");
+      if (!btn) return;
+      fixedPairs.splice(Number(btn.dataset.removePair), 1);
+      invalidateGeneratedResult();
+      renderFixedPairControls();
+    });
 
     enableButtonTapFeedback();
     updateInstallTip();
