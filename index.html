@@ -870,7 +870,7 @@ body.large-ui .zoom-mode-title {
 <body>
   <main class="app">
     <header>
-      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V23.1</span></h1>
+      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V23.2</span></h1>
       <p class="subtitle">登録メンバーは最大50人まで保持。黒ベースのホーム画面のまま、対戦表は横スワイプ表示と見やすい画像出力に対応しています。</p>
 
       <div class="install-tip" id="installTip">
@@ -1009,6 +1009,9 @@ body.large-ui .zoom-mode-title {
         <summary>アップデートノート</summary>
         <div class="release-notes-body">
 <div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V23.2</span><span class="release-note-title">大会モードの対戦・ペア重複を抑制</span></div>
+            <div class="release-note-text">大会モードで休憩回数の公平性を維持しつつ、フリーペアや対戦チームを再配置する履歴分散型探索を追加。同じ相手・同じ4名・同じ固定ペア同士の対戦集中を減らします。固定ペアの同時出場時は必ずペア固定、片方休憩中はフリー扱いを維持。通常モードは従来どおりです。</div>
+          </div><div class="release-note-item">
             <div class="release-note-head"><span class="release-note-version">V23.1</span><span class="release-note-title">大会モード休憩柔軟化・対戦表の表示改善</span></div>
             <div class="release-note-text">大会ペアを登録して固定。両名参加時だけ有効とし、片方欠席時はフリー参加者扱い。休憩は個人単位で選び、片方だけ休憩ならもう片方はフリー参加者と組めます。通常モードに切り替え可能です。</div>
             <div class="release-note-head"><span class="release-note-version">V22.2.1</span><span class="release-note-title">横スワイプ挙動と画像チャレンジ表示を調整</span></div>
@@ -1853,62 +1856,189 @@ body.large-ui .zoom-mode-title {
       return copy;
     }
 
-    // 大会モードは休憩を個人単位で選ぶ。出場中の固定ペアだけを不可分のチームにする。
-    // 固定ペアの片方が休憩なら、残りの1人はその試合に限りフリー扱い。
-    function chooseTournamentRound(state, courtCount, roundNo, recentQuartets) {
+    // V23.2: 大会モード専用の履歴分散型探索。
+    // 固定ペアは出場者2名がそろった場合だけ不可分。片方休憩中はもう片方をフリー扱いにする。
+    // 休憩者・フリーペア・対戦チームを複数パターン探索し、履歴の集中を抑える。
+    function tournamentTeamKey(team) {
+      return team.map((p) => p.id).sort().join("|");
+    }
+
+    function tournamentMatchupKey(teamA, teamB) {
+      return [tournamentTeamKey(teamA), tournamentTeamKey(teamB)].sort().join("~");
+    }
+
+    function tournamentRestPenalty(state, onCourtIds, averagePlays, presentIds) {
+      let score = 0;
+      const restIds = new Set();
+      for (const p of state) {
+        const playing = onCourtIds.has(p.id);
+        const nextPlays = p.played + (playing ? 1 : 0);
+        score += (nextPlays - averagePlays) ** 2 * 11000;
+        if (!playing) {
+          restIds.add(p.id);
+          if (p.lastRest) score += 2600;
+        }
+      }
+      // ペア2名を別々に休憩させることは許可する（あくまで同条件時の小さな優先度）。
+      for (const [a, b] of fixedPairs) {
+        if (presentIds.has(a) && presentIds.has(b) && (restIds.has(a) !== restIds.has(b))) {
+          score += 300;
+        }
+      }
+      return score;
+    }
+
+    function tournamentMatchScore(teamA, teamB, roundNo, recentQuartets, teamMatchups) {
+      let score = 0;
+      const pairKeyA = tournamentTeamKey(teamA);
+      const pairKeyB = tournamentTeamKey(teamB);
+      const fixedA = tournamentFixedPairKeys.has(pairKeyA);
+      const fixedB = tournamentFixedPairKeys.has(pairKeyB);
+
+      for (const [team, isFixed] of [[teamA, fixedA], [teamB, fixedB]]) {
+        if (isFixed) continue; // 固定ペアは何度組んでも重複ペナルティを付けない。
+        const seen = getCount(team[0].partners, team[1].id);
+        score += seen * seen * 2600;
+        score += recentPartnerPenalty(team, roundNo) * 5200;
+      }
+
+      // 対戦相手との遭遇回数の「平方」を用い、特定の相手への集中をより強く抑える。
+      for (const a of teamA) for (const b of teamB) {
+        const seen = getCount(a.opponents, b.id);
+        score += seen * seen * 900;
+        const recent = getRecentRounds(a.recentOpponents, b.id);
+        for (const previous of recent) {
+          const gap = roundNo - previous;
+          if (gap === 1) score += 1750;
+          else if (gap === 2) score += 800;
+        }
+      }
+
+      // 完全に同じ2チームの再戦、同じ4人セットの連続を別途抑制。
+      const matchHistory = teamMatchups.get(tournamentMatchupKey(teamA, teamB)) || [];
+      score += matchHistory.length ** 2 * 2500;
+      if (matchHistory.length && roundNo - matchHistory[matchHistory.length - 1] <= 2) score += 3500;
+      score += getRecentQuartetPenalty([...teamA, ...teamB], roundNo, recentQuartets) * 2400;
+
+      if (appSettings.useRatings) {
+        const sumA = teamA[0].rating + teamA[1].rating;
+        const sumB = teamB[0].rating + teamB[1].rating;
+        const diff = Math.abs(sumA - sumB);
+        score += diff * 240;
+        score += Math.max(0, diff - 3) * 650;
+        if (diff > 5) score += 6000 + (diff - 5) * 3500;
+      }
+      return score;
+    }
+
+    function tournamentCourtsScore(teams, roundNo, recentQuartets, teamMatchups) {
+      let score = 0;
+      for (let i = 0; i < teams.length; i += 2) {
+        score += tournamentMatchScore(teams[i].players, teams[i + 1].players,
+          roundNo, recentQuartets, teamMatchups);
+      }
+      return score;
+    }
+
+    function tournamentDisplayMatch(teamA, teamB, roundNo, recentQuartets) {
+      const useRatings = appSettings.useRatings;
+      const sumA = useRatings ? teamA[0].rating + teamA[1].rating : null;
+      const sumB = useRatings ? teamB[0].rating + teamB[1].rating : null;
+      const diff = useRatings ? Math.abs(sumA - sumB) : null;
+      return {
+        players: [...teamA, ...teamB], teamA, teamB, sumA, sumB, diff,
+        pairRepeat: (tournamentFixedPairKeys.has(tournamentTeamKey(teamA)) ? 0 : partnerRepeatCount(teamA))
+          + (tournamentFixedPairKeys.has(tournamentTeamKey(teamB)) ? 0 : partnerRepeatCount(teamB)),
+        recentQuartetPenalty: getRecentQuartetPenalty([...teamA, ...teamB], roundNo, recentQuartets),
+        opponentRepeat: opponentPenalty(teamA, teamB),
+        challengeTeam: useRatings && diff >= CHALLENGE_MIN_DIFF ? (sumA < sumB ? 'A' : 'B') : null
+      };
+    }
+
+    // 描画／通常モードと分離し、休憩・ペア・対戦の最適化にだけ使用する集合。
+    let tournamentFixedPairKeys = new Set();
+
+    function chooseTournamentRound(state, courtCount, roundNo, recentQuartets, teamMatchups = new Map()) {
       const slots = courtCount * 4;
-      const restCount = state.length - slots;
-      const strategy = buildRoundStrategy(state, roundNo, state.length);
-      const fixedKeys = new Set(fixedPairs.map((pair) => pair.slice().sort().join("|")));
-      const restPriority = new Map(state.map((p) => [p.id, restScore(p)]));
       const presentIds = new Set(state.map((p) => p.id));
-      const idealRestScore = [...restPriority.values()].sort((a, b) => b - a)
-        .slice(0, restCount).reduce((sum, value) => sum + value, 0);
+      const averagePlays = (state.reduce((sum, p) => sum + p.played, 0) + slots) / state.length;
+      tournamentFixedPairKeys = new Set(fixedPairs
+        .filter(([a, b]) => presentIds.has(a) && presentIds.has(b))
+        .map(([a, b]) => [a, b].sort().join('|')));
+      const attempts = state.length <= 12 ? 100 : 110;
+      const steps = courtCount === 1 ? 38 : 64;
       let best = null;
 
-      for (let attempt = 0; attempt < 240; attempt++) {
-        // 適度な揺らぎを入れて候補を複数作り、個人別の出場公平性も評価する。
-        const rests = state.map((p) => ({ p, priority: restPriority.get(p.id) + Math.random() * 13 }))
-          .sort((a, b) => b.priority - a.priority)
-          .slice(0, restCount).map((entry) => entry.p);
-        const restIds = new Set(rests.map((p) => p.id));
-        const onCourt = state.filter((p) => !restIds.has(p.id));
-        const units = tournamentUnits(onCourt);
-        const fixedTeams = units.filter((unit) => unit.length === 2);
+      for (let attempt = 0; attempt < attempts; attempt++) {
+        // 出場数の少ない人を優先し、同数なら直前休憩者を優先しつつ揺らぎを付ける。
+        // 試合数の差が広がるような休憩選択は許容しない（スコアで厳格に評価）。
+        const active = state.map((p) => ({ p,
+          rank: p.played * 100 - (p.lastRest ? 16 : 0) + Math.random() * 32
+        })).sort((a, b) => a.rank - b.rank).slice(0, slots).map((entry) => entry.p);
+        const activeIds = new Set(active.map((p) => p.id));
+        const restPenalty = tournamentRestPenalty(state, activeIds, averagePlays, presentIds);
+        const units = tournamentUnits(active);
         const freePlayers = shuffleCopy(units.filter((unit) => unit.length === 1).flat());
-        const freeTeams = [];
+        const teams = units.filter((unit) => unit.length === 2)
+          .map((unit) => ({ players: unit.slice(), fixed: true }));
         for (let i = 0; i < freePlayers.length; i += 2) {
-          if (!freePlayers[i + 1]) break;
-          freeTeams.push([freePlayers[i], freePlayers[i + 1]]);
+          teams.push({ players: [freePlayers[i], freePlayers[i + 1]], fixed: false });
         }
-        const teams = shuffleCopy([...fixedTeams, ...freeTeams]);
-        if (teams.length !== courtCount * 2) continue;
+        if (teams.length !== courtCount * 2 || teams.some((team) => team.players.length !== 2 || !team.players[1])) continue;
+        let current = shuffleCopy(teams);
+        const freeTeamIndices = current.map((team, i) => team.fixed ? -1 : i).filter((i) => i !== -1);
+        let currentScore = tournamentCourtsScore(current, roundNo, recentQuartets, teamMatchups);
+        if (!best || currentScore + restPenalty < best.score) {
+          best = { score: currentScore + restPenalty, activeIds, teams: current.map((t) => t.players.slice()) };
+        }
 
-        const matches = [];
-        let matchScore = 0;
-        for (let i = 0; i < teams.length; i += 2) {
-          const candidates = [];
-          addPairingCandidate(candidates, teams[i], teams[i + 1], strategy, recentQuartets);
-          const match = candidates[0];
-          matches.push(match);
-          matchScore += match.score;
-          // 毎試合同じペアで出ることが「固定ペア」の仕様。
-          // そのペアの再結成ペナルティは候補評価から除く（通常モードには非適用）。
-          for (const team of [match.teamA, match.teamB]) {
-            const key = team.map((p) => p.id).sort().join("|");
-            if (!fixedKeys.has(key)) continue;
-            matchScore -= partnerRepeatCount(team) * strategy.pairRepeatWeight;
-            matchScore -= recentPartnerPenalty(team, roundNo) * strategy.recentPairWeight;
+        // 局所探索：チーム対戦の入れ替えと、フリー選手のパートナー交換。
+        // 焼きなましによって局所解から抜け、連続試合の偏りを抑える。
+        for (let step = 0; step < steps; step++) {
+          const proposed = current.map((team) => ({ players: team.players.slice(), fixed: team.fixed }));
+          const swapFree = freeTeamIndices.length >= 2 && Math.random() < 0.52;
+          if (swapFree) {
+            const x = Math.floor(Math.random() * freeTeamIndices.length);
+            let y = Math.floor(Math.random() * (freeTeamIndices.length - 1));
+            if (y >= x) y++;
+            const i = freeTeamIndices[x], j = freeTeamIndices[y];
+            const ai = Math.floor(Math.random() * 2), bj = Math.floor(Math.random() * 2);
+            [proposed[i].players[ai], proposed[j].players[bj]] = [proposed[j].players[bj], proposed[i].players[ai]];
+          } else {
+            const i = Math.floor(Math.random() * proposed.length);
+            let j = Math.floor(Math.random() * (proposed.length - 1));
+            if (j >= i) j++;
+            [proposed[i], proposed[j]] = [proposed[j], proposed[i]];
+            // チーム位置が変わるため、次回以降の交換候補は再計算する。
+          }
+          const proposalScore = tournamentCourtsScore(proposed, roundNo, recentQuartets, teamMatchups);
+          const temperature = 3100 * (1 - step / steps) + 180;
+          if (proposalScore <= currentScore || Math.random() < Math.exp((currentScore - proposalScore) / temperature)) {
+            current = proposed;
+            currentScore = proposalScore;
+            // fixed/freeの位置を入れ替えた場合にも常に現在の位置を参照する。
+            freeTeamIndices.length = 0;
+            current.forEach((team, i) => { if (!team.fixed) freeTeamIndices.push(i); });
+          }
+          if (!best || currentScore + restPenalty < best.score) {
+            best = { score: currentScore + restPenalty, activeIds, teams: current.map((t) => t.players.slice()) };
           }
         }
-        // 公平性を重視。固定ペアは可能な限り共に出場するが、休憩の強制同期はしない。
-        const missedRestPriority = Math.max(0, idealRestScore - rests.reduce((sum, p) => sum + restPriority.get(p.id), 0));
-        const splitPairCount = fixedPairs.reduce((count, [a, b]) =>
-          count + (presentIds.has(a) && presentIds.has(b) && (restIds.has(a) !== restIds.has(b)) ? 1 : 0), 0);
-        const score = matchScore + missedRestPriority * 4800 + splitPairCount * 4500;
-        if (!best || score < best.score) best = { rests, matches, score };
       }
-      return best;
+      if (!best) return null;
+      const rests = state.filter((p) => !best.activeIds.has(p.id));
+      const matches = [];
+      for (let i = 0; i < best.teams.length; i += 2) {
+        matches.push(tournamentDisplayMatch(best.teams[i], best.teams[i + 1], roundNo, recentQuartets));
+      }
+      return { rests, matches: shuffleCopy(matches), score: best.score };
+    }
+
+    function recordTournamentMatchup(teamA, teamB, roundNo, teamMatchups) {
+      const key = tournamentMatchupKey(teamA, teamB);
+      const rounds = teamMatchups.get(key) || [];
+      rounds.push(roundNo);
+      teamMatchups.set(key, rounds);
     }
 
     function cloneStatePlayers(source) {
@@ -1919,7 +2049,8 @@ body.large-ui .zoom-mode-title {
         lastRest: false,
         partners: new Map(),
         opponents: new Map(),
-        recentPartners: new Map()
+        recentPartners: new Map(),
+        recentOpponents: new Map()
       }));
     }
 
@@ -1945,6 +2076,7 @@ body.large-ui .zoom-mode-title {
         const state = cloneStatePlayers(activeMembers);
         const schedule = [];
         const recentQuartets = new Map();
+        const tournamentMatchups = new Map();
 
         for (let roundNo = 1; roundNo <= roundCount; roundNo++) {
           const availableCourts = Math.min(courtSetting, Math.floor(state.length / 4));
@@ -1952,7 +2084,7 @@ body.large-ui .zoom-mode-title {
           const restCount = state.length - activeCount;
 
           const tournamentRound = appSettings.competitionMode === "tournament"
-            ? chooseTournamentRound(state, availableCourts, roundNo, recentQuartets) : null;
+            ? chooseTournamentRound(state, availableCourts, roundNo, recentQuartets, tournamentMatchups) : null;
           if (appSettings.competitionMode === "tournament" && !tournamentRound) {
             return setError(`第${roundNo}試合の組み合わせを生成できませんでした。条件を調整してください。`);
           }
@@ -1971,6 +2103,7 @@ body.large-ui .zoom-mode-title {
             match.teamB.forEach((p) => p.played += 1);
             recordHistory(match.teamA, match.teamB, roundNo);
             recordQuartetHistory(match.teamA, match.teamB, roundNo, recentQuartets);
+            if (appSettings.competitionMode === "tournament") recordTournamentMatchup(match.teamA, match.teamB, roundNo, tournamentMatchups);
             return {
               courtNo: idx + 1,
               teamA: match.teamA.map(slim),
@@ -1985,6 +2118,10 @@ body.large-ui .zoom-mode-title {
           });
 
           schedule.push({ roundNo, rests: rests.map(slim), courts });
+          if (appSettings.competitionMode === "tournament" && roundNo % 3 === 0 && roundNo < roundCount) {
+            generateBtn.textContent = `計算中… ${roundNo}/${roundCount}`;
+            await new Promise((resolve) => setTimeout(resolve, 0));
+          }
         }
 
         schedule.__state = state.map(slim);
@@ -2266,6 +2403,8 @@ body.large-ui .zoom-mode-title {
       teamA.forEach((a) => teamB.forEach((b) => {
         addMapCount(a.opponents, b.id);
         addMapCount(b.opponents, a.id);
+        if (a.recentOpponents instanceof Map) addRecentRound(a.recentOpponents, b.id, roundNo);
+        if (b.recentOpponents instanceof Map) addRecentRound(b.recentOpponents, a.id, roundNo);
       }));
     }
 
