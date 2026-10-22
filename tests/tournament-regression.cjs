@@ -22,6 +22,8 @@ function test(n, courts, rounds, rated, pairs, absent = []) {
     const working=cloneStatePlayers(members.filter(p=>!absent.includes(+p.id)));
     const quartets=new Map(), matchups=new Map();
     const schedule=[];
+    const restEvents=new Map(working.map(p=>[p.id,[]]));
+    let maxRoundlyRestGap=0;
     for(let round=1;round<=rounds;round++){
       const usableCourts=Math.min(courts,Math.floor(working.length/4));
       const result=chooseTournamentRound(working,usableCourts,round,quartets,matchups);
@@ -35,7 +37,14 @@ function test(n, courts, rounds, rated, pairs, absent = []) {
         recordTournamentMatchup(m.teamA,m.teamB,round,matchups);
         for(const p of m.players)p.played++;
       }
-      for(const p of working){p.lastRest=!used.has(p.id);if(p.lastRest)p.rested++;}
+      for(const p of working){
+        p.lastRest=!used.has(p.id);
+        if(p.lastRest){ p.rested++; p.lastRestRound=round; restEvents.get(p.id).push(round); }
+      }
+      const counts=working.map(p=>p.rested);
+      const currentGap=Math.max(...counts)-Math.min(...counts);
+      maxRoundlyRestGap=Math.max(maxRoundlyRestGap,currentGap);
+      if(currentGap>1)throw Error('rest imbalance at round '+round+': '+currentGap);
       for(const [a,b] of fixedPairs){
         if(!used.has(a)||!used.has(b))continue;
         if(!result.matches.some(m=>
@@ -45,7 +54,19 @@ function test(n, courts, rounds, rated, pairs, absent = []) {
       if(used.size!==usableCourts*4||result.rests.length!==working.length-used.size)throw Error('wrong attendance');
       schedule.push(result);
     }
+    const slots=Math.min(courts,Math.floor(working.length/4))*4;
+    const restPerRound=working.length-slots;
+    const firstCycle=restPerRound>0?Math.ceil(working.length/restPerRound):Infinity;
+    const firstRestMax=restPerRound>0&&rounds>=firstCycle
+      ? Math.max(...[...restEvents.values()].map(events=>events[0]??Infinity)):null;
+    const largestRestInterval=Math.max(0,...[...restEvents.values()].flatMap(events=>events.slice(1).map((r,i)=>r-events[i])));
+    const maxConsecutivePlay=Math.max(...[...restEvents.values()].map(events=>{
+      let last=0, most=0;
+      for(const round of [...events,rounds+1]){most=Math.max(most,round-last-1);last=round;}
+      return most;
+    }));
     return {games:schedule.length,restGap:Math.max(...working.map(p=>p.rested))-Math.min(...working.map(p=>p.rested)),
+      maxRoundlyRestGap,firstRestMax,firstCycle,largestRestInterval,maxConsecutivePlay,
       singleRest: schedule.some(r=>r.rests.some(p=>fixedPairs.some(pair=>pair.includes(p.id)&&pair.some(other=>other!==p.id&&!r.rests.some(x=>x.id===other)))))};
   })()`;
   return vm.runInContext(script,context,{timeout:90000});
@@ -55,6 +76,9 @@ const cases = [
   [4,1,10,false,[[0,1],[2,3]]],
   [9,2,12,false,[[0,3],[4,5]]],
   [9,2,12,true,[[0,3],[4,5]]],
+  [14,3,21,false,[[0,1],[2,3],[4,5],[6,7],[8,9]]], // 5 fixed pairs + 4 free, 2 rests each round
+  [14,3,21,true,[[0,1],[2,3],[4,5],[6,7],[8,9]]],
+  [14,2,16,false,[[0,1],[2,3],[4,5],[6,7],[8,9]]],
   [12,2,18,false,[[0,3],[4,5]]],
   [12,2,18,true,[[0,3],[4,5]]],
   [16,3,15,false,[[0,3],[4,5],[6,7]]],
@@ -66,8 +90,15 @@ for (const args of cases) {
   const result = test(...args);
   assert.equal(result.games,args[2]);
   assert.ok(result.restGap<=1, `Uneven resting: ${result.restGap}`);
+  assert.ok(result.maxRoundlyRestGap<=1, `Resting temporarily uneven: ${result.maxRoundlyRestGap}`);
+  if(result.firstRestMax!==null) assert.ok(result.firstRestMax<=result.firstCycle,
+    `First rest too late: round ${result.firstRestMax}, expected by round ${result.firstCycle}`);
+  if(args[0]===14 && args[1]===3) {
+    assert.ok(result.largestRestInterval<=7, `Rest spacing too long: ${result.largestRestInterval}`);
+    assert.ok(result.maxConsecutivePlay<=6, `Played too many consecutive games: ${result.maxConsecutivePlay}`);
+  }
   if(args[0]===9) assert.ok(result.singleRest,'Registered pair must be allowed to rest separately');
-  console.log(`PASS: ${args[0]} players, ${args[1]} courts, ${args[2]} rounds, ratings=${args[3]}, rest-gap=${result.restGap}`);
+  console.log(`PASS: ${args[0]} players, ${args[1]} courts, ${args[2]} rounds, ratings=${args[3]}, rest-gap=${result.restGap}, first-rest-last=${result.firstRestMax}, max-play-streak=${result.maxConsecutivePlay}`);
 }
 // Smoke-test the unchanged normal-mode generator with ratings on and off.
 for (const rated of [false,true]) {

@@ -870,7 +870,7 @@ body.large-ui .zoom-mode-title {
 <body>
   <main class="app">
     <header>
-      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V23.2</span></h1>
+      <h1><span>ダブルス対戦メーカー</span><span class="title-version">V23.3</span></h1>
       <p class="subtitle">登録メンバーは最大50人まで保持。黒ベースのホーム画面のまま、対戦表は横スワイプ表示と見やすい画像出力に対応しています。</p>
 
       <div class="install-tip" id="installTip">
@@ -1009,6 +1009,9 @@ body.large-ui .zoom-mode-title {
         <summary>アップデートノート</summary>
         <div class="release-notes-body">
 <div class="release-note-item">
+            <div class="release-note-head"><span class="release-note-version">V23.3</span><span class="release-note-title">大会モードの休憩タイミングを均等化</span></div>
+            <div class="release-note-text">休憩人数を先に確定し、休憩回数が少ない人から優先選定。同数では前回の休憩が最も古い人を優先するローテーション方式に変更しました。初回休憩の極端な遅れや連続休憩を抑えた後、対戦相手・フリーペアの履歴分散を探索します。固定ペア片方だけの休憩も継続可能。通常モードは変更ありません。</div>
+          </div><div class="release-note-item">
             <div class="release-note-head"><span class="release-note-version">V23.2</span><span class="release-note-title">大会モードの対戦・ペア重複を抑制</span></div>
             <div class="release-note-text">大会モードで休憩回数の公平性を維持しつつ、フリーペアや対戦チームを再配置する履歴分散型探索を追加。同じ相手・同じ4名・同じ固定ペア同士の対戦集中を減らします。固定ペアの同時出場時は必ずペア固定、片方休憩中はフリー扱いを維持。通常モードは従来どおりです。</div>
           </div><div class="release-note-item">
@@ -1856,7 +1859,7 @@ body.large-ui .zoom-mode-title {
       return copy;
     }
 
-    // V23.2: 大会モード専用の履歴分散型探索。
+    // V23.3: 休憩の回数・時期を最優先にした上で、V23.2の履歴分散型探索を行う。
     // 固定ペアは出場者2名がそろった場合だけ不可分。片方休憩中はもう片方をフリー扱いにする。
     // 休憩者・フリーペア・対戦チームを複数パターン探索し、履歴の集中を抑える。
     function tournamentTeamKey(team) {
@@ -1970,11 +1973,21 @@ body.large-ui .zoom-mode-title {
       let best = null;
 
       for (let attempt = 0; attempt < attempts; attempt++) {
-        // 出場数の少ない人を優先し、同数なら直前休憩者を優先しつつ揺らぎを付ける。
-        // 試合数の差が広がるような休憩選択は許容しない（スコアで厳格に評価）。
-        const active = state.map((p) => ({ p,
-          rank: p.played * 100 - (p.lastRest ? 16 : 0) + Math.random() * 32
-        })).sort((a, b) => a.rank - b.rank).slice(0, slots).map((entry) => entry.p);
+        // 休憩は組合せスコアより先に「厳格な優先順位」で選ぶ。
+        // ①累計休憩数が少ない人、②最後の休憩が古い人、③同順位だけランダム。
+        // そのため、対戦カードの都合で「まだ一度も休んでいない人」を後回しにできない。
+        // 14人・3コートなら2名/回休憩し、遅くとも7回目までに全員1回休む。
+        const restingCount = state.length - slots;
+        const restCandidates = state.map((p) => ({
+          p,
+          restCount: p.rested,
+          lastRestRound: p.lastRestRound || 0,
+          tie: Math.random()
+        })).sort((a, b) => a.restCount - b.restCount
+          || a.lastRestRound - b.lastRestRound
+          || a.tie - b.tie);
+        const restIds = new Set(restCandidates.slice(0, restingCount).map((entry) => entry.p.id));
+        const active = state.filter((p) => !restIds.has(p.id));
         const activeIds = new Set(active.map((p) => p.id));
         const restPenalty = tournamentRestPenalty(state, activeIds, averagePlays, presentIds);
         const units = tournamentUnits(active);
@@ -2047,6 +2060,7 @@ body.large-ui .zoom-mode-title {
         played: 0,
         rested: 0,
         lastRest: false,
+        lastRestRound: 0,
         partners: new Map(),
         opponents: new Map(),
         recentPartners: new Map(),
@@ -2093,7 +2107,7 @@ body.large-ui .zoom-mode-title {
           const rests = state.filter((p) => restSet.has(p.id));
           const active = state.filter((p) => !restSet.has(p.id));
 
-          rests.forEach((p) => { p.rested += 1; p.lastRest = true; });
+          rests.forEach((p) => { p.rested += 1; p.lastRest = true; p.lastRestRound = roundNo; });
           active.forEach((p) => { p.lastRest = false; });
 
           const roundMatches = tournamentRound
